@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Monte seu Pino — Demo</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#151922;
+    --muted:#8b94a7;
+    --peg:#d9c6a3;
+    --wood:#f0e7d6;
+    --shadow: 0 10px 20px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.18);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 20% 0%, #192033 0%, #0f1115 60%);
+    color:#e7ecf6;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .app{
+    width:min(1100px, 95vw);
+    background: linear-gradient(180deg, #171c27 0%, #141924 100%);
+    border-radius: var(--radius);
+    padding:22px;
+    box-shadow: var(--shadow);
+  }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:18px;
+  }
+  header h1{
+    font-size: clamp(18px, 2.3vw, 28px);
+    margin:0;
+    letter-spacing:.3px;
+  }
+  .actions{display:flex; gap:10px}
+  button{
+    appearance:none; border:0; cursor:pointer; font-weight:600;
+    padding:10px 14px; border-radius:12px; transition:.2s transform,.2s opacity;
+  }
+  button:active{transform:translateY(1px)}
+  .ghost{background:#232a3a; color:#d9e1f2}
+  .primary{background:#3b82f6; color:white}
+  .ghost:hover{opacity:.9}
+  .primary:hover{opacity:.92}
+
+  .grid{
+    display:grid; grid-template-columns: 1.1fr .9fr;
+    gap:18px; min-height: 520px;
+  }
+  @media (max-width: 880px){
+    .grid{grid-template-columns: 1fr; grid-auto-rows: auto}
+  }
+
+  /* --- Peg / Área de montagem --- */
+  .stage{
+    background: linear-gradient(180deg, #20263a 0%, #1b2132 100%);
+    border:1px solid #262e44;
+    border-radius:16px; padding:18px;
+    position:relative; overflow:hidden;
+  }
+  .table{
+    position:absolute; left:50%; transform:translateX(-50%);
+    bottom:26px; width: 86%;
+    height: 18px; background: var(--wood);
+    border-radius: 10px; box-shadow: inset 0 2px 0 rgba(0,0,0,.08);
+  }
+  .peg-wrap{
+    position:absolute; left:22%; top:52%; transform:translate(-50%,-50%);
+    width: 70px; height: 360px; display:flex; align-items:flex-end; justify-content:center;
+  }
+  .peg{
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width:14px; height:300px; background: var(--peg);
+    border-radius: 8px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.12);
+  }
+  .stack-zone{
+    position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+    width: 220px; height: 300px; pointer-events:none;
+  }
+
+  /* Dica */
+  .hint{
+    position:absolute; right:16px; top:16px; color: var(--muted);
+    font-size: 12px; opacity:.9;
+  }
+
+  /* --- Catálogo --- */
+  .catalog{
+    background: linear-gradient(180deg, #1c2232 0%, #171d2b 100%);
+    border:1px solid #262e44; border-radius:16px; padding:16px;
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
+  }
+  .item{
+    background:#0f1524; border:1px solid #222a40; border-radius:14px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; padding:12px; user-select:none; touch-action:none;
+    position:relative;
+  }
+  .item span{font-size:12px; color:#cdd6ea}
+  .draggable{
+    width:92px; height:60px; display:flex; align-items:center; justify-content:center;
+    border-radius:10px; position:relative; cursor:grab;
+    box-shadow: 0 6px 14px rgba(0,0,0,.28), inset 0 -8px 0 rgba(0,0,0,.15);
+    border:2px solid rgba(255,255,255,.08);
+  }
+  .draggable:active{cursor:grabbing}
+
+  /* Shapes via clip-path / border-radius */
+  .shape{ width:78px; height:38px; position:relative }
+  .shape.circle{ border-radius: 1000px }
+  .shape.square{ border-radius: 10px }
+  .shape.octagon{
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    border-radius: 10px;
+  }
+
+  /* Colors */
+  .c-pink { background:#ec4899 }
+  .c-lime { background:#84cc16 }
+  .c-sky  { background:#38bdf8 }
+
+  /* Peças soltas enquanto arrasta */
+  .piece-floating{
+    position:fixed; z-index:9999; pointer-events:none; transform: translate(-50%,-50%);
+    width:100px; height:64px;
+  }
+
+  /* Peças empilhadas */
+  .stack-piece{
+    position:absolute; left:50%; transform:translateX(-50%);
+    width: calc(200px - var(--shrink, 0px));
+    height: 40px; border-radius: 12px;
+    box-shadow: 0 10px 18px rgba(0,0,0,.28), inset 0 -10px 0 rgba(0,0,0,.16);
+    border:2px solid rgba(255,255,255,.07);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .stack-piece .shape{ width:85%; height:26px }
+  .stack-piece[data-shape="circle"] .shape{ border-radius: 1000px }
+  .stack-piece[data-shape="square"] .shape{ border-radius: 10px }
+  .stack-piece[data-shape="octagon"] .shape{ clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); border-radius:10px }
+
+  /* Zona alvo visual quando válido */
+  .drop-ok{ outline:2px dashed #3b82f6; outline-offset:6px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Monte seu pino</h1>
+      <div class="actions">
+        <button class="ghost" id="btn-clear">Limpar</button>
+        <button class="primary" id="btn-finish">Finalizar seleção</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Área do pino -->
+      <section class="stage" id="stage">
+        <div class="hint">Arraste peças para o pino ➜</div>
+
+        <div class="peg-wrap">
+          <div class="peg" aria-hidden="true"></div>
+          <div class="stack-zone" id="stackZone" aria-label="Área de empilhamento"></div>
+        </div>
+        <div class="table" aria-hidden="true"></div>
+      </section>
+
+      <!-- Catálogo de peças -->
+      <section class="catalog" id="catalog">
+        <!-- Cada .item gera uma peça arrastável -->
+        <!-- Círculo -->
+        <div class="item">
+          <div class="draggable" data-shape="circle" data-color="pink" aria-label="Círculo rosa">
+            <div class="shape circle c-pink"></div>
+          </div>
+          <span>Círculo — Rosa</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="circle" data-color="lime" aria-label="Círculo verde">
+            <div class="shape circle c-lime"></div>
+          </div>
+          <span>Círculo — Verde</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="circle" data-color="sky" aria-label="Círculo azul">
+            <div class="shape circle c-sky"></div>
+          </div>
+          <span>Círculo — Azul</span>
+        </div>
+
+        <!-- Quadrado -->
+        <div class="item">
+          <div class="draggable" data-shape="square" data-color="pink" aria-label="Quadrado rosa">
+            <div class="shape square c-pink"></div>
+          </div>
+          <span>Quadrado — Rosa</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="square" data-color="lime" aria-label="Quadrado verde">
+            <div class="shape square c-lime"></div>
+          </div>
+          <span>Quadrado — Verde</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="square" data-color="sky" aria-label="Quadrado azul">
+            <div class="shape square c-sky"></div>
+          </div>
+          <span>Quadrado — Azul</span>
+        </div>
+
+        <!-- Octógono -->
+        <div class="item">
+          <div class="draggable" data-shape="octagon" data-color="pink" aria-label="Octógono rosa">
+            <div class="shape octagon c-pink"></div>
+          </div>
+          <span>Octógono — Rosa</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="octagon" data-color="lime" aria-label="Octógono verde">
+            <div class="shape octagon c-lime"></div>
+          </div>
+          <span>Octógono — Verde</span>
+        </div>
+        <div class="item">
+          <div class="draggable" data-shape="octagon" data-color="sky" aria-label="Octógono azul">
+            <div class="shape octagon c-sky"></div>
+          </div>
+          <span>Octógono — Azul</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+/* ====== util ====== */
+const $ = (s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+const stackZone = $('#stackZone');
+const stage     = $('#stage');
+
+let stack = []; // topo = último
+
+function getRect(el){ return el.getBoundingClientRect(); }
+
+function isInside(point, rect){
+  return point.x >= rect.left && point.x <= rect.right &&
+         point.y >= rect.top  && point.y <= rect.bottom;
+}
+
+/* ====== Drag (mouse + touch + pointer) ====== */
+function makeDraggable(el){
+  let floating=null;
+
+  const start = (clientX, clientY) => {
+    floating = el.cloneNode(true);
+    floating.classList.add('piece-floating');
+    floating.style.left = clientX+'px';
+    floating.style.top  = clientY+'px';
+    document.body.appendChild(floating);
+    stage.classList.add('drop-ok');
+  };
+
+  const move = (clientX, clientY) => {
+    if(!floating) return;
+    floating.style.left = clientX+'px';
+    floating.style.top  = clientY+'px';
+  };
+
+  const end = (clientX, clientY) => {
+    if(!floating) return;
+    stage.classList.remove('drop-ok');
+    const dropPoint = {x: clientX, y: clientY};
+    const zoneRect = getRect(stackZone);
+
+    if(isInside(dropPoint, zoneRect)){
+      addToStack(el.dataset.shape, el.dataset.color);
+    }
+    floating.remove();
+    floating=null;
+  };
+
+  // Pointer (cobre mouse + touch modernos)
+  el.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    start(e.clientX, e.clientY);
+
+    const onMove = ev => move(ev.clientX, ev.clientY);
+    const onUp = ev => {
+      end(ev.clientX, ev.clientY);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
+    };
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+  });
+}
+
+/* ====== Stack logic ====== */
+function computeY(index){
+  // base 10px acima do fundo, cada peça 44px de altura/spacing
+  return 10 + (index * 44);
+}
+
+function addToStack(shape, color){
+  const piece = document.createElement('div');
+  piece.className = 'stack-piece';
+  piece.dataset.shape = shape;
+  piece.dataset.color = color;
+  piece.setAttribute('title', 'Duplo clique para remover');
+
+  // pequena variação de largura para efeito “pirâmide”
+  piece.style.setProperty('--shrink', `${Math.min(stack.length*14, 80)}px`);
+  piece.style.bottom = computeY(stack.length) + 'px';
+
+  const shapeEl = document.createElement('div');
+  shapeEl.className = `shape ${shape} c-${color}`;
+  piece.appendChild(shapeEl);
+
+  // remover: duplo clique
+  piece.addEventListener('dblclick', ()=> removeFromStack(piece));
+
+  stackZone.appendChild(piece);
+  stack.push(piece);
+}
+
+function removeFromStack(piece){
+  const idx = stack.indexOf(piece);
+  if(idx === -1) return;
+  stack.splice(idx,1);
+  piece.remove();
+  // reajusta alturas
+  stack.forEach((p, i)=>{
+    p.style.bottom = computeY(i)+'px';
+    p.style.setProperty('--shrink', `${Math.min(i*14, 80)}px`);
+  });
+}
+
+/* ====== Init ====== */
+$$('.draggable').forEach(makeDraggable);
+
+$('#btn-clear').addEventListener('click',()=>{
+  stack.forEach(p=>p.remove());
+  stack=[];
+});
+
+$('#btn-finish').addEventListener('click',()=>{
+  const summary = stack.map(p=>({
+    shape: p.dataset.shape,
+    color: p.dataset.color
+  }));
+  alert('Sua seleção (de baixo para cima):\n' + summary.map((s,i)=>`${i+1}. ${s.shape} - ${s.color}`).join('\n') || 'vazio');
+});
+
+/* Remoção por arrastar para fora: observa pointerup fora da stage */
+document.addEventListener('pointerup',(e)=>{
+  // se soltou em cima de uma peça da pilha e fora da stage, remover
+  const target = e.target.closest('.stack-piece');
+  if(target && !isInside({x:e.clientX,y:e.clientY}, getRect(stage))){
+    removeFromStack(target);
+  }
+});
+</script>
+</body>
+</html>
