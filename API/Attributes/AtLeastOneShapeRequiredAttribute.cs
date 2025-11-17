@@ -10,10 +10,10 @@ namespace API.Attributes
         {
             var order = (Order)validationContext.ObjectInstance;
 
-            // Verifica se pelo menos um dos ShapePos está preenchido (diferente de None ou 0)
-            if (order.ShapePos1 != default(ShapeType) || 
-                order.ShapePos2 != default(ShapeType) || 
-                order.ShapePos3 != default(ShapeType))
+            // Verifica se pelo menos um dos ShapePos está preenchido (diferente de None)
+            if (order.ShapePos1 != ShapeType.None || 
+                order.ShapePos2 != ShapeType.None || 
+                order.ShapePos3 != ShapeType.None)
             {
                 return ValidationResult.Success;
             }

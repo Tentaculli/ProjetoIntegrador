@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Attributes;
 using API.Models.Enums;
+using ClientModel = API.Models.Client.Client;
 
 namespace API.Models.Order
 {
@@ -21,6 +22,10 @@ namespace API.Models.Order
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created { get; set; }
+        
+        [Required(ErrorMessage = "ClientId is required")]
+        [ForeignKey("Client")]
+        public int ClientId { get; set; }        
         public StatusType Status { get; set; }
     }
 }

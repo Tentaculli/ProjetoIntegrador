@@ -25,6 +25,13 @@ namespace API.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Validar se o cliente existe
+            var clientExists = await _appDbContext.Clients.AnyAsync(c => c.Id == order.ClientId);
+            if (!clientExists)
+            {
+                return BadRequest($"Client with ID {order.ClientId} does not exist.");
+            }
+
             _appDbContext.Orders.Add(order);
             await _appDbContext.SaveChangesAsync();
 
@@ -65,6 +72,17 @@ namespace API.Controllers
             if (order.Status != StatusType.Waiting)
             {
                 return BadRequest("This order can no longer be changed.");
+            }
+
+            // Validar se o cliente existe (caso esteja alterando o ClientId)
+            if (order.ClientId != updatedOrder.ClientId)
+            {
+                var clientExists = await _appDbContext.Clients.AnyAsync(c => c.Id == updatedOrder.ClientId);
+                if (!clientExists)
+                {
+                    return BadRequest($"Client with ID {updatedOrder.ClientId} does not exist.");
+                }
+                order.ClientId = updatedOrder.ClientId;
             }
 
             order.ShapePos1 = updatedOrder.ShapePos1;

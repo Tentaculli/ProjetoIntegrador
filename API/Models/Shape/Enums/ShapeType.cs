@@ -5,8 +5,9 @@ namespace API.Models.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ShapeType
     {
-        Hexagon,
-        Square,
-        Circle
+        None = 0,
+        Hexagon = 1,
+        Square = 2,
+        Circle = 3
     }
 }
