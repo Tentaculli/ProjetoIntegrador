@@ -85,9 +85,13 @@ namespace API.Controllers
                 order.ClientId = updatedOrder.ClientId;
             }
 
-            order.ShapePos1 = updatedOrder.ShapePos1;
-            order.ShapePos2 = updatedOrder.ShapePos2;
-            order.ShapePos3 = updatedOrder.ShapePos3;
+            order.Pin1Pos1 = updatedOrder.Pin1Pos1;
+            order.Pin1Pos2 = updatedOrder.Pin1Pos2;
+            order.Pin1Pos3 = updatedOrder.Pin1Pos3;
+
+            order.Pin2Pos1 = updatedOrder.Pin2Pos1;
+            order.Pin2Pos2 = updatedOrder.Pin2Pos2;
+            order.Pin2Pos3 = updatedOrder.Pin2Pos3;
 
             await _appDbContext.SaveChangesAsync();
 
