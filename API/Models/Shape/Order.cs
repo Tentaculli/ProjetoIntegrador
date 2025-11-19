@@ -24,8 +24,11 @@ namespace API.Models.Order
         public DateTime Created { get; set; }
         
         [Required(ErrorMessage = "ClientId is required")]
-        [ForeignKey("Client")]
-        public int ClientId { get; set; }        
+        [ForeignKey("ClientId")]
+        public int ClientId { get; set; }
+
+        [ForeignKey("ClientId")]
+        public virtual ClientModel? Client { get; set; }    
         public StatusType Status { get; set; }
     }
 }
