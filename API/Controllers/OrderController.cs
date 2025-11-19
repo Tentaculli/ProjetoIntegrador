@@ -1,0 +1,156 @@
+using API.Data;
+using API.Models.Enums;
+using API.Models.Order;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrderController : ControllerBase
+    {
+        private readonly AppDbContext _appDbContext;
+
+        public OrderController(AppDbContext appDbContext)
+        {
+            _appDbContext = appDbContext;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NewOrder([FromBody] Order order)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Validar se o cliente existe
+            var clientExists = await _appDbContext.Clients.AnyAsync(c => c.Id == order.ClientId);
+            if (!clientExists)
+            {
+                return BadRequest($"Client with ID {order.ClientId} does not exist.");
+            }
+
+            _appDbContext.Orders.Add(order);
+            await _appDbContext.SaveChangesAsync();
+
+            return Created("Order created successfully!", order);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
+        {
+            var orders = await _appDbContext.Orders.ToListAsync();
+
+            return Ok(orders);
+        }
+        
+        [HttpGet ("{id}")]
+        public async Task<ActionResult<Order>> GetOrderById(int id)
+        {
+            var order = await _appDbContext.Orders.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound("Order wasn't found.");
+            }
+
+            return Ok(order);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order updatedOrder)
+        {
+            var order = await _appDbContext.Orders.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound("Order wasn't found.");
+            }
+            
+            if (order.Status != StatusType.Waiting)
+            {
+                return BadRequest("This order can no longer be changed.");
+            }
+
+            // Validar se o cliente existe (caso esteja alterando o ClientId)
+            if (order.ClientId != updatedOrder.ClientId)
+            {
+                var clientExists = await _appDbContext.Clients.AnyAsync(c => c.Id == updatedOrder.ClientId);
+                if (!clientExists)
+                {
+                    return BadRequest($"Client with ID {updatedOrder.ClientId} does not exist.");
+                }
+                order.ClientId = updatedOrder.ClientId;
+            }
+
+            order.ShapePos1 = updatedOrder.ShapePos1;
+            order.ShapePos2 = updatedOrder.ShapePos2;
+            order.ShapePos3 = updatedOrder.ShapePos3;
+
+            await _appDbContext.SaveChangesAsync();
+
+            return StatusCode(201, order);
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] StatusType newStatus)
+        {
+            var order = await _appDbContext.Orders.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound("Order wasn't found.");
+            }
+
+            var validationError = ValidateStatusTransition(order.Status, newStatus);
+            if (validationError != null)
+            {
+                return BadRequest(validationError);
+            }
+
+            order.Status = newStatus;
+            await _appDbContext.SaveChangesAsync();
+
+            return Ok(new { Message = "Order status updated successfully!", Order = order });
+        }
+
+        private string? ValidateStatusTransition(StatusType currentStatus, StatusType newStatus)
+        {
+            if (currentStatus == newStatus)
+            {
+                return "The order is already in this status.";
+            }
+
+            switch (currentStatus)
+            {
+                case StatusType.Waiting:
+                    // From Waiting it can go to InProgress or Canceled
+                    if (newStatus != StatusType.InProgress && newStatus != StatusType.Canceled)
+                    {
+                        return "Orders in 'Waiting' status can only be moved to 'InProgress' or 'Canceled'.";
+                    }
+                    break;
+
+                case StatusType.InProgress:
+                    // De InProgress it can go to Finished or Canceled
+                    if (newStatus != StatusType.Finished && newStatus != StatusType.Canceled)
+                    {
+                        return "Orders in 'InProgress' status can only be moved to 'Finished' or 'Canceled'.";
+                    }
+                    break;
+
+                case StatusType.Finished:
+                    // Completed orders cannot change status.
+                    return "Finished orders cannot be changed.";
+
+                case StatusType.Canceled:
+                    // Completed orders cannot change status.
+                    return "Canceled orders cannot be changed.";
+            }
+
+            return null;
+        }
+    }
+}
