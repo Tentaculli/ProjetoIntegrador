@@ -1,3 +1,5 @@
+import { api } from '../services/api.js';
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Seleção de Elementos ---
@@ -43,33 +45,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Submissão de Formulário de Login (ATUALIZADO)
-    loginForm.addEventListener('submit', (event) => {
+    // 3. Submissão de Formulário de Login (ATUALIZADO COM API)
+    loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        
         const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
         
-        // Atualiza o nome do usuário no dashboard
-        if (userEmailDisplay && emailInput) {
-            userEmailDisplay.textContent = emailInput.value;
+        try {
+            // Chama a API para fazer login
+            const client = await api.loginClient(emailInput.value, passwordInput.value);
+            
+            // Armazena os dados do cliente no localStorage
+            localStorage.setItem('currentClient', JSON.stringify(client));
+            
+            // Atualiza o nome do usuário no dashboard
+            if (userEmailDisplay) {
+                userEmailDisplay.textContent = client.name;
+            }
+            
+            // Troca a tela de login pela tela do dashboard
+            switchScreens('login-screen', 'dashboard-screen');
+            
+            loginForm.reset();
+        } catch (error) {
+            alert('Login failed: ' + error.message);
         }
-        
-        // Troca a tela de login pela tela do dashboard
-        switchScreens('login-screen', 'dashboard-screen');
-        
-        // Limpa o formulário para a próxima vez
-        loginForm.reset();
     });
 
-    // 4. Submissão de Formulário de Cadastro
-    signupForm.addEventListener('submit', (event) => {
+    // 4. Submissão de Formulário de Cadastro (ATUALIZADO COM API)
+    signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        switchScreens('signup-screen', 'success-notification');
-        signupForm.reset();
+        
+        const fullnameInput = document.getElementById('fullname');
+        const emailInput = document.getElementById('signup-email');
+        const passwordInput = document.getElementById('signup-password');
+        
+        try {
+            const clientData = {
+                name: fullnameInput.value,
+                email: emailInput.value,
+                password: passwordInput.value,
+                active: true
+            };
+            
+            await api.registerClient(clientData);
+            
+            switchScreens('signup-screen', 'success-notification');
+            signupForm.reset();
+        } catch (error) {
+            alert('Registration failed: ' + error.message);
+        }
     });
     
-    // 5. Botão de Logout (NOVO)
+    // 5. Botão de Logout (ATUALIZADO)
     logoutBtn.addEventListener('click', (event) => {
         event.preventDefault();
+        localStorage.removeItem('currentClient');
         toggleScreen('dashboard-screen', false);
     });
 
