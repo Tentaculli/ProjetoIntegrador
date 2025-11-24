@@ -26,15 +26,27 @@ namespace API.Data
                 .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
             
             modelBuilder.Entity<Order>()
-                .Property(o => o.ShapePos1)
+                .Property(o => o.Pin1Pos1)
                 .HasConversion<string>();
             
             modelBuilder.Entity<Order>()
-                .Property(o => o.ShapePos2)
+                .Property(o => o.Pin1Pos2)
                 .HasConversion<string>();
             
             modelBuilder.Entity<Order>()
-                .Property(o => o.ShapePos3)
+                .Property(o => o.Pin1Pos3)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Pin2Pos1)
+                .HasConversion<string>();
+            
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Pin2Pos2)
+                .HasConversion<string>();
+            
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Pin2Pos3)
                 .HasConversion<string>();
             
             modelBuilder.Entity<Order>()

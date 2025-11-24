@@ -246,6 +246,7 @@ body {
 /* 3.3 Form Elements */
 .input-group {
     margin-bottom: 1.5rem;
+    position: relative;
 }
 .input-group label {
     display: block;
@@ -268,23 +269,82 @@ body {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 4px rgba(79, 50, 184, 0.2);
 }
-.form-container .btn-primary {
-    width: 100%;
+/* Estilos para inputs com erro */
+.input-group input.error {
+    border-color: #dc3545;
 }
-.form-switcher {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #555;
+.input-group input.error:focus {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.2);
 }
-.form-switcher a {
-    color: var(--color-primary);
-    font-weight: 600;
-    text-decoration: none;
-    transition: text-decoration 0.2s ease;
+/* Mensagem de erro individual do campo */
+.input-error {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    animation: slideDown 0.3s ease-out;
 }
-.form-switcher a:hover {
-    text-decoration: underline;
+.input-error::before {
+    content: '⚠';
+    font-size: 1rem;
+}
+/* Mensagem de erro geral do formulário */
+.form-error-message {
+    background-color: #fee;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    animation: slideDown 0.3s ease-out;
+}
+.form-error-message::before {
+    content: '✕';
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #dc3545;
+    flex-shrink: 0;
+}
+.form-error-message p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+/* Mensagem de sucesso */
+.form-success-message {
+    background-color: #d4edda;
+    border-left: 4px solid var(--color-success);
+    color: #155724;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    animation: slideDown 0.3s ease-out;
+}
+.form-success-message::before {
+    content: '✓';
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-success);
+    flex-shrink: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* 3.4 Success Notification Styles */
