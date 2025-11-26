@@ -5,9 +5,9 @@ namespace API.Models.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum StatusType
     {
-        Waiting,
-        InProgress,
-        Finished,
-        Canceled
+        Waiting = 1,
+        InProgress = 2,
+        Finished = 3,
+        Canceled = 4
     }
 }

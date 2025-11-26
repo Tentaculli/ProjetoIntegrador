@@ -1,11 +1,11 @@
-using API.Data;
-using API.Models.Enums;
-using API.Models.Order;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
 namespace API.Controllers
 {
+    using API.Data;
+    using API.Models.Enums;
+    using API.Models.Order;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Shared.DTOs;
     [ApiController]
     [Route("api/[controller]")]
     public class OrderController : ControllerBase
@@ -16,6 +16,12 @@ namespace API.Controllers
         {
             _appDbContext = appDbContext;
         }
+
+        private int ToShapeInt(ShapeType shape)
+        {
+            return (int)shape;
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> NewOrder([FromBody] Order order)
@@ -45,7 +51,33 @@ namespace API.Controllers
 
             return Ok(orders);
         }
-        
+
+        [HttpGet("oldest-waiting")]
+        public async Task<ActionResult<Order>> GetOldestWaitingOrder()
+        {
+            var order = await _appDbContext.Orders
+                .Where(o => o.Status == StatusType.Waiting)
+                .OrderBy(o => o.Created)      // Order by created date
+                .FirstOrDefaultAsync();  // Get first item on list
+
+            if (order == null)
+                return NotFound("Nenhum pedido com status 'Waiting' encontrado.");
+
+            var dto = new OrderForNodeDto
+            {
+                Id = order.Id,
+                Pin1Pos1 = ToShapeInt(order.Pin1Pos1),
+                Pin1Pos2 = ToShapeInt(order.Pin1Pos2),
+                Pin1Pos3 = ToShapeInt(order.Pin1Pos3),
+
+                Pin2Pos1 = ToShapeInt(order.Pin2Pos1),
+                Pin2Pos2 = ToShapeInt(order.Pin2Pos2),
+                Pin2Pos3 = ToShapeInt(order.Pin2Pos3),
+            };
+
+            return Ok(dto);
+        }
+
         [HttpGet ("{id}")]
         public async Task<ActionResult<Order>> GetOrderById(int id)
         {
@@ -74,7 +106,7 @@ namespace API.Controllers
                 return BadRequest("This order can no longer be changed.");
             }
 
-            // Validar se o cliente existe (caso esteja alterando o ClientId)
+            // Validate if the client exists
             if (order.ClientId != updatedOrder.ClientId)
             {
                 var clientExists = await _appDbContext.Clients.AnyAsync(c => c.Id == updatedOrder.ClientId);
