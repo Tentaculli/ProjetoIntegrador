@@ -1,42 +1,27 @@
 <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.js"}}
+    </script>
+</head>
+<body>
+    <div id="conteiner">   
+        <header>
+            <button class="compra" onclick="finalizarCompra()">Finalizar Compra</button>
+        </header>
 
-<html lang="pt-BR">
+        <main>
+            <div class="section1"></div>
+            <div class="section2"></div>
+        </main>
 
-    <head>
+    </div>
 
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="stylesheet" href="css/style.css">
-        <script src="js/app.js" defer></script>
-        <title>PROJETO INTEGRADOR</title>
-
-    </head>
-
-    <body>
-
-        <div id = "conteiner">
-
-            <header></header>
-            <aside></aside>
-            <!-- <section class="section1"></section> -->
-            
-            <section class="section1">
-                <div class="stage">         <!-- palco do pino -->
-                    <div class="peg-wrap">    <!-- agrupa pino e pilha -->
-                    <div class="peg" aria-hidden="true"></div>          <!-- o pino -->
-                    <div class="stack-zone" id="stackZone"></div>       <!-- onde as peças vão empilhar -->
-                    </div>
-                    <div class="table" aria-hidden="true"></div>          <!-- “mesa” decorativa -->
-                </div>
-            </section>
-
-            <section class="section2"></section>
-
-        </div>
-
-    </body>
-
+    <script type="module" src="script.js"></script>
+</body>
 </html>
-
-
-
