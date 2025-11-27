@@ -19,22 +19,19 @@ const pins = [];
 const PIN_RADIUS = 1.3;
 const PIN_HEIGHT = 8.7;
 
-const SOURCE_SIZE = 2.8;
-const DRAGGABLE_SIZE = 2.8;
-const PIECE_THICKNESS = 1.8;
-const BEVEL_SIZE = 0.25;
+const SOURCE_SIZE = 3.2;
+const DRAGGABLE_SIZE = 3.2;
+const PIECE_THICKNESS = 2;
+const BEVEL_SIZE = 0.30;
 
 const LIFT_HEIGHT = 8.0;
 const SNAP_THRESHOLD = 6.0;
 
-// --- AQUI ESTÁ A MUDANÇA DE LÓGICA ---
-// typeId: 1 = Círculo
-// typeId: 2 = Quadrado
-// typeId: 3 = Hexágono
+// Tipos: 1 = Círculo, 2 = Quadrado, 3 = Hexágono
 const SOURCE_POSITIONS = [
-    { x: -18, y: 1.0, z: -14, type: 'square',  typeId: 2, color: 0x4F32B8 }, // Quadrado agora é 2
-    { x: -15, y: 1.0, z: 0,   type: 'circle',  typeId: 1, color: 0x9A2EC3 }, // Círculo agora é 1
-    { x: -12.5, y: 1.0, z: 11, type: 'hexagon', typeId: 3, color: 0x001BB7 }  // Hexágono continua 3
+    { x: -18, y: 1.0, z: -14, type: 'square',  typeId: 2, color: 0x4F32B8 }, 
+    { x: -15, y: 1.0, z: 0,   type: 'circle',  typeId: 1, color: 0x9A2EC3 }, 
+    { x: -12.5, y: 1.0, z: 11, type: 'hexagon', typeId: 3, color: 0x001BB7 }
 ];
 
 const PIN_POSITIONS = [
@@ -59,7 +56,6 @@ function init() {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     
-    // SOMBRAS DESATIVADAS
     renderer.shadowMap.enabled = false; 
     
     renderer.domElement.style.position = 'absolute';
@@ -68,7 +64,7 @@ function init() {
     renderer.domElement.style.zIndex = '-1';
     document.body.appendChild(renderer.domElement);
 
-    // ILUMINAÇÃO "FLAT"
+    // ILUMINAÇÃO
     const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); 
     scene.add(ambientLight);
 
@@ -78,7 +74,6 @@ function init() {
 
     const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
     frontLight.position.set(0, 10, 20);
-    frontLight.castShadow = false; 
     scene.add(frontLight);
 
     // PLANO DE ARRASTE
@@ -136,7 +131,6 @@ function createPin(x, z, id) {
         roughness: 0.25,
     });
 
-    // BASE (como antes)
     const base = new THREE.Mesh(
         new THREE.CylinderGeometry(4.0, 4.0, 1.2, 100),
         pinMat
@@ -144,7 +138,6 @@ function createPin(x, z, id) {
     base.position.y = 0.4;
     group.add(base);
 
-    // EIXO (cilindro principal)
     const shaft = new THREE.Mesh(
         new THREE.CylinderGeometry(PIN_RADIUS, PIN_RADIUS, PIN_HEIGHT, 100),
         pinMat
@@ -152,7 +145,6 @@ function createPin(x, z, id) {
     shaft.position.y = PIN_HEIGHT / 2 + 0.4;
     group.add(shaft);
 
-    // FINAL
     group.position.set(x, 0, z);
     scene.add(group);
 
@@ -163,8 +155,8 @@ function createPin(x, z, id) {
         items: []
     });
 }
-
 function createWasherMesh(type, size, colorHex) {
+    // SHAPE EXTERNO
     const shape = new THREE.Shape();
     const holeRadius = PIN_RADIUS + 0.25;
 
@@ -173,48 +165,69 @@ function createWasherMesh(type, size, colorHex) {
         shape.lineTo(size, -size);
         shape.lineTo(size, size);
         shape.lineTo(-size, size);
-        shape.lineTo(-size, -size);
-    } else if (type === 'circle') {
-        shape.absarc(0, 0, size, 0, Math.PI * 2);
-    } else if (type === 'hexagon') {
-        const segments = 6;
-        for (let i = 0; i < segments; i++) {
-            const angle = (i / segments) * Math.PI * 2;
-            const x = Math.cos(angle) * size;
-            const y = Math.sin(angle) * size;
+        shape.closePath();
+    } 
+    else if (type === 'circle') {
+        const segments = 128;
+        for (let i = 0; i <= segments; i++) {
+            const t = (i / segments) * Math.PI * 2;
+            const x = Math.cos(t) * size;
+            const y = Math.sin(t) * size;
+            if (i === 0) shape.moveTo(x, y);
+            else shape.lineTo(x, y);
+        }
+    } 
+    else if (type === 'hexagon') {
+        const seg = 6;
+        for (let i = 0; i < seg; i++) {
+            const ang = (i / seg) * Math.PI * 2;
+            const x = Math.cos(ang) * size;
+            const y = Math.sin(ang) * size;
             if (i === 0) shape.moveTo(x, y);
             else shape.lineTo(x, y);
         }
         shape.closePath();
     }
 
+    // FURO INTERNO
     const hole = new THREE.Path();
     hole.absarc(0, 0, holeRadius, 0, Math.PI * 2);
     shape.holes.push(hole);
 
+    // EXTRUSÃO SEM BEVEL (limpo)
     const extrudeSettings = { 
         depth: PIECE_THICKNESS,
-        bevelEnabled: true,
-        bevelThickness: BEVEL_SIZE * 2,
-        bevelSize: BEVEL_SIZE * 2,
-        bevelSegments: 12,
+        bevelEnabled: false,   // <<< AQUI! remove o bug
         curveSegments: 64
     };
 
     const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     geo.center();
     geo.rotateX(Math.PI / 2);
-    geo.computeVertexNormals(true);
+    geo.computeVertexNormals();
 
+    // MATERIAL
     const mat = new THREE.MeshStandardMaterial({
-        color: colorHex,
-        metalness: 0.3, 
-        roughness: 0.2,
-        flatShading: false
+        color: new THREE.Color(colorHex).offsetHSL(0, -0.15, +0.20),
+        roughness: 0.3,
+        metalness: 0.05
     });
 
-    return new THREE.Mesh(geo, mat);
+    const mesh = new THREE.Mesh(geo, mat);
+
+    // BORDA LINDA (bem fininha)
+    const edgesGeo = new THREE.EdgesGeometry(geo, 1);
+    const edgesMat = new THREE.LineBasicMaterial({
+        color: 0x000000,
+        opacity: 0.35,
+        transparent: true
+    });
+    const edgeLines = new THREE.LineSegments(edgesGeo, edgesMat);
+    mesh.add(edgeLines);
+
+    return mesh;
 }
+
 
 function createHitbox(size) {
     return new THREE.Mesh(
@@ -239,7 +252,7 @@ function createSourcePiece(config) {
         parentGroup: group, 
         isSource: true, 
         type: config.type, 
-        typeId: config.typeId, // ID correto passado pela config
+        typeId: config.typeId, 
         color: config.color 
     };
     scene.add(group);
@@ -263,7 +276,7 @@ function spawnDraggable(type, typeId, position, color) {
     group.userData = { 
         pinnedTo: null,
         type: type,
-        typeId: typeId // ID preservado na peça criada
+        typeId: typeId 
     };
 
     hitbox.userData = { parentGroup: group, isDraggable: true };
@@ -294,8 +307,26 @@ function onMouseDown(e) {
             selectedGroup = hitData.parentGroup;
 
             if (selectedGroup.userData.pinnedTo !== null) {
+
+                // Remove da pilha
                 removeStack(selectedGroup);
+                selectedGroup.userData.pinnedTo = null;
+
+                // Calcula o ponto exato onde o usuário clicou no plano de arrasto
+                raycaster.setFromCamera(mouse, camera);
+                const planeHit = raycaster.intersectObject(dragPlane);
+
+                if (planeHit.length > 0) {
+                    const p = planeHit[0].point;
+
+                    // Coloca imediatamente na posição do mouse
+                    selectedGroup.position.set(p.x, LIFT_HEIGHT, p.z);
+                } else {
+                    // Se der algum erro raro, pelo menos sobe
+                    selectedGroup.position.y = LIFT_HEIGHT;
+                }
             }
+
         }
 
         if (selectedGroup) {
@@ -350,7 +381,7 @@ function addToPin(group, pin) {
     const index = pin.items.length;
     const singlePieceHeight = PIECE_THICKNESS + (BEVEL_SIZE * 2);
 
-    const BASE_OFFSET = 1.2; // ajuste fino
+    const BASE_OFFSET = 1.2; 
     const stackY = BASE_OFFSET + (index * singlePieceHeight) + (singlePieceHeight / 2);
 
     group.position.set(pin.position.x, stackY, pin.position.z);
@@ -379,7 +410,6 @@ function removeStack(group) {
         pin.items.forEach((item, i) => {
             const BASE_OFFSET = 1.2;
             item.position.y = BASE_OFFSET + (i * singlePieceHeight) + (singlePieceHeight / 2);
-
         });
     }
 }
@@ -414,10 +444,8 @@ function limparPino(id) {
 // ============================================================================
 
 function finalizarCompra() {
-    // Vetor inicial zerado
     let vetorResultado = [0, 0, 0, 0, 0, 0];
 
-    // Pino 1 (Índices 0, 1, 2)
     const pino1 = pins[0];
     pino1.items.forEach((item, index) => {
         if (index < 3) {
@@ -425,7 +453,6 @@ function finalizarCompra() {
         }
     });
 
-    // Pino 2 (Índices 3, 4, 5)
     const pino2 = pins[1];
     pino2.items.forEach((item, index) => {
         if (index < 3) {
