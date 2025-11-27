@@ -3,480 +3,487 @@ import * as THREE from 'three';
 // ============================================================================
 // 1. VARIÁVEIS GLOBAIS
 // ============================================================================
-let scene, camera, renderer;
-let raycaster, mouse;
-let selectedGroup = null;
-let dragPlane;
-let dragOffset = new THREE.Vector3();
+// Elementos principais do Three.js
+let cena, camera, renderizador;
 
-const hitboxes = []; 
-const pins = [];
+// Ferramentas de interação (Mouse e Raios)
+let raycaster, mouse;
+let pecaSelecionada = null; // Guarda a peça que estamos arrastando
+let planoArrasto;           // Plano invisível no céu para mover a peça
+
+// Listas de controle
+const listaInterativos = []; // Objetos clicáveis (hitboxes)
+const listaPinos = [];       // Referência lógica dos pinos e suas pilhas
 
 // ============================================================================
 // 2. CONFIGURAÇÕES (CONSTANTES)
 // ============================================================================
 
-const PIN_RADIUS = 1.3;
-const PIN_HEIGHT = 8.7;
+// Dimensões do Pino
+const RAIO_PINO = 1.3;
+const ALTURA_PINO = 8.7;
 
-const SOURCE_SIZE = 3.2;
-const DRAGGABLE_SIZE = 3.2;
-const PIECE_THICKNESS = 2;
-const BEVEL_SIZE = 0.30;
+// Dimensões das Peças
+const TAMANHO_LOJA = 3.2;      // Tamanho das peças na esquerda
+const TAMANHO_ARRASTO = 3.2;   // Tamanho das peças sendo movidas
+const ESPESSURA_PECA = 2;
+const TAMANHO_CHANFRO = 0.30;  // Bevel (usado no cálculo de altura)
 
-const LIFT_HEIGHT = 8.0;
-const SNAP_THRESHOLD = 6.0;
+// Comportamento
+const ALTURA_ELEVACAO = 8.0;   // Altura que a peça "voa" ao ser pega
+const DISTANCIA_IMA = 6.0;     // Distância para o pino "puxar" a peça
 
-// Tipos: 1 = Círculo, 2 = Quadrado, 3 = Hexágono
-const SOURCE_POSITIONS = [
-    { x: -18, y: 1.0, z: -14, type: 'square',  typeId: 2, color: 0x4F32B8 }, 
-    { x: -15, y: 1.0, z: 0,   type: 'circle',  typeId: 1, color: 0x9A2EC3 }, 
-    { x: -12.5, y: 1.0, z: 11, type: 'hexagon', typeId: 3, color: 0x001BB7 }
+// Configuração da Loja (Peças Disponíveis)
+// IDs: 1 = Círculo, 2 = Quadrado, 3 = Hexágono
+const CONFIG_LOJA = [
+    { x: -18.5, y: 1.0, z: -14, tipo: 'square',  idTipo: 2, cor: 0x4F32B8 }, 
+    { x: -15,   y: 1.0, z: 0,   tipo: 'circle',  idTipo: 1, cor: 0x9A2EC3 }, 
+    { x: -12.2, y: 1.0, z: 11,  tipo: 'hexagon', idTipo: 3, cor: 0x001BB7 }
 ];
 
-const PIN_POSITIONS = [
+// Posição dos Pinos no chão
+const POSICOES_PINOS = [
     { x: 3, z: 0 }, 
     { x: 17, z: 0 } 
 ];
 
+// Inicia o sistema
 init();
-animate();
+animar();
 
 // ============================================================================
-// 3. INICIALIZAÇÃO (SETUP)
+// 3. FUNÇÕES AUXILIARES (VISUAL)
 // ============================================================================
+
+// Cria um fundo gradiente leve e performático sem carregar imagens externas
+function criarFundoGradiente() {
+    const tamanho = 512;
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = tamanho;
+    const ctx = canvas.getContext("2d");
+
+    // Gradiente diagonal (Roxo escuro -> Quase preto)
+    const gradiente = ctx.createLinearGradient(0, tamanho, tamanho, 0);
+    gradiente.addColorStop(0, "#050008");
+    gradiente.addColorStop(1, "#1a0f3b");
+
+    ctx.fillStyle = gradiente;
+    ctx.fillRect(0, 0, tamanho, tamanho);
+
+    const textura = new THREE.CanvasTexture(canvas);
+    textura.minFilter = THREE.LinearFilter; // Suaviza a textura
+    return textura;
+}
+
+// ============================================================================
+// 4. INICIALIZAÇÃO (SETUP)
+// ============================================================================
+
 function init() {
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xFFFFFF); 
+    // 1. Cena e Câmara
+    cena = new THREE.Scene();
+    cena.background = criarFundoGradiente();
 
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 30, 35);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 30, 35); // Posição elevada
+    camera.lookAt(0, 0, 0);         // Olhando para o centro
 
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    // 2. Renderizador
+    renderizador = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderizador.setSize(window.innerWidth, window.innerHeight);
+    renderizador.shadowMap.enabled = false; // Desligado para estilo "Flat" e performance
     
-    renderer.shadowMap.enabled = false; 
-    
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.left = '0';
-    renderer.domElement.style.zIndex = '-1';
-    document.body.appendChild(renderer.domElement);
+    // Estilo CSS para fixar no fundo
+    const canvasStyle = renderizador.domElement.style;
+    canvasStyle.position = 'absolute';
+    canvasStyle.top = '0';
+    canvasStyle.left = '0';
+    canvasStyle.zIndex = '-1';
+    document.body.appendChild(renderizador.domElement);
 
-    // ILUMINAÇÃO
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); 
-    scene.add(ambientLight);
+    // 3. Iluminação (Ambiente + Direcional)
+    const luzAmbiente = new THREE.AmbientLight(0xffffff, 2.0); 
+    cena.add(luzAmbiente);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
-    hemiLight.position.set(0, 20, 0);
-    scene.add(hemiLight);
+    const luzHemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    luzHemi.position.set(0, 20, 0);
+    cena.add(luzHemi);
 
-    const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    frontLight.position.set(0, 10, 20);
-    scene.add(frontLight);
+    const luzFrontal = new THREE.DirectionalLight(0xffffff, 0.5);
+    luzFrontal.position.set(0, 10, 20);
+    cena.add(luzFrontal);
 
-    // PLANO DE ARRASTE
-    dragPlane = new THREE.Mesh(
+    // 4. Elementos Invisíveis de Lógica
+    // Plano onde o mouse "desliza" a peça
+    planoArrasto = new THREE.Mesh(
         new THREE.PlaneGeometry(200, 200),
         new THREE.MeshBasicMaterial({ visible: false })
     );
-    dragPlane.rotation.x = -Math.PI / 2;
-    dragPlane.position.y = LIFT_HEIGHT;
-    scene.add(dragPlane);
+    planoArrasto.rotation.x = -Math.PI / 2;
+    planoArrasto.position.y = ALTURA_ELEVACAO;
+    cena.add(planoArrasto);
 
-    // CHÃO VISUAL
-    const floor = new THREE.Mesh(
+    // 5. Chão Visual (Espelho escuro)
+    const chao = new THREE.Mesh(
         new THREE.PlaneGeometry(200, 200),
         new THREE.MeshBasicMaterial({ 
-            color: 0x444444, 
-            transparent: true, 
-            opacity: 0.1, 
-            side: THREE.DoubleSide
+            color: 0x444444, transparent: true, opacity: 0.1, side: THREE.DoubleSide 
         })
     );
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = 0;
-    scene.add(floor);
+    chao.rotation.x = -Math.PI / 2;
+    cena.add(chao);
 
-    createPin(PIN_POSITIONS[0].x, PIN_POSITIONS[0].z, 0);
-    createPin(PIN_POSITIONS[1].x, PIN_POSITIONS[1].z, 1);
+    // 6. Criar Objetos do Jogo
+    criarPino(POSICOES_PINOS[0].x, POSICOES_PINOS[0].z, 0);
+    criarPino(POSICOES_PINOS[1].x, POSICOES_PINOS[1].z, 1);
 
-    SOURCE_POSITIONS.forEach(config => {
-        createSourcePiece(config);
-    });
+    CONFIG_LOJA.forEach(cfg => criarPecaLoja(cfg));
 
+    // 7. Eventos e Ferramentas
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
-    window.addEventListener('resize', onResize);
-    document.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('resize', aoRedimensionar);
+    document.addEventListener('mousedown', aoClicar);
+    document.addEventListener('mousemove', aoMoverMouse);
+    document.addEventListener('mouseup', aoSoltarMouse);
 
+    // Funções globais para botões HTML
     window.limparPino = limparPino;
     window.finalizarCompra = finalizarCompra;
 }
 
 // ============================================================================
-// 4. CRIAÇÃO DE OBJETOS
+// 5. CRIAÇÃO DE OBJETOS (GEOMETRIA)
 // ============================================================================
 
-function createPin(x, z, id) {
-    const group = new THREE.Group();
-
-    const pinMat = new THREE.MeshStandardMaterial({
-        color: 0xe0e0e0,
-        metalness: 0.4,
-        roughness: 0.25,
+function criarPino(x, z, id) {
+    const grupo = new THREE.Group();
+    const materialPino = new THREE.MeshStandardMaterial({
+        color: 0xe0e0e0, metalness: 0.4, roughness: 0.25
     });
 
-    const base = new THREE.Mesh(
-        new THREE.CylinderGeometry(4.0, 4.0, 1.2, 100),
-        pinMat
-    );
+    // Base do pino
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(4.0, 4.0, 1.2, 64), materialPino);
     base.position.y = 0.4;
-    group.add(base);
+    grupo.add(base);
 
-    const shaft = new THREE.Mesh(
-        new THREE.CylinderGeometry(PIN_RADIUS, PIN_RADIUS, PIN_HEIGHT, 100),
-        pinMat
-    );
-    shaft.position.y = PIN_HEIGHT / 2 + 0.4;
-    group.add(shaft);
+    // Haste do pino
+    const haste = new THREE.Mesh(new THREE.CylinderGeometry(RAIO_PINO, RAIO_PINO, ALTURA_PINO, 64), materialPino);
+    haste.position.y = ALTURA_PINO / 2 + 0.4;
+    grupo.add(haste);
 
-    group.position.set(x, 0, z);
-    scene.add(group);
+    grupo.position.set(x, 0, z);
+    cena.add(grupo);
 
-    pins.push({
-        id: id,
-        position: new THREE.Vector3(x, 0, z),
-        group: group,
-        items: []
-    });
+    // Regista na lista lógica
+    listaPinos.push({ id: id, posicao: new THREE.Vector3(x, 0, z), itens: [] });
 }
-function createWasherMesh(type, size, colorHex) {
-    // SHAPE EXTERNO
-    const shape = new THREE.Shape();
-    const holeRadius = PIN_RADIUS + 0.25;
 
-    if (type === 'square') {
-        shape.moveTo(-size, -size);
-        shape.lineTo(size, -size);
-        shape.lineTo(size, size);
-        shape.lineTo(-size, size);
-        shape.closePath();
+function criarMalhaPeca(tipo, tamanho, hexCor) {
+    // 1. Desenhar a forma 2D
+    const forma = new THREE.Shape();
+    const raioFuro = RAIO_PINO + 0.25;
+
+    if (tipo === 'square') {
+        forma.moveTo(-tamanho, -tamanho);
+        forma.lineTo(tamanho, -tamanho);
+        forma.lineTo(tamanho, tamanho);
+        forma.lineTo(-tamanho, tamanho);
+        forma.closePath();
     } 
-    else if (type === 'circle') {
-        const segments = 128;
-        for (let i = 0; i <= segments; i++) {
-            const t = (i / segments) * Math.PI * 2;
-            const x = Math.cos(t) * size;
-            const y = Math.sin(t) * size;
-            if (i === 0) shape.moveTo(x, y);
-            else shape.lineTo(x, y);
-        }
+    else if (tipo === 'circle') {
+        forma.absarc(0, 0, tamanho, 0, Math.PI * 2);
     } 
-    else if (type === 'hexagon') {
+    else if (tipo === 'hexagon') {
         const seg = 6;
         for (let i = 0; i < seg; i++) {
             const ang = (i / seg) * Math.PI * 2;
-            const x = Math.cos(ang) * size;
-            const y = Math.sin(ang) * size;
-            if (i === 0) shape.moveTo(x, y);
-            else shape.lineTo(x, y);
+            const x = Math.cos(ang) * tamanho;
+            const y = Math.sin(ang) * tamanho;
+            if (i === 0) forma.moveTo(x, y);
+            else forma.lineTo(x, y);
         }
-        shape.closePath();
+        forma.closePath();
     }
 
-    // FURO INTERNO
-    const hole = new THREE.Path();
-    hole.absarc(0, 0, holeRadius, 0, Math.PI * 2);
-    shape.holes.push(hole);
+    // 2. Fazer o furo
+    const furo = new THREE.Path();
+    furo.absarc(0, 0, raioFuro, 0, Math.PI * 2);
+    forma.holes.push(furo);
 
-    // EXTRUSÃO SEM BEVEL (limpo)
-    const extrudeSettings = { 
-        depth: PIECE_THICKNESS,
-        bevelEnabled: false,   // <<< AQUI! remove o bug
-        curveSegments: 64
+    // 3. Extrusão (3D)
+    // bevelEnabled: false garante bordas limpas sem falhas visuais
+    const configExtrusao = { 
+        depth: ESPESSURA_PECA, 
+        bevelEnabled: false, 
+        curveSegments: 64 
     };
 
-    const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    geo.center();
-    geo.rotateX(Math.PI / 2);
-    geo.computeVertexNormals();
+    const geometria = new THREE.ExtrudeGeometry(forma, configExtrusao);
+    geometria.center();
+    geometria.rotateX(Math.PI / 2); // Deitar a peça
+    geometria.computeVertexNormals();
 
-    // MATERIAL
-    const mat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(colorHex).offsetHSL(0, -0.15, +0.20),
+    // 4. Material (Cor da peça)
+    const material = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(hexCor).offsetHSL(0, -0.15, +0.20),
         roughness: 0.3,
         metalness: 0.05
     });
 
-    const mesh = new THREE.Mesh(geo, mat);
+    const malha = new THREE.Mesh(geometria, material);
 
-    // BORDA LINDA (bem fininha)
-    const edgesGeo = new THREE.EdgesGeometry(geo, 1);
-    const edgesMat = new THREE.LineBasicMaterial({
-        color: 0x000000,
-        opacity: 0.35,
-        transparent: true
-    });
-    const edgeLines = new THREE.LineSegments(edgesGeo, edgesMat);
-    mesh.add(edgeLines);
+    // 5. Borda (Linha preta de contorno)
+    const geoBorda = new THREE.EdgesGeometry(geometria, 1);
+    const matBorda = new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.35, transparent: true });
+    const linhas = new THREE.LineSegments(geoBorda, matBorda);
+    malha.add(linhas);
 
-    return mesh;
+    return malha;
 }
 
-
-function createHitbox(size) {
+// Cria um cilindro invisível maior que a peça para facilitar o clique
+function criarAreaClique(tamanho) {
     return new THREE.Mesh(
-        new THREE.CylinderGeometry(size * 1.3, size * 1.3, 3, 16),
+        new THREE.CylinderGeometry(tamanho * 1.3, tamanho * 1.3, 3, 16),
         new THREE.MeshBasicMaterial({ visible: false })
     );
 }
 
-function createSourcePiece(config) {
-    const group = new THREE.Group();
-    const mesh = createWasherMesh(config.type, SOURCE_SIZE, config.color);
-    group.add(mesh);
+// Cria as peças estáticas na "Loja"
+function criarPecaLoja(cfg) {
+    const grupo = new THREE.Group();
+    const malha = criarMalhaPeca(cfg.tipo, TAMANHO_LOJA, cfg.cor);
+    grupo.add(malha);
 
-    const hitbox = createHitbox(SOURCE_SIZE);
-    group.add(hitbox);
-    hitboxes.push(hitbox);
+    const areaClique = criarAreaClique(TAMANHO_LOJA);
+    grupo.add(areaClique);
+    listaInterativos.push(areaClique); // Adiciona à lista de raycast
 
-    group.position.set(config.x, config.y, config.z);
-    group.rotation.x = Math.PI / 6;
+    grupo.position.set(cfg.x, cfg.y, cfg.z);
+    grupo.rotation.x = Math.PI / 6; // Inclina para ficar bonito
 
-    hitbox.userData = { 
-        parentGroup: group, 
-        isSource: true, 
-        type: config.type, 
-        typeId: config.typeId, 
-        color: config.color 
+    // Dados para saber o que criar ao clicar
+    areaClique.userData = { 
+        grupoPai: grupo, ehLoja: true, 
+        tipo: cfg.tipo, idTipo: cfg.idTipo, cor: cfg.cor 
     };
-    scene.add(group);
+    cena.add(grupo);
 }
 
-function spawnDraggable(type, typeId, position, color) {
-    const group = new THREE.Group();
-    const mesh = createWasherMesh(type, DRAGGABLE_SIZE, color);
+// Cria a peça móvel quando clicamos na loja
+function gerarPecaArrastavel(tipo, idTipo, posicao, cor) {
+    const grupo = new THREE.Group();
+    const malha = criarMalhaPeca(tipo, TAMANHO_ARRASTO, cor);
     
-    mesh.material = mesh.material.clone();
-    mesh.material.emissive = new THREE.Color(0x222222); 
+    // Clona material para brilhar ao selecionar
+    malha.material = malha.material.clone();
+    malha.material.emissive = new THREE.Color(0x222222); 
 
-    group.add(mesh);
+    grupo.add(malha);
 
-    const hitbox = createHitbox(DRAGGABLE_SIZE);
-    group.add(hitbox);
-    hitboxes.push(hitbox);
+    const areaClique = criarAreaClique(TAMANHO_ARRASTO);
+    grupo.add(areaClique);
+    listaInterativos.push(areaClique);
 
-    group.position.copy(position);
+    grupo.position.copy(posicao);
     
-    group.userData = { 
-        pinnedTo: null,
-        type: type,
-        typeId: typeId 
-    };
-
-    hitbox.userData = { parentGroup: group, isDraggable: true };
-    scene.add(group);
-    return group;
+    // Dados de controle
+    grupo.userData = { pinoAtual: null, tipo: tipo, idTipo: idTipo };
+    areaClique.userData = { grupoPai: grupo, ehArrastavel: true };
+    
+    cena.add(grupo);
+    return grupo;
 }
 
 // ============================================================================
-// 5. LÓGICA DE INTERAÇÃO (MOUSE)
+// 6. INTERAÇÃO (MOUSE)
 // ============================================================================
 
-function onMouseDown(e) {
+function aoClicar(e) {
     e.preventDefault();
+    // Converter coordenadas do mouse
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(hitboxes);
+    const intersecoes = raycaster.intersectObjects(listaInterativos);
 
-    if (intersects.length > 0) {
-        const hitData = intersects[0].object.userData;
+    if (intersecoes.length > 0) {
+        const dados = intersecoes[0].object.userData;
 
-        if (hitData.isSource) {
-            const floorPoint = intersects[0].point;
-            selectedGroup = spawnDraggable(hitData.type, hitData.typeId, floorPoint, hitData.color);
+        // Caso 1: Clicou na Loja -> Cria nova peça
+        if (dados.ehLoja) {
+            const pontoChao = intersecoes[0].point;
+            pecaSelecionada = gerarPecaArrastavel(dados.tipo, dados.idTipo, pontoChao, dados.cor);
 
-        } else if (hitData.isDraggable) {
-            selectedGroup = hitData.parentGroup;
+        // Caso 2: Clicou numa peça móvel -> Agarra ela
+        } else if (dados.ehArrastavel) {
+            pecaSelecionada = dados.grupoPai;
 
-            if (selectedGroup.userData.pinnedTo !== null) {
+            // Se estava num pino, remove da pilha
+            if (pecaSelecionada.userData.pinoAtual !== null) {
+                removerDaPilha(pecaSelecionada);
+                pecaSelecionada.userData.pinoAtual = null;
 
-                // Remove da pilha
-                removeStack(selectedGroup);
-                selectedGroup.userData.pinnedTo = null;
-
-                // Calcula o ponto exato onde o usuário clicou no plano de arrasto
+                // Tenta colocar na altura do mouse
                 raycaster.setFromCamera(mouse, camera);
-                const planeHit = raycaster.intersectObject(dragPlane);
-
-                if (planeHit.length > 0) {
-                    const p = planeHit[0].point;
-
-                    // Coloca imediatamente na posição do mouse
-                    selectedGroup.position.set(p.x, LIFT_HEIGHT, p.z);
+                const hitPlano = raycaster.intersectObject(planoArrasto);
+                if (hitPlano.length > 0) {
+                    const p = hitPlano[0].point;
+                    pecaSelecionada.position.set(p.x, ALTURA_ELEVACAO, p.z);
                 } else {
-                    // Se der algum erro raro, pelo menos sobe
-                    selectedGroup.position.y = LIFT_HEIGHT;
+                    pecaSelecionada.position.y = ALTURA_ELEVACAO;
                 }
             }
-
         }
-
-        if (selectedGroup) {
-            selectedGroup.rotation.set(0, 0, 0);
-        }
+        
+        // Reseta rotação ao pegar
+        if (pecaSelecionada) pecaSelecionada.rotation.set(0, 0, 0);
     }
 }
 
-function onMouseMove(e) {
-    if (!selectedGroup) return;
+function aoMoverMouse(e) {
+    if (!pecaSelecionada) return;
 
     mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObject(dragPlane);
+    const intersecoes = raycaster.intersectObject(planoArrasto);
 
-    if (intersects.length > 0) {
-        const p = intersects[0].point;
-        selectedGroup.position.set(p.x, LIFT_HEIGHT, p.z);
+    if (intersecoes.length > 0) {
+        const p = intersecoes[0].point;
+        pecaSelecionada.position.set(p.x, ALTURA_ELEVACAO, p.z);
     }
 }
 
-function onMouseUp() {
-    if (!selectedGroup) return;
+function aoSoltarMouse() {
+    if (!pecaSelecionada) return;
 
-    let droppedOnPin = false;
+    let encaixou = false;
 
-    for (let pin of pins) {
+    // Verifica proximidade com cada pino
+    for (let pino of listaPinos) {
         const dist = Math.hypot(
-            selectedGroup.position.x - pin.position.x,
-            selectedGroup.position.z - pin.position.z
+            pecaSelecionada.position.x - pino.posicao.x,
+            pecaSelecionada.position.z - pino.posicao.z
         );
 
-        if (dist < SNAP_THRESHOLD) {
-            droppedOnPin = addToPin(selectedGroup, pin);
-            if (droppedOnPin) break;
+        // Efeito Ímã
+        if (dist < DISTANCIA_IMA) {
+            encaixou = adicionarAoPino(pecaSelecionada, pino);
+            if (encaixou) break;
         }
     }
 
-    if (!droppedOnPin) deleteObject(selectedGroup);
-    selectedGroup = null;
+    // Se não encaixou em nada, apaga a peça
+    if (!encaixou) deletarObjeto(pecaSelecionada);
+    pecaSelecionada = null;
 }
 
 // ============================================================================
-// 6. LÓGICA DOS PINOS
+// 7. LÓGICA DO JOGO (PILHAS)
 // ============================================================================
 
-function addToPin(group, pin) {
-    if (pin.items.length >= 3) return false;
+function adicionarAoPino(grupo, pino) {
+    if (pino.itens.length >= 3) return false; // Máximo 3 peças
 
-    const index = pin.items.length;
-    const singlePieceHeight = PIECE_THICKNESS + (BEVEL_SIZE * 2);
+    const indice = pino.itens.length;
+    const alturaUnitaria = ESPESSURA_PECA + (TAMANHO_CHANFRO * 2);
+    const baseOffset = 1.2;
+    
+    // Calcula posição na pilha
+    const yPilha = baseOffset + (indice * alturaUnitaria) + (alturaUnitaria / 2);
 
-    const BASE_OFFSET = 1.2; 
-    const stackY = BASE_OFFSET + (index * singlePieceHeight) + (singlePieceHeight / 2);
+    grupo.position.set(pino.posicao.x, yPilha, pino.posicao.z);
+    grupo.userData.pinoAtual = pino.id;
 
-    group.position.set(pin.position.x, stackY, pin.position.z);
-    group.userData.pinnedTo = pin.id;
+    // Remove brilho de seleção
+    const malha = grupo.children.find(c => c.isMesh);
+    if (malha) malha.material.emissive.setHex(0x000000);
 
-    const mesh = group.children.find(c => c.isMesh);
-    if (mesh) mesh.material.emissive.setHex(0x000000);
-
-    pin.items.push(group);
+    pino.itens.push(grupo);
     return true;
 }
 
-function removeStack(group) {
-    const pinId = group.userData.pinnedTo;
-    if (pinId === null) return;
+function removerDaPilha(grupo) {
+    const idPino = grupo.userData.pinoAtual;
+    if (idPino === null) return;
 
-    const pin = pins.find(p => p.id === pinId);
-    const index = pin.items.indexOf(group);
+    const pino = listaPinos.find(p => p.id === idPino);
+    const indice = pino.itens.indexOf(grupo);
 
-    if (index > -1) {
-        pin.items.splice(index, 1);
-        group.userData.pinnedTo = null;
+    if (indice > -1) {
+        pino.itens.splice(indice, 1);
+        grupo.userData.pinoAtual = null;
 
-        const singlePieceHeight = PIECE_THICKNESS + (BEVEL_SIZE * 2);
-
-        pin.items.forEach((item, i) => {
-            const BASE_OFFSET = 1.2;
-            item.position.y = BASE_OFFSET + (i * singlePieceHeight) + (singlePieceHeight / 2);
+        // Reorganiza quem sobrou
+        const alturaUnitaria = ESPESSURA_PECA + (TAMANHO_CHANFRO * 2);
+        pino.itens.forEach((item, i) => {
+            const baseOffset = 1.2;
+            item.position.y = baseOffset + (i * alturaUnitaria) + (alturaUnitaria / 2);
         });
     }
 }
 
-function deleteObject(group) {
-    scene.remove(group);
+function deletarObjeto(grupo) {
+    cena.remove(grupo);
 
-    const hb = group.children.find(c => !c.material || c.material.visible === false);
-    if (hb) {
-        const idx = hitboxes.indexOf(hb);
-        if (idx > -1) hitboxes.splice(idx, 1);
+    // Remove da lista de cliques
+    const hitbox = grupo.children.find(c => !c.material || c.material.visible === false);
+    if (hitbox) {
+        const idx = listaInterativos.indexOf(hitbox);
+        if (idx > -1) listaInterativos.splice(idx, 1);
     }
 
-    group.traverse(child => {
-        if (child.isMesh) {
-            child.geometry.dispose();
-            child.material.dispose();
+    // Limpa memória
+    grupo.traverse(filho => {
+        if (filho.isMesh) {
+            filho.geometry.dispose();
+            filho.material.dispose();
         }
     });
 }
 
 function limparPino(id) {
-    const pin = pins.find(p => p.id === id);
-    if (pin) {
-        [...pin.items].forEach(obj => deleteObject(obj));
-        pin.items = [];
+    const pino = listaPinos.find(p => p.id === id);
+    if (pino) {
+        [...pino.itens].forEach(obj => deletarObjeto(obj));
+        pino.itens = [];
     }
 }
-
-// ============================================================================
-// 7. FINALIZAÇÃO DA COMPRA (GERAÇÃO DO VETOR)
-// ============================================================================
 
 function finalizarCompra() {
     let vetorResultado = [0, 0, 0, 0, 0, 0];
 
-    const pino1 = pins[0];
-    pino1.items.forEach((item, index) => {
-        if (index < 3) {
-            vetorResultado[index] = item.userData.typeId;
-        }
+    // Pino 1 (índices 0-2)
+    listaPinos[0].itens.forEach((item, i) => {
+        if (i < 3) vetorResultado[i] = item.userData.idTipo;
     });
 
-    const pino2 = pins[1];
-    pino2.items.forEach((item, index) => {
-        if (index < 3) {
-            vetorResultado[index + 3] = item.userData.typeId;
-        }
+    // Pino 2 (índices 3-5)
+    listaPinos[1].itens.forEach((item, i) => {
+        if (i < 3) vetorResultado[i + 3] = item.userData.idTipo;
     });
 
     console.log("Vetor Final:", vetorResultado);
-    alert(`Compra Finalizada!\nLegenda: 1=Círculo, 2=Quadrado, 3=Hexágono\nVetor: [${vetorResultado.join(', ')}]`);
-    
+    alert(`Compra Finalizada!\nVetor: [${vetorResultado.join(', ')}]`);
     return vetorResultado;
 }
 
 // ============================================================================
-// 8. LOOP DE ANIMAÇÃO E RESIZE
+// 8. LOOP DE ANIMAÇÃO
 // ============================================================================
 
-function onResize() {
+function aoRedimensionar() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderizador.setSize(window.innerWidth, window.innerHeight);
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+function animar() {
+    requestAnimationFrame(animar);
+    renderizador.render(cena, camera);
 }

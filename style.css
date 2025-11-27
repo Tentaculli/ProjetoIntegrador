@@ -1,32 +1,50 @@
+/* ============================================================
+   RESET BÁSICO
+   Remove margens e padroniza comportamento entre navegadores
+   ============================================================ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
 }
+
+/* ============================================================
+   FUNDOS E CONTROLE DE ROLAGEM
+   Bloqueia scroll pois o 3D ocupa toda a tela
+   ============================================================ */
 body {
-    overflow: hidden; /* Evita barras de rolagem */
+    overflow: hidden;
 }
 
+/* ============================================================
+   LAYOUT PRINCIPAL
+   #conteiner contém o header e o main
+   pointer-events: none → deixa o 3D receber cliques
+   ============================================================ */
 #conteiner {
     display: grid;
-    grid-template-rows: 80px 1fr; /* Header fixo, resto flexível */
+    grid-template-rows: 80px 1fr; /* topo fixo + área flexível */
     height: 100vh;
-    pointer-events: none; /* Deixa o clique passar para o 3D atrás */
+    pointer-events: none;
 }
 
-/* Reativa cliques apenas no header */
+/* ============================================================
+   HEADER
+   pointer-events: auto → reativa clique apenas nele
+   ============================================================ */
 header {
     pointer-events: auto;
-}
-
-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; /* botões alinhados à direita */
     align-items: center;
     padding: 0 40px;
 }
 
+/* ============================================================
+   BOTÕES DO HEADER
+   Estilização moderna + sombreamento
+   ============================================================ */
 button.compra {
     background-color: #111;
     color: #fff;
@@ -42,16 +60,25 @@ button.compra {
     transition: transform 0.2s, background 0.2s;
 }
 
+/* Hover: efeito de foco */
 button.compra:hover {
     background-color: #000;
     transform: scale(1.05);
 }
 
+/* ============================================================
+   ÁREA PRINCIPAL DA PÁGINA
+   O site divide o layout em duas colunas
+   ============================================================ */
 main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr; /* Coluna esquerda + direita */
 }
 
+/* ============================================================
+   SECTION2 — espaço inferior para elementos
+   (usado para manter proporção do site original)
+   ============================================================ */
 .section2 {
     display: flex;
     justify-content: center;
