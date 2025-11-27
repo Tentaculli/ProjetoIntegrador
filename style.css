@@ -4,14 +4,6 @@
     box-sizing: border-box;
     font-family: sans-serif;
 }
-
-html, body {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
 body {
     overflow: hidden; /* Evita barras de rolagem */
 }
@@ -39,8 +31,8 @@ button.compra {
     background-color: #111;
     color: #fff;
     border: none;
-    margin: 5px;
-    padding: 15px 40px;
+    margin-right: 20px;
+    padding: 15px 15px;
     font-size: 1.2rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -66,35 +58,3 @@ main {
     align-items: flex-end;
     padding-bottom: 40px;
 }
-/* ===============================
-   FUNDO GRADIENTE COM BLOCOS
-   =============================== */
-
-.bg-blobs {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    z-index: -2; /* atrás do canvas */
-    pointer-events: none;
-    background: #000; /* fundo preto igual ao site */
-}
-
-/* base dos quadrados */
-.blob {
-    position: absolute;
-    width: 260px;
-    height: 260px;
-    border-radius: 22px;
-    filter: blur(3px);
-    opacity: 0.85;
-}
-/* CORES DO SEU SITE */
-.blob.purple   { background: #7a63e0; top: 10%; left: 12%; }
-.blob.violet   { background: #c026d3; top: 15%; right: 18%; }
-.blob.white    { background: #e8eaf1; bottom: 15%; left: 8%; }
-.blob.dark     { background: #151522; bottom: 20%; right: 12%; }
-.blob.purple2  { background: #8b5cf6; bottom: 35%; left: 40%; }
-.blob.violet2  { background: #d946ef; top: 60%; right: 30%; }

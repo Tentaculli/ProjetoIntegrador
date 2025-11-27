@@ -6,23 +6,20 @@
     <title>Configurador 3D</title>
     <link rel="stylesheet" href="style.css">
     <script type="importmap">
-        {"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.js"}}
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
     </script>
 </head>
 <body>
-    <div class="bg-blobs">
-        <div class="blob purple"></div>
-        <div class="blob violet"></div>
-        <div class="blob white"></div>
-        <div class="blob dark"></div>
-        <div class="blob purple2"></div>
-        <div class="blob violet2"></div>
-    </div>
 
+ 
     <div id="conteiner">
         <header>
             <button class="compra" onclick="finalizarCompra()">Finalizar Compra</button>
-            <button class="encomendas" onclick="window.location.href='encomendas.html'">Encomendas</button>
+            <button class="compra" onclick="window.location.href='encomendas.html'">Encomendas</button>
         </header>
 
         <main>
@@ -30,6 +27,7 @@
             <div class="section2"></div>
         </main>
     </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
