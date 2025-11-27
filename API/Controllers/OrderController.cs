@@ -61,11 +61,26 @@ namespace API.Controllers
                 .FirstOrDefaultAsync();  // Get first item on list
 
             if (order == null)
-                return NotFound("Nenhum pedido com status 'Waiting' encontrado.");
+                return NotFound("No order with 'Waiting' status has been found.");
+
+            return Ok(order);
+        }
+
+        [HttpGet("newOrder")]
+        public async Task<ActionResult<Order>> GetNewOrder()
+        {
+            var order = await _appDbContext.Orders
+                .Where(o => o.Status == StatusType.InProgress)
+                .OrderBy(o => o.Created)      // Order by created date
+                .FirstOrDefaultAsync();  // Get first item on list
+
+            if (order == null)
+                return NotFound("NNo order with 'In Progress' status has been found.");
 
             var dto = new OrderForNodeDto
             {
                 Id = order.Id,
+
                 Pin1Pos1 = ToShapeInt(order.Pin1Pos1),
                 Pin1Pos2 = ToShapeInt(order.Pin1Pos2),
                 Pin1Pos3 = ToShapeInt(order.Pin1Pos3),
@@ -151,6 +166,44 @@ namespace API.Controllers
 
             return Ok(new { Message = "Order status updated successfully!", Order = order });
         }
+
+        [HttpPut("oldest/start")]
+        public async Task<IActionResult> StartOldestWaitingOrder()
+        {
+            var hasInProgress = await _appDbContext.Orders
+                .AnyAsync(o => o.Status == StatusType.InProgress);
+
+            if (hasInProgress)
+            {
+                return BadRequest("There is already an order in 'InProgress' status. Only one order can be 'InProgress' at a time.");
+            }
+
+            var order = await _appDbContext.Orders
+                .Where(o => o.Status == StatusType.Waiting)
+                .OrderBy(o => o.Created)
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound("No orders with status 'Waiting' were found.");
+            }
+
+            var validationError = ValidateStatusTransition(order.Status, StatusType.InProgress);
+            if (validationError != null)
+            {
+                return BadRequest(validationError);
+            }
+
+            order.Status = StatusType.InProgress;
+            await _appDbContext.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "Oldest 'Waiting' order has been updated to 'InProgress' successfully.",
+                Order = order
+            });
+        }
+
 
         private string? ValidateStatusTransition(StatusType currentStatus, StatusType newStatus)
         {

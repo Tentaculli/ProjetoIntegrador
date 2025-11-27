@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    overflow: hidden; /* Evita barras de rolagem */
+}
+
+#conteiner {
+    display: grid;
+    grid-template-rows: 80px 1fr; /* Header fixo, resto flexível */
+    height: 100vh;
+    pointer-events: none; /* Deixa o clique passar para o 3D atrás */
+}
+
+/* Reativa cliques apenas no header */
+header {
+    pointer-events: auto;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 40px;
+}
+
+button.compra {
+    background-color: #111;
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background 0.2s;
+}
+
+button.compra:hover {
+    background-color: #000;
+    transform: scale(1.05);
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.section2 {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 40px;
+}
