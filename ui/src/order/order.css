@@ -1,60 +1,152 @@
+/* ============================================================
+   RESET BÁSICO
+   Remove margens e padroniza comportamento entre navegadores
+   ============================================================ */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
 }
 
+/* ============================================================
+   FUNDOS E CONTROLE DE ROLAGEM
+   Bloqueia scroll pois o 3D ocupa toda a tela
+   ============================================================ */
 body {
-    overflow: hidden; /* Evita barras de rolagem */
+  overflow: hidden;
 }
 
+/* ============================================================
+   LAYOUT PRINCIPAL
+   #conteiner contém o header e o main
+   pointer-events: none → deixa o 3D receber cliques
+   ============================================================ */
 #conteiner {
-    display: grid;
-    grid-template-rows: 80px 1fr; /* Header fixo, resto flexível */
-    height: 100vh;
-    pointer-events: none; /* Deixa o clique passar para o 3D atrás */
+  display: grid;
+  grid-template-rows: 80px 1fr; /* topo fixo + área flexível */
+  height: 100vh;
+  pointer-events: none;
 }
 
-/* Reativa cliques apenas no header */
+/* ============================================================
+   HEADER
+   pointer-events: auto → reativa clique apenas nele
+   ============================================================ */
 header {
-    pointer-events: auto;
+  pointer-events: auto;
+  display: flex;
+  justify-content: flex-end; /* botões alinhados à direita */
+  align-items: center;
 }
 
-header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 40px;
+/* ============================================================
+   BOTÕES DO HEADER
+   Estilização moderna + sombreamento
+   ============================================================ */
+/* ==========================================================
+   BOTÕES PADRONIZADOS IGUAL AO SITE ROXO (Tentaculli Style)
+   ========================================================== */
+
+button.compra,
+button.encomenda {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-right: 20px;
+
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background-size: 200% 200%;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  /* Botão roxo padrão (btn-primary) */
+  background-image: linear-gradient(90deg, #6f42c1, #4f32b8);
+  color: #fff;
+
+
+  pointer-events: auto; /* mantém clique mesmo no header */
 }
 
-button.compra {
-    background-color: #111;
-    color: #fff;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s, background 0.2s;
+/* HOVER bonito igual do site */
+button.compra:hover,
+button.encomenda:hover {
+  background-color: #000;
+  transform: scale(1.05);
 }
 
-button.compra:hover {
-    background-color: #000;
-    transform: scale(1.05);
-}
-
+/* ============================================================
+   ÁREA PRINCIPAL DA PÁGINA
+   O site divide o layout em duas colunas
+   ============================================================ */
 main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Coluna esquerda + direita */
 }
 
+/* ============================================================
+   SECTION2 — espaço inferior para elementos
+   (usado para manter proporção do site original)
+   ============================================================ */
 .section2 {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 40px;
+}
+
+/* ============================================================
+   ESTILO DA JANELA MODAL (POP-UP)
+   ============================================================ */
+
+/* O fundo escuro que cobre a tela inteira */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Fundo preto transparente */
+  
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center;     /* Centraliza verticalmente */
+  
+  z-index: 1000; /* Garante que fica na frente de tudo (inclusive do 3D) */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: auto; /* Permite clicar no botão dentro dele */
+}
+
+/* Classe utilitária para esconder o modal */
+.modal-container.fechado {
+  opacity: 0;
+  pointer-events: none; /* Deixa clicar "através" quando invisível */
+  visibility: hidden; /* Garante que não atrapalha a leitura de tela */
+}
+
+/* A caixinha da mensagem em si */
+.modal-box {
+  background: linear-gradient(135deg, #1a0f3b, #050008);
+  border: 2px solid #6f42c1; /* Borda roxa igual aos botões */
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  color: #fff;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(111, 66, 193, 0.4); /* Brilho roxo */
+  
+  /* Pequena animação de subida */
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+/* Quando fechado, a caixa desce um pouquinho (efeito visual) */
+.modal-container.fechado .modal-box {
+  transform: translateY(20px);
 }

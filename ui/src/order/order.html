@@ -1,27 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Título da página -->
     <title>Configurador 3D</title>
-    <link rel="stylesheet" href="order.css">
+
+    <!-- Arquivo de estilo -->
+    <link rel="stylesheet" href="order.css" />
+
+    <!-- Importação do módulo THREE.js via importmap -->
     <script type="importmap">
-        {"imports": {"three": "https://unpkg.com/three@0.160.0/build/three.module.js"}}
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+      }
     </script>
-</head>
-<body>
-    <div id="conteiner">   
-        <header>
-            <button class="compra" onclick="finalizarCompra()">Finalizar Compra</button>
-        </header>
+  </head>
 
-        <main>
-            <div class="section1"></div>
-            <div class="section2"></div>
-        </main>
+  <body>
+    <!-- 
+        CONTAINER PRINCIPAL DA PÁGINA
+        Toda a interface (header + áreas laterais)
+        O conteúdo 3D fica atrás, no <canvas> criado pelo JS
+    -->
+    <div id="conteiner">
+      <!-- 
+            HEADER FIXO NO TOPO
+            Contém os botões da interface
+        -->
+      <header>
+        <!-- Botão que finaliza a montagem no 3D -->
+        <button class="compra" onclick="finalizarCompra()">
+          Finalizar Compra
+        </button>
 
+        <!-- Botão que leva para a página de encomendas -->
+        <button class="compra" onclick="window.location.href='encomendas.html'">
+          Encomendas
+        </button>
+      </header>
+
+      <!-- 
+            ÁREA PRINCIPAL DIVIDIDA EM DUAS COLUNAS
+            A estrutura é mantida para layout do site
+        -->
+      <main>
+        <div class="section1"></div>
+        <div class="section2"></div>
+      </main>
     </div>
 
+    <!-- Arquivo principal do projeto 3D -->
     <script type="module" src="order.js"></script>
-</body>
+  </body>
 </html>
