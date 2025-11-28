@@ -3,14 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Título da página -->
     <title>Configurador 3D</title>
-
-    <!-- Arquivo de estilo -->
+    
+    <!-- Link para o CSS -->
     <link rel="stylesheet" href="order.css" />
 
-    <!-- Importação do módulo THREE.js via importmap -->
+    <!-- ImportMap para Three.js -->
     <script type="importmap">
       {
         "imports": {
@@ -21,48 +19,65 @@
   </head>
 
   <body>
-    <!-- 
-        CONTAINER PRINCIPAL DA PÁGINA
-        Toda a interface (header + áreas laterais)
-        O conteúdo 3D fica atrás, no <canvas> criado pelo JS
-    -->
+    <!-- CONTAINER DA INTERFACE -->
     <div id="conteiner">
-      <!-- 
-            HEADER FIXO NO TOPO
-            Contém os botões da interface
-        -->
+      <!-- Cabeçalho com Botões -->
       <header>
-        <!-- Botão que finaliza a montagem no 3D -->
         <button class="compra" onclick="finalizarCompra()">
           Finalizar Compra
         </button>
-
-        <!-- Botão que leva para a página de encomendas -->
         <button class="compra" onclick="window.location.href='encomendas.html'">
           Encomendas
         </button>
       </header>
 
-      <!-- 
-            ÁREA PRINCIPAL DIVIDIDA EM DUAS COLUNAS
-            A estrutura é mantida para layout do site
-        -->
+      <!-- Área Principal -->
       <main>
-        <div class="section1"></div>
+        <!-- LADO ESQUERDO: Instruções -->
+        <div class="section1">
+          <div class="instrucoes-card">
+            <h3>Instruções</h3>
+            <p>Arraste a peça escolhida até o pino para montar a sua encomenda.</p>
+          </div>
+        </div>
+
+        <!-- LADO DIREITO: Vazio (Reserva de espaço) -->
         <div class="section2"></div>
       </main>
     </div>
     
+    <!-- MODAL UNIFICADO (SUCESSO E ERRO) -->
     <div id="modal-container" class="modal-container fechado">
       <div class="modal-box">
-        <h2 style="margin-bottom: 15px; color: #a970ff;">Status do Pedido</h2>
+        
+        <!-- Ícone SUCESSO (Verde) -->
+        <div id="icon-success" class="success-icon" style="display: none;">
+          <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" />
+            <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
+        </div>
+
+        <!-- Ícone ERRO (Vermelho) -->
+        <div id="icon-error" class="error-icon" style="display: none;">
+          <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" />
+            <path fill="none" d="M16 16 36 36 M36 16 16 36" />
+          </svg>
+        </div>
+
+        <!-- Título e Texto Dinâmicos -->
+        <h2 id="modal-titulo">Título</h2>
         <p id="modal-mensagem">Mensagem aqui...</p>
         
-        <button class="compra" style="margin-top: 20px; margin-right: 0;" onclick="fecharModal()">
-          Entendido
+        <!-- Botão de Ação -->
+        <button id="modal-btn" onclick="fecharModal()">
+          Continuar
         </button>
       </div>
     </div>
+
+    <!-- Script Principal -->
     <script type="module" src="order.js"></script>
   </body>
 </html>

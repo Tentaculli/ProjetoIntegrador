@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Encomendas</title>
+    
+    <!-- Link para o CSS -->
+    <link rel="stylesheet" href="encomendas.css">
+    
+    <!-- Fonte Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Fundo Decorativo -->
+    <div class="background-decor"></div>
+
+    <div class="container">
+        <!-- Cabeçalho -->
+        <header class="page-header">
+            <div class="header-text">
+                <h1>Histórico de Encomendas</h1>
+                <p>Acompanhe o status de produção e entrega dos seus pedidos.</p>
+            </div>
+            
+            <!-- Botão Voltar para o 3D -->
+            <button class="btn-voltar" onclick="window.location.href='order.html'">
+                Voltar para Loja
+            </button>
+        </header>
+
+        <!-- Grade de Pedidos (Preenchido via JS) -->
+        <main id="lista-pedidos" class="orders-grid">
+            <div class="loading">Carregando seus pedidos...</div>
+        </main>
+    </div>
+
+    <!-- Script Lógico -->
+    <script src="encomendas.js"></script>
+</body>
+</html>

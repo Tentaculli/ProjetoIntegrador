@@ -1,97 +1,89 @@
 /* ============================================================
-   RESET BÁSICO
-   Remove margens e padroniza comportamento entre navegadores
+   1. CONFIG & GLOBAIS
    ============================================================ */
+:root {
+  --color-primary: #4f32b8;
+  --color-secondary: #9a2ec3;
+  --color-accent: #6f42c1;
+  --color-white: #fff;
+  --color-success: #28a745;
+  --color-error: #dc3545;
+  --border-radius: 18px;
+  --shadow-dark: 0 15px 40px rgba(0, 0, 0, 0.5);
+  --transition-speed: 0.3s;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
-/* ============================================================
-   FUNDOS E CONTROLE DE ROLAGEM
-   Bloqueia scroll pois o 3D ocupa toda a tela
-   ============================================================ */
 body {
   overflow: hidden;
+  background-color: #000;
 }
 
 /* ============================================================
-   LAYOUT PRINCIPAL
-   #conteiner contém o header e o main
-   pointer-events: none → deixa o 3D receber cliques
+   2. LAYOUT PRINCIPAL
    ============================================================ */
 #conteiner {
   display: grid;
-  grid-template-rows: 80px 1fr; /* topo fixo + área flexível */
+  grid-template-rows: 80px 1fr;
   height: 100vh;
-  pointer-events: none;
+  width: 100vw;
+  pointer-events: none; /* Permite clicar no 3D atrás */
 }
 
-/* ============================================================
-   HEADER
-   pointer-events: auto → reativa clique apenas nele
-   ============================================================ */
 header {
   pointer-events: auto;
   display: flex;
-  justify-content: flex-end; /* botões alinhados à direita */
+  justify-content: flex-end;
   align-items: center;
+  padding-right: 20px;
 }
 
 /* ============================================================
-   BOTÕES DO HEADER
-   Estilização moderna + sombreamento
+   3. BOTÕES E INTERFACE
    ============================================================ */
-/* ==========================================================
-   BOTÕES PADRONIZADOS IGUAL AO SITE ROXO (Tentaculli Style)
-   ========================================================== */
-
-button.compra,
-button.encomenda {
-  font-family: "Poppins", sans-serif;
+button.compra {
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-right: 20px;
-
+  margin-left: 20px;
   padding: 0.9rem 1.5rem;
   border-radius: 12px;
   border: 2px solid transparent;
-  background-size: 200% 200%;
-
   cursor: pointer;
   transition: all 0.3s ease;
-
-  /* Botão roxo padrão (btn-primary) */
   background-image: linear-gradient(90deg, #6f42c1, #4f32b8);
   color: #fff;
-
-
-  pointer-events: auto; /* mantém clique mesmo no header */
+  box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
 }
 
-/* HOVER bonito igual do site */
-button.compra:hover,
-button.encomenda:hover {
-  background-color: #000;
-  transform: scale(1.05);
+button.compra:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.5);
 }
 
-/* ============================================================
-   ÁREA PRINCIPAL DA PÁGINA
-   O site divide o layout em duas colunas
-   ============================================================ */
 main {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Coluna esquerda + direita */
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
 }
 
-/* ============================================================
-   SECTION2 — espaço inferior para elementos
-   (usado para manter proporção do site original)
-   ============================================================ */
+/* Coluna Esquerda: Instruções */
+.section1 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  /* Ajuste de Posição */
+  padding-left: 10px;
+  padding-bottom: 300px;
+}
+
 .section2 {
   display: flex;
   justify-content: center;
@@ -100,120 +92,171 @@ main {
 }
 
 /* ============================================================
-   ESTILO DA JANELA MODAL (POP-UP)
+   4. CARTÃO DE INSTRUÇÕES
    ============================================================ */
+.instrucoes-card {
+  pointer-events: auto;
+  background-image: linear-gradient(135deg, #6f42c1, #4f32b8);
+  color: #fff;
+  padding: 1.5rem;
+  max-width: 300px;
+  height:300px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: slideUp 0.8s ease-out forwards;
+}
 
-/* O fundo escuro que cobre a tela inteira */
+.instrucoes-card h3 {
+  margin-bottom: 0.8rem;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 0.5rem;
+}
+
+.instrucoes-card p {
+  font-size: 20px;
+  line-height: 1.6;
+  margin-top:30px;
+  color: #f0f0f0;
+}
+
+/* ============================================================
+   5. MODAL (ESTILO LOGIN)
+   ============================================================ */
 .modal-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8); /* Fundo preto transparente */
-  
-  display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center;     /* Centraliza verticalmente */
-  
-  z-index: 1000; /* Garante que fica na frente de tudo (inclusive do 3D) */
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  background-color: rgba(10, 1, 40, 0.5);
+  backdrop-filter: blur(10px);
   opacity: 1;
-  transition: opacity 0.3s ease;
-  pointer-events: auto; /* Permite clicar no botão dentro dele */
+  visibility: visible;
+  transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+  pointer-events: auto;
 }
 
-/* Classe utilitária para esconder o modal */
 .modal-container.fechado {
   opacity: 0;
-  pointer-events: none; /* Deixa clicar "através" quando invisível */
-  visibility: hidden; /* Garante que não atrapalha a leitura de tela */
+  visibility: hidden;
+  pointer-events: none;
 }
 
-/* A caixinha da mensagem em si */
 .modal-box {
-  background: linear-gradient(135deg, #1a0f3b, #050008);
-  border: 2px solid #6f42c1; /* Borda roxa igual aos botões */
-  padding: 30px;
-  border-radius: 15px;
-  text-align: center;
-  color: #fff;
-  min-width: 300px;
+  background-color: var(--color-white);
+  padding: 2.5rem;
+  width: 100%;
   max-width: 400px;
-  box-shadow: 0 0 20px rgba(111, 66, 193, 0.4); /* Brilho roxo */
-  
-  /* Pequena animação de subida */
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-}
-
-/* Quando fechado, a caixa desce um pouquinho (efeito visual) */
-.modal-container.fechado .modal-box {
-  transform: translateY(20px);
-}
-
-/* =========================================
-   ESTILO DAS NOTIFICAÇÕES (TOASTS)
-   ========================================= */
-
-/* Container que segura as notificações no canto superior direito */
-#toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-dark);
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-/* O cartão da notificação */
-.toast {
-  min-width: 250px;
-  background-color: #1a1a2e; /* Fundo escuro combinando com o tema */
-  color: #fff;
-  padding: 16px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-left: 5px solid; /* Linha colorida na esquerda */
-  animation: slideIn 0.3s ease-out forwards;
-  opacity: 0;
-  transform: translateX(100%);
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
+  gap: 1.5rem;
+  transform: scale(1);
+  transition: transform var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Tipos de Notificação */
-.toast.sucesso {
-  border-left-color: #00ff88; /* Verde neon */
+.modal-container.fechado .modal-box {
+  transform: scale(0.95);
 }
 
-.toast.erro {
-  border-left-color: #ff4d4d; /* Vermelho */
+.modal-box h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+  font-weight: 700;
 }
 
-.toast.aviso {
-  border-left-color: #ffd700; /* Amarelo */
+.modal-box p {
+  font-size: 1rem;
+  color: #4a4a4a;
+  margin: 0;
+  line-height: 1.5;
 }
 
-/* Animação de entrada */
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* Botão Padrão do Modal */
+.modal-box button {
+  background-image: linear-gradient(45deg, var(--color-accent), var(--color-primary));
+  color: var(--color-white);
+  box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s ease;
 }
 
-/* Animação de saída (adicionada via JS) */
-.toast.saindo {
-  animation: slideOut 0.3s ease-in forwards;
+.modal-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
 }
 
-@keyframes slideOut {
-  to {
-    opacity: 0;
-    transform: translateX(100%);
-  }
+/* Botão de Erro (Vermelho) */
+.modal-box button.btn-erro {
+  background-image: linear-gradient(45deg, var(--color-error), #a71d2a);
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+.modal-box button.btn-erro:hover {
+  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* ============================================================
+   6. ÍCONES ANIMADOS (SVG)
+   ============================================================ */
+/* Comum aos dois */
+.success-icon svg, .error-icon svg {
+  width: 80px;
+  display: block;
+}
+
+/* Animação Verde (Sucesso) */
+.success-icon circle {
+  stroke: var(--color-success);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.success-icon path {
+  stroke: var(--color-success);
+  stroke-width: 3;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+/* Animação Vermelha (Erro) */
+.error-icon circle {
+  stroke: var(--color-error);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.error-icon path {
+  stroke: var(--color-error);
+  stroke-width: 3;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
