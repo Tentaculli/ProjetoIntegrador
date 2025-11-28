@@ -150,3 +150,70 @@ main {
 .modal-container.fechado .modal-box {
   transform: translateY(20px);
 }
+
+/* =========================================
+   ESTILO DAS NOTIFICAÇÕES (TOASTS)
+   ========================================= */
+
+/* Container que segura as notificações no canto superior direito */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* O cartão da notificação */
+.toast {
+  min-width: 250px;
+  background-color: #1a1a2e; /* Fundo escuro combinando com o tema */
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 5px solid; /* Linha colorida na esquerda */
+  animation: slideIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(100%);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Tipos de Notificação */
+.toast.sucesso {
+  border-left-color: #00ff88; /* Verde neon */
+}
+
+.toast.erro {
+  border-left-color: #ff4d4d; /* Vermelho */
+}
+
+.toast.aviso {
+  border-left-color: #ffd700; /* Amarelo */
+}
+
+/* Animação de entrada */
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animação de saída (adicionada via JS) */
+.toast.saindo {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}

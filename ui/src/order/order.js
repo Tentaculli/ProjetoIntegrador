@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { api } from '../services/api.js';
 
 // ============================================================================
 // 1. VARIÁVEIS GLOBAIS
@@ -483,33 +484,6 @@ function limparPino(id) {
   }
 }
 
-function finalizarCompra() {
-  let vetorResultado = [0, 0, 0, 0, 0, 0];
-
-  // Pino 1 (índices 0-2)
-  listaPinos[0].itens.forEach((item, i) => {
-    if (i < 3) vetorResultado[i] = item.userData.idTipo;
-  });
-
-  // Pino 2 (índices 3-5)
-  listaPinos[1].itens.forEach((item, i) => {
-    if (i < 3) vetorResultado[i + 3] = item.userData.idTipo;
-  });
-
-  console.log("Vetor Final:", vetorResultado);
-
-  // --- MUDANÇA AQUI ---
-  // Em vez de alert(), chamamos a nossa função bonita
-  // Usamos <br> para quebra de linha no HTML
-  const mensagemBonita = `
-    Compra Finalizada com sucesso!<br><br>
-  `;
-  
-  mostrarModal(mensagemBonita);
-  
-  return vetorResultado;
-}
-
 // ============================================================================
 // 8. LOOP DE ANIMAÇÃO
 // ============================================================================
@@ -533,15 +507,12 @@ function mostrarModal(mensagem) {
   const modal = document.getElementById("modal-container");
   const texto = document.getElementById("modal-mensagem");
   
-  // VERIFICAÇÃO DE SEGURANÇA
-  // Se o HTML não existir, usa o alert antigo para não dar erro
   if (!modal || !texto) {
     console.warn("HTML do modal não encontrado. Usando alert padrão.");
-    alert(mensagem.replace(/<br>/g, "\n").replace(/<strong>|<\/strong>/g, ""));
+    alert(mensagem.replace(/<br>/g, "\n").replace(/<[^>]*>/g, ""));
     return;
   }
   
-  // Se existir, segue normal
   texto.innerHTML = mensagem;
   modal.classList.remove("fechado");
 }
@@ -553,3 +524,120 @@ function fecharModal() {
 
 // Exportar para o HTML poder usar (se estiveres usando modules)
 window.fecharModal = fecharModal;
+
+
+// ============================================================================
+// 10. SISTEMA DE NOTIFICAÇÕES (TOASTS)
+// ============================================================================
+
+function exibirNotificacao(mensagem, tipo = 'sucesso') {
+  // 1. Verifica se o container existe, se não, cria
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  // 2. Cria o elemento da notificação
+  const toast = document.createElement('div');
+  toast.classList.add('toast', tipo);
+  toast.innerText = mensagem;
+
+  // 3. Adiciona ao container
+  container.appendChild(toast);
+
+  // 4. Remove automaticamente após 4 segundos
+  setTimeout(() => {
+    toast.classList.add('saindo'); // Começa animação de saída
+    toast.addEventListener('animationend', () => {
+      toast.remove(); // Remove do HTML quando animação acabar
+    });
+  }, 4000);
+}
+
+// ============================================================================
+// 11. LÓGICA DE FINALIZAR COMPRA (CONECTADA À API)
+// ============================================================================
+
+function getLoggedClient() {
+  const saved = localStorage.getItem("loggedClient");
+  if (!saved) return null;
+
+  try {
+    return JSON.parse(saved);
+  } catch {
+    return null;
+  }
+}
+
+async function finalizarCompra() {
+  let vetorResultado = [0, 0, 0, 0, 0, 0];
+
+  // Pino 1 (índices 0-2)
+  listaPinos[0].itens.forEach((item, i) => {
+    if (i < 3) vetorResultado[i] = item.userData.idTipo;
+  });
+
+  // Pino 2 (índices 3-5)
+  listaPinos[1].itens.forEach((item, i) => {
+    if (i < 3) vetorResultado[i + 3] = item.userData.idTipo;
+  });
+
+  // Validação: Pino 1 deve estar completo
+  if (vetorResultado[0] === 0 || vetorResultado[1] === 0 || vetorResultado[2] === 0) {
+    mostrarModal('❌ Erro!<br><br>O primeiro pino deve estar completamente preenchido com 3 peças.');
+    return;
+  }
+
+  // Pegar o cliente logado
+  const clientData = localStorage.getItem('currentClient');
+  if (!clientData) {
+    mostrarModal('❌ Erro!<br><br>Você precisa estar logado para fazer um pedido.<br><br><a href="../login/login.html" style="color: #a970ff;">Clique aqui para fazer login</a>');
+    return;
+  }
+
+  const client = JSON.parse(clientData);
+
+  // Preparar dados do pedido conforme o modelo Order
+  const orderData = {
+    pin1Pos1: vetorResultado[0],
+    pin1Pos2: vetorResultado[1],
+    pin1Pos3: vetorResultado[2],
+    pin2Pos1: vetorResultado[3],
+    pin2Pos2: vetorResultado[4],
+    pin2Pos3: vetorResultado[5],
+    clientId: client.id,
+    status: 1 // 1 = Waiting (StatusType.Waiting)
+  };
+
+  console.log("Enviando pedido:", orderData);
+
+  try {
+    // Mostrar mensagem de carregamento
+    mostrarModal('⏳ Processando seu pedido...');
+    
+    // Chamar a API
+    const response = await api.createOrder(orderData);
+    
+    console.log("Pedido criado com sucesso:", response);
+    
+    // Limpar os pinos após sucesso
+    limparPino(0);
+    limparPino(1);
+    
+    // Mostrar mensagem de sucesso
+    mostrarModal(`
+      ✅ Pedido realizado com sucesso!<br><br>
+      <strong>Número do Pedido:</strong> #${response.id}<br>
+      <strong>Status:</strong> Aguardando produção<br><br>
+      Você pode acompanhar seu pedido na área de encomendas.
+    `);
+    
+  } catch (error) {
+    console.error("Erro ao criar pedido:", error);
+    mostrarModal(`❌ Erro ao criar pedido!<br><br>${error.message}`);
+  }
+
+  return vetorResultado;
+}
