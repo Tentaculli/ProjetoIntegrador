@@ -503,8 +503,6 @@ function finalizarCompra() {
   // Usamos <br> para quebra de linha no HTML
   const mensagemBonita = `
     Compra Finalizada com sucesso!<br><br>
-    <strong>Vetor gerado:</strong><br>
-    [ ${vetorResultado.join(", ")} ]
   `;
   
   mostrarModal(mensagemBonita);
@@ -535,10 +533,16 @@ function mostrarModal(mensagem) {
   const modal = document.getElementById("modal-container");
   const texto = document.getElementById("modal-mensagem");
   
-  // Atualiza o texto. Usamos innerHTML para permitir quebras de linha com <br>
-  texto.innerHTML = mensagem;
+  // VERIFICAÇÃO DE SEGURANÇA
+  // Se o HTML não existir, usa o alert antigo para não dar erro
+  if (!modal || !texto) {
+    console.warn("HTML do modal não encontrado. Usando alert padrão.");
+    alert(mensagem.replace(/<br>/g, "\n").replace(/<strong>|<\/strong>/g, ""));
+    return;
+  }
   
-  // Remove a classe que esconde o modal
+  // Se existir, segue normal
+  texto.innerHTML = mensagem;
   modal.classList.remove("fechado");
 }
 
