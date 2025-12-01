@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Encomendas</title>
+    <link rel="stylesheet" href="orders-history.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-decor"></div>
+    <div class="container">
+        <header class="page-header">
+            <div class="header-text">
+                <h1>Histórico de Encomendas</h1>
+                <p>Acompanhe o status de produção e entrega dos seus pedidos.</p>
+            </div>
+            
+            <div class="header-buttons">
+                <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+                <button class="btn-voltar" onclick="window.location.href='../order/order.html'">Voltar para Loja</button>
+            </div>
+        </header>
+
+        <main id="lista-pedidos" class="orders-grid">
+            <div class="loading">Carregando seus pedidos...</div>
+        </main>
+    </div>
+    <script type="module" src="orders-history.js"></script>
+</body>
+</html>
