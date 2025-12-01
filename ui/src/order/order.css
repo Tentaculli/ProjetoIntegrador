@@ -1,6 +1,3 @@
-/* ============================================================
-   1. CONFIG & GLOBAIS
-   ============================================================ */
 :root {
   --color-primary: #4f32b8;
   --color-secondary: #9a2ec3;
@@ -13,250 +10,105 @@
   --transition-speed: 0.3s;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+body { overflow: hidden; background-color: #000; }
 
-body {
-  overflow: hidden;
-  background-color: #000;
-}
-
-/* ============================================================
-   2. LAYOUT PRINCIPAL
-   ============================================================ */
 #conteiner {
   display: grid;
   grid-template-rows: 80px 1fr;
   height: 100vh;
   width: 100vw;
-  pointer-events: none; /* Permite clicar no 3D atrás */
+  pointer-events: none;
 }
 
+/* HEADER */
 header {
   pointer-events: auto;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  padding-right: 20px;
+  padding: 0 30px;
+  width: 100%;
 }
 
-/* ============================================================
-   3. BOTÕES E INTERFACE
-   ============================================================ */
+.header-actions { display: flex; align-items: center; }
+
+/* BOTÃO SAIR */
+.btn-sair {
+    font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer;
+    transition: all 0.3s ease; background: transparent;
+    border: 2px solid #dc3545; color: #dc3545;
+}
+.btn-sair:hover { background-color: #dc3545; color: #fff; box-shadow: 0 0 15px rgba(220, 53, 69, 0.4); }
+
 button.compra {
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-left: 20px;
-  padding: 0.9rem 1.5rem;
-  border-radius: 12px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-image: linear-gradient(90deg, #6f42c1, #4f32b8);
-  color: #fff;
+  font-family: inherit; font-size: 1rem; font-weight: 600; letter-spacing: 0.5px;
+  margin-left: 20px; padding: 0.9rem 1.5rem; border-radius: 12px;
+  border: 2px solid transparent; cursor: pointer; transition: all 0.3s ease;
+  background-image: linear-gradient(90deg, #6f42c1, #4f32b8); color: #fff;
   box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
 }
+button.compra:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(111, 66, 193, 0.5); }
 
-button.compra:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.5);
-}
+main { display: grid; grid-template-columns: 1fr 1fr; height: 100%; }
 
-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-}
-
-/* Coluna Esquerda: Instruções */
 .section1 {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-end;
-  /* Ajuste de Posição */
-  padding-left: 10px;
-  padding-bottom: 300px;
+  display: flex; justify-content: flex-start; align-items: flex-end;
+  padding-left: 10px; padding-bottom: 300px;
 }
+.section2 { display: flex; justify-content: center; align-items: flex-end; padding-bottom: 40px; }
 
-.section2 {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 40px;
-}
-
-/* ============================================================
-   4. CARTÃO DE INSTRUÇÕES
-   ============================================================ */
 .instrucoes-card {
   pointer-events: auto;
   background-image: linear-gradient(135deg, #6f42c1, #4f32b8);
   color: #fff;
-  padding: 1.5rem;
-  max-width: 300px;
-  height:300px;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem; max-width: 300px; height: 300px;
+  border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   animation: slideUp 0.8s ease-out forwards;
 }
-
 .instrucoes-card h3 {
-  margin-bottom: 0.8rem;
-  font-size: 30px;
-  font-weight: 700;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.8rem; font-size: 30px; font-weight: 700; text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;
 }
+.instrucoes-card p { font-size: 20px; line-height: 1.6; margin-top:30px; color: #f0f0f0; }
 
-.instrucoes-card p {
-  font-size: 20px;
-  line-height: 1.6;
-  margin-top:30px;
-  color: #f0f0f0;
-}
-
-/* ============================================================
-   5. MODAL (ESTILO LOGIN)
-   ============================================================ */
+/* MODAL */
 .modal-container {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-  background-color: rgba(10, 1, 40, 0.5);
-  backdrop-filter: blur(10px);
-  opacity: 1;
-  visibility: visible;
-  transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
-  pointer-events: auto;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  display: grid; place-items: center; z-index: 1000;
+  background-color: rgba(10, 1, 40, 0.5); backdrop-filter: blur(10px);
+  opacity: 1; visibility: visible; transition: 0.3s; pointer-events: auto;
 }
-
-.modal-container.fechado {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
+.modal-container.fechado { opacity: 0; visibility: hidden; pointer-events: none; }
 
 .modal-box {
-  background-color: var(--color-white);
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 400px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-dark);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  transform: scale(1);
-  transition: transform var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+  background-color: var(--color-white); padding: 2.5rem; width: 100%; max-width: 400px;
+  border-radius: var(--border-radius); box-shadow: var(--shadow-dark); text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+  transform: scale(1); transition: 0.3s;
 }
+.modal-container.fechado .modal-box { transform: scale(0.95); }
 
-.modal-container.fechado .modal-box {
-  transform: scale(0.95);
-}
+.modal-box h2 { font-size: 1.5rem; color: #333; margin: 0; font-weight: 700; }
+.modal-box p { font-size: 1rem; color: #4a4a4a; margin: 0; line-height: 1.5; }
 
-.modal-box h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin: 0;
-  font-weight: 700;
-}
-
-.modal-box p {
-  font-size: 1rem;
-  color: #4a4a4a;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* Botão Padrão do Modal */
 .modal-box button {
   background-image: linear-gradient(45deg, var(--color-accent), var(--color-primary));
-  color: var(--color-white);
-  box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.2s ease;
+  color: var(--color-white); border: none; padding: 0.8rem 2rem; border-radius: 12px;
+  font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.2s;
 }
+.modal-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4); }
 
-.modal-box button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
-}
+.modal-box button.btn-erro { background-image: linear-gradient(45deg, var(--color-error), #a71d2a); }
+.modal-box button.btn-erro:hover { box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4); }
 
-/* Botão de Erro (Vermelho) */
-.modal-box button.btn-erro {
-  background-image: linear-gradient(45deg, var(--color-error), #a71d2a);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-}
-.modal-box button.btn-erro:hover {
-  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
-}
+.success-icon svg, .error-icon svg { width: 80px; display: block; }
+.success-icon circle { stroke: var(--color-success); stroke-width: 2; fill: none; stroke-dasharray: 166; stroke-dashoffset: 166; animation: stroke 0.6s forwards; }
+.success-icon path { stroke: var(--color-success); stroke-width: 3; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s 0.8s forwards; }
+.error-icon circle { stroke: var(--color-error); stroke-width: 2; fill: none; stroke-dasharray: 166; stroke-dashoffset: 166; animation: stroke 0.6s forwards; }
+.error-icon path { stroke: var(--color-error); stroke-width: 3; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s 0.8s forwards; }
 
-/* ============================================================
-   6. ÍCONES ANIMADOS (SVG)
-   ============================================================ */
-/* Comum aos dois */
-.success-icon svg, .error-icon svg {
-  width: 80px;
-  display: block;
-}
-
-/* Animação Verde (Sucesso) */
-.success-icon circle {
-  stroke: var(--color-success);
-  stroke-width: 2;
-  fill: none;
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
-.success-icon path {
-  stroke: var(--color-success);
-  stroke-width: 3;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-}
-
-/* Animação Vermelha (Erro) */
-.error-icon circle {
-  stroke: var(--color-error);
-  stroke-width: 2;
-  fill: none;
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
-.error-icon path {
-  stroke: var(--color-error);
-  stroke-width: 3;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-}
-
-@keyframes stroke {
-  100% { stroke-dashoffset: 0; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes stroke { 100% { stroke-dashoffset: 0; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
