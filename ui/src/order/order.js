@@ -1,6 +1,8 @@
 import * as THREE from "three";
 
+// ============================================================================
 // 1. VARIÁVEIS GLOBAIS
+// ============================================================================
 let cena, camera, renderizador;
 let raycaster, mouse;
 let pecaSelecionada = null;
@@ -8,7 +10,9 @@ let planoArrasto;
 const listaInterativos = [];
 const listaPinos = [];
 
+// ============================================================================
 // 2. CONFIGURAÇÕES
+// ============================================================================
 const RAIO_PINO = 1.3;
 const ALTURA_PINO = 8.7;
 const TAMANHO_LOJA = 3.2;
@@ -18,6 +22,7 @@ const TAMANHO_CHANFRO = 0.3;
 const ALTURA_ELEVACAO = 8.0;
 const DISTANCIA_IMA = 6.0;
 
+// Configuração da Loja (Cor do quadrado roxa: 0x5a2a81)
 const CONFIG_LOJA = [
   { x: -18.5, y: 1.0, z: -14, tipo: "square", idTipo: 2, cor: 0x5a2a81 }, 
   { x: -15, y: 1.0, z: 0, tipo: "circle", idTipo: 1, cor: 0x9a2ec3 },
@@ -29,7 +34,9 @@ const POSICOES_PINOS = [{ x: 3, z: 0 }, { x: 17, z: 0 }];
 init();
 animar();
 
+// ============================================================================
 // 3. SETUP E AUXILIARES
+// ============================================================================
 function criarFundoGradiente() {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 512;
@@ -59,6 +66,7 @@ function init() {
   canvasStyle.top = "0"; canvasStyle.left = "0"; canvasStyle.zIndex = "-1";
   document.body.appendChild(renderizador.domElement);
 
+  // Luzes
   const luzAmbiente = new THREE.AmbientLight(0xffffff, 2.0);
   cena.add(luzAmbiente);
   const luzHemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
@@ -68,19 +76,23 @@ function init() {
   luzFrontal.position.set(0, 10, 20);
   cena.add(luzFrontal);
 
+  // Lógica
   planoArrasto = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshBasicMaterial({ visible: false }));
   planoArrasto.rotation.x = -Math.PI / 2;
   planoArrasto.position.y = ALTURA_ELEVACAO;
   cena.add(planoArrasto);
 
+  // Chão
   const chao = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshBasicMaterial({ color: 0x444444, transparent: true, opacity: 0.1, side: THREE.DoubleSide }));
   chao.rotation.x = -Math.PI / 2;
   cena.add(chao);
 
+  // Objetos
   criarPino(POSICOES_PINOS[0].x, POSICOES_PINOS[0].z, 0);
   criarPino(POSICOES_PINOS[1].x, POSICOES_PINOS[1].z, 1);
   CONFIG_LOJA.forEach((cfg) => criarPecaLoja(cfg));
 
+  // Eventos
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
   window.addEventListener("resize", aoRedimensionar);
@@ -93,27 +105,45 @@ function init() {
   window.fecharModal = fecharModal;
 }
 
+// ============================================================================
 // 4. CRIAÇÃO DE OBJETOS
+// ============================================================================
 function criarPino(x, z, id) {
   const grupo = new THREE.Group();
-  const materialPino = new THREE.MeshStandardMaterial({ color: 0xC0C0C0 });
-  const materialBorda = new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.5, transparent: true });
 
+  const materialPino = new THREE.MeshStandardMaterial({
+    color: 0xC0C0C0, // Prata
+  });
+
+  const materialBorda = new THREE.LineBasicMaterial({
+    color: 0x000000,
+    opacity: 0.5,
+    transparent: true
+  });
+
+  // Base
   const geoBase = new THREE.CylinderGeometry(4.0, 4.0, 1.2, 64);
   const base = new THREE.Mesh(geoBase, materialPino);
   base.position.y = 0.4;
-  base.add(new THREE.LineSegments(new THREE.EdgesGeometry(geoBase, 30), materialBorda));
+  
+  const bordaBase = new THREE.LineSegments(new THREE.EdgesGeometry(geoBase, 30), materialBorda);
+  base.add(bordaBase);
   grupo.add(base);
 
+  // Haste
   const geoHaste = new THREE.CylinderGeometry(RAIO_PINO, RAIO_PINO, ALTURA_PINO, 64);
   const haste = new THREE.Mesh(geoHaste, materialPino);
   haste.position.y = ALTURA_PINO / 2 + 0.4;
-  haste.add(new THREE.LineSegments(new THREE.EdgesGeometry(geoHaste, 30), materialBorda));
+
+  const bordaHaste = new THREE.LineSegments(new THREE.EdgesGeometry(geoHaste, 30), materialBorda);
+  haste.add(bordaHaste);
   grupo.add(haste);
 
+  // Anel de Junção (Contorno onde a haste encontra a base)
   const geoJuncao = new THREE.CircleGeometry(RAIO_PINO, 64);
   const anelJuncao = new THREE.LineSegments(new THREE.EdgesGeometry(geoJuncao), materialBorda);
-  anelJuncao.rotation.x = -Math.PI / 2; anelJuncao.position.y = 1.01;
+  anelJuncao.rotation.x = -Math.PI / 2;
+  anelJuncao.position.y = 1.01;
   grupo.add(anelJuncao);
 
   grupo.position.set(x, 0, z);
@@ -152,7 +182,9 @@ function criarMalhaPeca(tipo, tamanho, hexCor) {
   });
 
   const malha = new THREE.Mesh(geometria, material);
-  malha.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometria, 1), new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.35, transparent: true })));
+  const linhas = new THREE.LineSegments(new THREE.EdgesGeometry(geometria, 1), new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.35, transparent: true }));
+  malha.add(linhas);
+
   return malha;
 }
 
@@ -189,7 +221,9 @@ function gerarPecaArrastavel(tipo, idTipo, posicao, cor) {
   return grupo;
 }
 
+// ============================================================================
 // 5. INTERAÇÃO E LÓGICA
+// ============================================================================
 function aoClicar(e) {
   e.preventDefault();
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -236,23 +270,28 @@ function aoSoltarMouse() {
   pecaSelecionada = null;
 }
 
-// VALIDAÇÃO DE PEÇAS
+// ---- VALIDAÇÃO DE PEÇA REPETIDA AO ADICIONAR ----
 function adicionarAoPino(grupo, pino) {
+  // Regra 1: Máximo de 3 peças por pino
   if (pino.itens.length >= 3) return false;
 
+  // Regra 2: Verificar duplicidade
   const tipoDaPecaNova = grupo.userData.idTipo;
   const jaExisteNoPino = pino.itens.some(item => item.userData.idTipo === tipoDaPecaNova);
 
   if (jaExisteNoPino) {
     mostrarModal("Peça repetida! Você só pode colocar uma peça de cada tipo por pino.", "erro");
-    return false;
+    return false; // Retorna false para a peça ser deletada
   }
 
+  // Se passou pelas regras, adiciona a peça
   const alturaUnitaria = ESPESSURA_PECA + TAMANHO_CHANFRO * 2;
   grupo.position.set(pino.posicao.x, 1.2 + pino.itens.length * alturaUnitaria + alturaUnitaria / 2, pino.posicao.z);
   grupo.userData.pinoAtual = pino.id;
+  
   const malha = grupo.children.find((c) => c.isMesh);
   if (malha) malha.material.emissive.setHex(0x000000);
+  
   pino.itens.push(grupo);
   return true;
 }
@@ -282,16 +321,40 @@ function limparPino(id) {
   if (pino) { [...pino.itens].forEach((obj) => deletarObjeto(obj)); pino.itens = []; }
 }
 
+// ============================================================================
+// 6. FINALIZAÇÃO E MODAL (COM VALIDAÇÃO DE PINO INCOMPLETO)
+// ============================================================================
+
 function finalizarCompra() {
-  const totalPecas = listaPinos[0].itens.length + listaPinos[1].itens.length;
-  if (totalPecas === 0) {
-    mostrarModal("Nenhuma peça selecionada! Adicione itens aos pinos antes de finalizar.", "erro");
+  const qtdPino1 = listaPinos[0].itens.length;
+  const qtdPino2 = listaPinos[1].itens.length;
+
+  // 1. Verificar se tudo está vazio
+  if (qtdPino1 === 0 && qtdPino2 === 0) {
+    mostrarModal("Nenhuma peça selecionada! Monte pelo menos um pino completo.", "erro");
     return null;
   }
+
+  // 2. Verificar se o Pino 1 está incompleto (Tem peças, mas não são 3)
+  if (qtdPino1 > 0 && qtdPino1 < 3) {
+    mostrarModal("O pino da esquerda está incompleto! Ele precisa ter 3 peças ou ficar vazio.", "erro");
+    return null;
+  }
+
+  // 3. Verificar se o Pino 2 está incompleto (Tem peças, mas não são 3)
+  if (qtdPino2 > 0 && qtdPino2 < 3) {
+    mostrarModal("O pino da direita está incompleto! Ele precisa ter 3 peças ou ficar vazio.", "erro");
+    return null;
+  }
+
+  // 4. Se passou das validações, processa a compra
   let vetorResultado = [0, 0, 0, 0, 0, 0];
   listaPinos[0].itens.forEach((item, i) => { if (i < 3) vetorResultado[i] = item.userData.idTipo; });
   listaPinos[1].itens.forEach((item, i) => { if (i < 3) vetorResultado[i + 3] = item.userData.idTipo; });
+  
   console.log("Vetor Final:", vetorResultado);
+  
+  // Modal de sucesso
   mostrarModal("Sua configuração foi salva e enviada para o carrinho.", "sucesso");
   return vetorResultado;
 }
@@ -301,32 +364,50 @@ function mostrarModal(mensagem, tipo = "sucesso") {
   const tituloEl = document.getElementById("modal-titulo");
   const msgEl = document.getElementById("modal-mensagem");
   const btnEl = document.getElementById("modal-btn");
+  
   const iconSuccess = document.getElementById("icon-success");
   const iconError = document.getElementById("icon-error");
 
   if (!modal) return;
+
   msgEl.textContent = mensagem;
 
   if (tipo === "erro") {
-    tituloEl.textContent = "Atenção"; tituloEl.style.color = "#dc3545";
-    iconSuccess.style.display = "none"; iconError.style.display = "block";
-    btnEl.classList.add("btn-erro"); btnEl.textContent = "Corrigir";
+    // Configura ERRO
+    tituloEl.textContent = "Atenção";
+    tituloEl.style.color = "#dc3545";
+    iconSuccess.style.display = "none";
+    iconError.style.display = "block";
+    btnEl.classList.add("btn-erro");
+    btnEl.textContent = "Corrigir";
   } else {
-    tituloEl.textContent = "Sucesso!"; tituloEl.style.color = "#333";
-    iconSuccess.style.display = "block"; iconError.style.display = "none";
-    btnEl.classList.remove("btn-erro"); btnEl.textContent = "Continuar";
+    // Configura SUCESSO
+    tituloEl.textContent = "Sucesso!";
+    tituloEl.style.color = "#333";
+    iconSuccess.style.display = "block";
+    iconError.style.display = "none";
+    btnEl.classList.remove("btn-erro");
+    btnEl.textContent = "Continuar";
   }
+
   modal.classList.remove("fechado");
 }
 
-function fecharModal() { document.getElementById("modal-container").classList.add("fechado"); }
+function fecharModal() {
+  const modal = document.getElementById("modal-container");
+  if (modal) modal.classList.add("fechado");
+}
 
 function aoRedimensionar() {
-  camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
   renderizador.setSize(window.innerWidth, window.innerHeight);
 }
 
-function animar() { requestAnimationFrame(animar); renderizador.render(cena, camera); }
+function animar() {
+  requestAnimationFrame(animar);
+  renderizador.render(cena, camera);
+}
 
 // Logout Global
 window.fazerLogout = function() {

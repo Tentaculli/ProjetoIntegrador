@@ -63,7 +63,7 @@ main { display: grid; grid-template-columns: 1fr 1fr; height: 100%; }
   pointer-events: auto;
   background-image: linear-gradient(135deg, #6f42c1, #4f32b8);
   color: #fff;
-  padding: 1.5rem; max-width: 300px; height: 300px;
+  padding: 1.5rem; max-width: 320px; height: 320px;
   border-radius: 18px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   animation: slideUp 0.8s ease-out forwards;
@@ -72,7 +72,7 @@ main { display: grid; grid-template-columns: 1fr 1fr; height: 100%; }
   margin-bottom: 0.8rem; font-size: 30px; font-weight: 700; text-transform: uppercase;
   border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 0.5rem;
 }
-.instrucoes-card p { font-size: 20px; line-height: 1.6; margin-top:30px; color: #f0f0f0; }
+.instrucoes-card p { font-size: 20px; line-height: 1.6; color: #f0f0f0; }
 
 /* MODAL */
 .modal-container {

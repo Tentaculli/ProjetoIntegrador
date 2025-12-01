@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj": {}
+    "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj": {
+    "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj",
+        "projectPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\API.csproj",
         "packagesPath": "C:\\Users\\chmat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\obj\\",
+        "outputPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\chmat\\AppData\\Roaming\\NuGet\\NuGet.Config"
