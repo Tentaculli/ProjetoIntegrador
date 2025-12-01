@@ -1,97 +1,101 @@
-/* ============================================================
-   RESET BÁSICO
-   Remove margens e padroniza comportamento entre navegadores
-   ============================================================ */
+:root {
+  --color-primary: #4f32b8;
+  --color-secondary: #9a2ec3;
+  --color-accent: #6f42c1;
+  --color-white: #fff;
+  --color-success: #28a745;
+  --color-error: #dc3545;
+  --border-radius: 18px;
+  --shadow-dark: 0 15px 40px rgba(0, 0, 0, 0.5);
+  --transition-speed: 0.3s;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: "Poppins", sans-serif;
 }
-
-/* ============================================================
-   FUNDOS E CONTROLE DE ROLAGEM
-   Bloqueia scroll pois o 3D ocupa toda a tela
-   ============================================================ */
 body {
   overflow: hidden;
+  background-color: #000;
 }
 
-/* ============================================================
-   LAYOUT PRINCIPAL
-   #conteiner contém o header e o main
-   pointer-events: none → deixa o 3D receber cliques
-   ============================================================ */
 #conteiner {
   display: grid;
-  grid-template-rows: 80px 1fr; /* topo fixo + área flexível */
+  grid-template-rows: 80px 1fr;
   height: 100vh;
+  width: 100vw;
   pointer-events: none;
 }
 
-/* ============================================================
-   HEADER
-   pointer-events: auto → reativa clique apenas nele
-   ============================================================ */
+/* HEADER */
 header {
   pointer-events: auto;
   display: flex;
-  justify-content: flex-end; /* botões alinhados à direita */
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  width: 100%;
+}
+
+.header-actions {
+  display: flex;
   align-items: center;
 }
 
-/* ============================================================
-   BOTÕES DO HEADER
-   Estilização moderna + sombreamento
-   ============================================================ */
-/* ==========================================================
-   BOTÕES PADRONIZADOS IGUAL AO SITE ROXO (Tentaculli Style)
-   ========================================================== */
+/* BOTÃO SAIR */
+.btn-sair {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  border: 2px solid #dc3545;
+  color: #dc3545;
+}
+.btn-sair:hover {
+  background-color: #dc3545;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(220, 53, 69, 0.4);
+}
 
-button.compra,
-button.encomenda {
-  font-family: "Poppins", sans-serif;
+button.compra {
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-right: 20px;
-
+  margin-left: 20px;
   padding: 0.9rem 1.5rem;
   border-radius: 12px;
   border: 2px solid transparent;
-  background-size: 200% 200%;
-
   cursor: pointer;
   transition: all 0.3s ease;
-
-  /* Botão roxo padrão (btn-primary) */
   background-image: linear-gradient(90deg, #6f42c1, #4f32b8);
   color: #fff;
-
-
-  pointer-events: auto; /* mantém clique mesmo no header */
+  box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+}
+button.compra:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.5);
 }
 
-/* HOVER bonito igual do site */
-button.compra:hover,
-button.encomenda:hover {
-  background-color: #000;
-  transform: scale(1.05);
-}
-
-/* ============================================================
-   ÁREA PRINCIPAL DA PÁGINA
-   O site divide o layout em duas colunas
-   ============================================================ */
 main {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Coluna esquerda + direita */
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
 }
 
-/* ============================================================
-   SECTION2 — espaço inferior para elementos
-   (usado para manter proporção do site original)
-   ============================================================ */
+.section1 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding-left: 10px;
+  padding-bottom: 300px;
+}
 .section2 {
   display: flex;
   justify-content: center;
@@ -99,121 +103,163 @@ main {
   padding-bottom: 40px;
 }
 
-/* ============================================================
-   ESTILO DA JANELA MODAL (POP-UP)
-   ============================================================ */
+.instrucoes-card {
+  pointer-events: auto;
+  background-image: linear-gradient(135deg, #6f42c1, #4f32b8);
+  color: #fff;
+  padding: 1.5rem;
+  max-width: 300px;
+  height: 300px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: slideUp 0.8s ease-out forwards;
+}
+.instrucoes-card h3 {
+  margin-bottom: 0.8rem;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.5rem;
+}
+.instrucoes-card p {
+  font-size: 20px;
+  line-height: 1.6;
+  margin-top: 30px;
+  color: #f0f0f0;
+}
 
-/* O fundo escuro que cobre a tela inteira */
+/* MODAL */
 .modal-container {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8); /* Fundo preto transparente */
-  
-  display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center;     /* Centraliza verticalmente */
-  
-  z-index: 1000; /* Garante que fica na frente de tudo (inclusive do 3D) */
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  background-color: rgba(10, 1, 40, 0.5);
+  backdrop-filter: blur(10px);
   opacity: 1;
-  transition: opacity 0.3s ease;
-  pointer-events: auto; /* Permite clicar no botão dentro dele */
+  visibility: visible;
+  transition: 0.3s;
+  pointer-events: auto;
 }
-
-/* Classe utilitária para esconder o modal */
 .modal-container.fechado {
   opacity: 0;
-  pointer-events: none; /* Deixa clicar "através" quando invisível */
-  visibility: hidden; /* Garante que não atrapalha a leitura de tela */
+  visibility: hidden;
+  pointer-events: none;
 }
 
-/* A caixinha da mensagem em si */
 .modal-box {
-  background: linear-gradient(135deg, #1a0f3b, #050008);
-  border: 2px solid #6f42c1; /* Borda roxa igual aos botões */
-  padding: 30px;
-  border-radius: 15px;
-  text-align: center;
-  color: #fff;
-  min-width: 300px;
+  background-color: var(--color-white);
+  padding: 2.5rem;
+  width: 100%;
   max-width: 400px;
-  box-shadow: 0 0 20px rgba(111, 66, 193, 0.4); /* Brilho roxo */
-  
-  /* Pequena animação de subida */
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-}
-
-/* Quando fechado, a caixa desce um pouquinho (efeito visual) */
-.modal-container.fechado .modal-box {
-  transform: translateY(20px);
-}
-
-/* =========================================
-   ESTILO DAS NOTIFICAÇÕES (TOASTS)
-   ========================================= */
-
-/* Container que segura as notificações no canto superior direito */
-#toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-dark);
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-/* O cartão da notificação */
-.toast {
-  min-width: 250px;
-  background-color: #1a1a2e; /* Fundo escuro combinando com o tema */
-  color: #fff;
-  padding: 16px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-left: 5px solid; /* Linha colorida na esquerda */
-  animation: slideIn 0.3s ease-out forwards;
-  opacity: 0;
-  transform: translateX(100%);
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
+  gap: 1.5rem;
+  transform: scale(1);
+  transition: 0.3s;
+}
+.modal-container.fechado .modal-box {
+  transform: scale(0.95);
 }
 
-/* Tipos de Notificação */
-.toast.sucesso {
-  border-left-color: #00ff88; /* Verde neon */
+.modal-box h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+  font-weight: 700;
+}
+.modal-box p {
+  font-size: 1rem;
+  color: #4a4a4a;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.toast.erro {
-  border-left-color: #ff4d4d; /* Vermelho */
+.modal-box button {
+  background-image: linear-gradient(
+    45deg,
+    var(--color-accent),
+    var(--color-primary)
+  );
+  color: var(--color-white);
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+.modal-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
 }
 
-.toast.aviso {
-  border-left-color: #ffd700; /* Amarelo */
+.modal-box button.btn-erro {
+  background-image: linear-gradient(45deg, var(--color-error), #a71d2a);
+}
+.modal-box button.btn-erro:hover {
+  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
 }
 
-/* Animação de entrada */
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateX(0);
+.success-icon svg,
+.error-icon svg {
+  width: 80px;
+  display: block;
+}
+.success-icon circle {
+  stroke: var(--color-success);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s forwards;
+}
+.success-icon path {
+  stroke: var(--color-success);
+  stroke-width: 3;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s 0.8s forwards;
+}
+.error-icon circle {
+  stroke: var(--color-error);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: stroke 0.6s forwards;
+}
+.error-icon path {
+  stroke: var(--color-error);
+  stroke-width: 3;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
   }
 }
-
-/* Animação de saída (adicionada via JS) */
-.toast.saindo {
-  animation: slideOut 0.3s ease-in forwards;
-}
-
-@keyframes slideOut {
-  to {
+@keyframes slideUp {
+  from {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
