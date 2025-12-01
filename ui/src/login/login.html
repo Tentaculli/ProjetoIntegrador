@@ -25,7 +25,7 @@
     <!-- Tela de Boas-Vindas -->
     <main class="container">
         <section class="logo-section">
-            <img src="../../imagens/TENTACULLI.png" alt="Logo da Tentaculli com um polvo roxo no centro">
+            <img src="../../imagens/TENTACULLI.png" alt="Logo da Tentaculli">
         </section>
         <section class="login-section">
             <div class="login-box">
@@ -41,7 +41,7 @@
     <!-- Telas de Formulário -->
     <section id="login-screen" class="form-overlay" role="dialog" aria-modal="true">
         <div class="form-container">
-            <button class="back-button" data-action="hide" data-target-id="login-screen" aria-label="Fechar">&larr;</button>
+            <button class="back-button" data-action="hide" data-target-id="login-screen">&larr;</button>
             <h2>Acesse sua Conta</h2>
             <form id="login-form">
                 <div class="input-group"><label for="email">Email</label><input type="email" id="email" required></div>
@@ -54,7 +54,7 @@
 
     <section id="signup-screen" class="form-overlay" role="dialog" aria-modal="true">
         <div class="form-container">
-            <button class="back-button" data-action="hide" data-target-id="signup-screen" aria-label="Fechar">&larr;</button>
+            <button class="back-button" data-action="hide" data-target-id="signup-screen">&larr;</button>
             <h2>Crie sua Conta</h2>
             <form id="signup-form">
                 <div class="input-group"><label for="fullname">Nome Completo</label><input type="text" id="fullname" required></div>
@@ -74,7 +74,7 @@
         </div>
     </section>
     
-    <!-- NOVA TELA DE DASHBOARD -->
+    <!-- TELA DE DASHBOARD -->
     <div id="dashboard-screen" class="main-app-screen">
         <header class="dashboard-header">
             <img src="../../imagens/TENTACULLI.png" alt="Logo Tentaculli" class="header-logo">
@@ -83,7 +83,12 @@
             <h2 class="welcome-message">Bem-vindo, <span id="user-email-display">usuário</span>!</h2>
             <p class="dashboard-subtitle">O que você gostaria de fazer?</p>
             <div class="dashboard-actions">
-                <button class="btn btn-primary btn-action">Ver Histórico</button>
+                <!-- Botão Encomendas -->
+                <button class="btn btn-primary btn-action" onclick="window.location.href='../encomendas/encomendas.html'">
+                    Encomendas
+                </button>
+                
+                <!-- Botão Fazer Encomenda -->
                 <button
                     class="btn btn-secondary btn-action"
                     onclick="window.location.href='../order/order.html'">
