@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { api } from "../services/api.js";
 
 // ============================================================================
 // 1. VARIÁVEIS GLOBAIS
@@ -321,6 +322,7 @@ function limparPino(id) {
   if (pino) { [...pino.itens].forEach((obj) => deletarObjeto(obj)); pino.itens = []; }
 }
 
+<<<<<<< HEAD
 // ============================================================================
 // 6. FINALIZAÇÃO E MODAL (COM VALIDAÇÃO DE PINO INCOMPLETO)
 // ============================================================================
@@ -359,6 +361,8 @@ function finalizarCompra() {
   return vetorResultado;
 }
 
+=======
+>>>>>>> 156cc8271291f8f62aef9431c895ca3b7e166ef1
 function mostrarModal(mensagem, tipo = "sucesso") {
   const modal = document.getElementById("modal-container");
   const tituloEl = document.getElementById("modal-titulo");
@@ -414,3 +418,89 @@ window.fazerLogout = function() {
     localStorage.removeItem('currentClient');
     window.location.href = '../login/login.html';
 };
+
+// ============================================================================
+// 11. LÓGICA DE FINALIZAR COMPRA (CONECTADA À API)
+// ============================================================================
+
+function getLoggedClient() {
+  const saved = localStorage.getItem("loggedClient");
+  if (!saved) return null;
+
+  try {
+    return JSON.parse(saved);
+  } catch {
+    return null;
+  }
+}
+
+async function finalizarCompra() {
+  let vetorResultado = [0, 0, 0, 0, 0, 0];
+
+  // Pino 1 (índices 0-2)
+  listaPinos[0].itens.forEach((item, i) => {
+    if (i < 3) vetorResultado[i] = item.userData.idTipo;
+  });
+
+  // Pino 2 (índices 3-5)
+  listaPinos[1].itens.forEach((item, i) => {
+    if (i < 3) vetorResultado[i + 3] = item.userData.idTipo;
+  });
+
+  // Validação: Pino 1 deve estar completo
+  if (vetorResultado[0] === 0 || vetorResultado[1] === 0 || vetorResultado[2] === 0) {
+    mostrarModal('❌ Erro!<br><br>O primeiro pino deve estar completamente preenchido com 3 peças.');
+    return;
+  }
+
+  // Pegar o cliente logado
+  const clientData = localStorage.getItem('currentClient');
+  if (!clientData) {
+    mostrarModal('❌ Erro!<br><br>Você precisa estar logado para fazer um pedido.<br><br><a href="../login/login.html" style="color: #a970ff;">Clique aqui para fazer login</a>');
+    return;
+  }
+
+  const client = JSON.parse(clientData);
+
+  // Preparar dados do pedido conforme o modelo Order
+  const orderData = {
+    pin1Pos1: vetorResultado[0],
+    pin1Pos2: vetorResultado[1],
+    pin1Pos3: vetorResultado[2],
+    pin2Pos1: vetorResultado[3],
+    pin2Pos2: vetorResultado[4],
+    pin2Pos3: vetorResultado[5],
+    clientId: client.id,
+    status: 1 // 1 = Waiting (StatusType.Waiting)
+  };
+
+  console.log("Enviando pedido:", orderData);
+
+  try {
+    // Mostrar mensagem de carregamento
+    mostrarModal('⏳ Processando seu pedido...');
+    
+    // Chamar a API
+    const response = await api.createOrder(orderData);
+    
+    console.log("Pedido criado com sucesso:", response);
+    
+    // Limpar os pinos após sucesso
+    limparPino(0);
+    limparPino(1);
+    
+    // Mostrar mensagem de sucesso
+    mostrarModal(`
+      ✅ Pedido realizado com sucesso!<br><br>
+      <strong>Número do Pedido:</strong> #${response.id}<br>
+      <strong>Status:</strong> Aguardando produção<br><br>
+      Você pode acompanhar seu pedido na área de encomendas.
+    `);
+    
+  } catch (error) {
+    console.error("Erro ao criar pedido:", error);
+    mostrarModal(`❌ Erro ao criar pedido!<br><br>${error.message}`);
+  }
+
+  return vetorResultado;
+}
