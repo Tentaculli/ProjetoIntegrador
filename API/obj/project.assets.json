@@ -4521,19 +4521,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\angel\\.nuget\\packages\\": {}
+    "C:\\Users\\chmat\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Estudos\\ProjetoIntegrador\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Estudos\\ProjetoIntegrador\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
-      "outputPath": "C:\\Estudos\\ProjetoIntegrador\\API\\obj\\",
+      "projectPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\API.csproj",
+      "packagesPath": "C:\\Users\\chmat\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\att2\\ProjetoIntegrador\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\angel\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\chmat\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -4610,7 +4610,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.412/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.319/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
