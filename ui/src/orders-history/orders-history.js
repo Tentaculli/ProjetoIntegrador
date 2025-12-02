@@ -4,17 +4,23 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarPedidos();
 });
 
+// Logout global
+window.fazerLogout = function() {
+    localStorage.removeItem('currentClient');
+    window.location.href = '../login/login.html';
+};
+
 async function carregarPedidos() {
     const container = document.getElementById("lista-pedidos");
     
-    // Verificar se o usuário está logado
+    // Verificar login
     const clientData = localStorage.getItem('currentClient');
     if (!clientData) {
         container.innerHTML = `
-            <div style="text-align:center; padding: 2rem; color: #777;">
+            <div style="text-align:center; padding: 40px; color: #777;">
                 Você precisa estar logado para ver suas encomendas.
                 <br><br>
-                <a href="../login/login.html" style="color: #a970ff;">Clique aqui para fazer login</a>
+                <a href="../login/login.html" style="color: #6f42c1; text-decoration: none; font-weight: 600;">Clique aqui para fazer login</a>
             </div>
         `;
         return;
@@ -23,21 +29,20 @@ async function carregarPedidos() {
     const client = JSON.parse(clientData);
 
     try {
-        // Buscar pedidos da API
         const pedidos = await api.getOrdersByClientId(client.id);
         
         container.innerHTML = "";
         
-        if (pedidos.length === 0) {
+        if (!pedidos || pedidos.length === 0) {
             container.innerHTML = `
-                <div style="text-align:center; padding: 2rem; color: #777;">
+                <div style="text-align:center; padding: 40px; color: #777;">
                     Você ainda não fez nenhuma encomenda.
                 </div>
             `;
             return;
         }
 
-        // Ordenar pedidos por data (mais recentes primeiro)
+        // Ordenar: mais recentes primeiro
         pedidos.sort((a, b) => new Date(b.created) - new Date(a.created));
 
         pedidos.forEach(pedido => {
@@ -48,8 +53,8 @@ async function carregarPedidos() {
     } catch (error) {
         console.error("Erro ao carregar pedidos:", error);
         container.innerHTML = `
-            <div style="text-align:center; padding: 2rem; color: #dc3545;">
-                Erro ao carregar pedidos. Por favor, tente novamente mais tarde.
+            <div style="text-align:center; padding: 40px; color: #ff4d4d;">
+                Erro ao carregar pedidos. Tente novamente mais tarde.
             </div>
         `;
     }
@@ -58,83 +63,59 @@ async function carregarPedidos() {
 function criarCardHTML(pedido) {
     let statusLabel, statusClass;
 
-    // Mapear status da API para a interface
-    switch(pedido.status) {
-        case "Waiting":
-        case "waiting":
-        case 1:
-            statusLabel = "Aguardando";
-            statusClass = "produzindo";
-            break;
-        case "InProgress":
-        case "inprogress":
-        case 2:
-            statusLabel = "Em Produção";
-            statusClass = "produzindo";
-            break;
-        case "Finished":
-        case "finished":
-        case 3:
-            statusLabel = "Entregue";
-            statusClass = "entregue";
-            break;
-        case "Canceled":
-        case "canceled":
-        case 4:
-            statusLabel = "Cancelado";
-            statusClass = "cancelado";
-            break;
-        default:
-            statusLabel = "Pendente";
-            statusClass = "";
+    // 1. Mapear Status
+    const status = pedido.status;
+    
+    // Suporte para resposta string ou int da API
+    if (status === 1 || status === "Waiting" || status === "waiting") {
+        statusLabel = "Aguardando"; statusClass = "produzindo";
+    } else if (status === 2 || status === "InProgress" || status === "inprogress") {
+        statusLabel = "Em Produção"; statusClass = "produzindo";
+    } else if (status === 3 || status === "Finished" || status === "finished") {
+        statusLabel = "Entregue"; statusClass = "entregue";
+    } else if (status === 4 || status === "Canceled" || status === "canceled") {
+        statusLabel = "Cancelado"; statusClass = "cancelado";
+    } else {
+        // Fallback visual
+        statusLabel = "Em Trânsito"; statusClass = "entregando";
     }
 
-    // Mapear ShapeType enum para números da interface
+    // 2. Mapear Formas
     const mapearShape = (shape) => {
         if (typeof shape === 'number') return shape;
-        switch(shape) {
-            case "None": return 0;
-            case "Hexagon": return 3;
-            case "Square": return 2;
-            case "Circle": return 1;
-            default: return 0;
-        }
+        const s = String(shape).toLowerCase();
+        if (s === "hexagon") return 3;
+        if (s === "square") return 2;
+        if (s === "circle") return 1;
+        return 0; // None/Vazio
     };
 
-    // Montar array de configuração
     const config = [
-        mapearShape(pedido.pin1Pos1),
-        mapearShape(pedido.pin1Pos2),
-        mapearShape(pedido.pin1Pos3),
-        mapearShape(pedido.pin2Pos1),
-        mapearShape(pedido.pin2Pos2),
-        mapearShape(pedido.pin2Pos3)
+        mapearShape(pedido.pin1Pos1), mapearShape(pedido.pin1Pos2), mapearShape(pedido.pin1Pos3),
+        mapearShape(pedido.pin2Pos1), mapearShape(pedido.pin2Pos2), mapearShape(pedido.pin2Pos3)
     ];
 
-    const pino1 = config.slice(0, 3);
-    const pino2 = config.slice(3, 6);
-
-    const htmlPino1 = pino1.map(tipo => 
-        tipo === 0 
-            ? `<div class="mini-peca vazio"></div>` 
-            : `<div class="mini-peca tipo-${tipo}" title="Peça ${tipo}"></div>`
+    // Pino 1 (Indices 0, 1, 2)
+    const htmlPino1 = config.slice(0, 3).map(tipo => 
+        tipo === 0 ? `<div class="mini-peca vazio"></div>` : `<div class="mini-peca tipo-${tipo}"></div>`
     ).join('');
 
-    const htmlPino2 = pino2.map(tipo => 
-        tipo === 0 
-            ? `<div class="mini-peca vazio"></div>` 
-            : `<div class="mini-peca tipo-${tipo}" title="Peça ${tipo}"></div>`
+    // Pino 2 (Indices 3, 4, 5)
+    const htmlPino2 = config.slice(3, 6).map(tipo => 
+        tipo === 0 ? `<div class="mini-peca vazio"></div>` : `<div class="mini-peca tipo-${tipo}"></div>`
     ).join('');
 
-    // Formatar data
-    const dataFormatada = new Date(pedido.created).toLocaleDateString('pt-BR');
+    // 3. Formatar Data
+    const dataObj = new Date(pedido.created);
+    const dataFormatada = dataObj.toLocaleDateString('pt-BR');
 
+    // 4. Retornar HTML Estruturado
     return `
         <div class="order-card">
-            <div class="order-info">
-                <div class="order-header">
+            <div class="order-left">
+                <div class="order-header-line">
                     <h3>Pedido #${pedido.id}</h3>
-                    <span class="order-date">${dataFormatada}</span>
+                    <span class="date-badge">${dataFormatada}</span>
                 </div>
                 
                 <div class="visual-config">
@@ -143,14 +124,10 @@ function criarCardHTML(pedido) {
                     ${htmlPino2}
                 </div>
             </div>
+
             <div class="status-badge ${statusClass}">
                 ${statusLabel}
             </div>
         </div>
     `;
-}
-
-function fazerLogout() {
-    localStorage.removeItem('currentClient');
-    window.location.href = '../login/login.html';
 }

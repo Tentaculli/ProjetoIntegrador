@@ -17,14 +17,15 @@
   <body>
     <div id="conteiner">
       <header>
-        <!-- BOTÃO SAIR (ESQUERDA) -->
+        <!-- BOTÃO SAIR -->
         <button class="btn-sair" onclick="fazerLogout()">Sair</button>
 
-        <!-- BOTÕES DE AÇÃO (DIREITA) -->
+        <!-- BOTÕES DE AÇÃO -->
         <div class="header-actions">
             <button class="compra" onclick="finalizarCompra()">
               Finalizar Compra
             </button>
+            <!-- Link corrigido para a pasta orders-history -->
             <button class="compra" onclick="window.location.href='../orders-history/orders-history.html'">
               Encomendas
             </button>
@@ -35,7 +36,7 @@
         <div class="section1">
           <div class="instrucoes-card">
             <h3>Instruções</h3>
-            <p>Arraste a peça escolhida até o pino para montar a sua encomenda, é permitido apenas uma unidade de peça por pino e são necessárias 3 peças por pino.</p>
+            <p>Arraste a peça escolhida até o pino para montar a sua encomenda. É necessário ter 3 peças para completar um pino.</p>
           </div>
         </div>
         <div class="section2"></div>
@@ -46,16 +47,10 @@
     <div id="modal-container" class="modal-container fechado">
       <div class="modal-box">
         <div id="icon-success" class="success-icon" style="display: none;">
-          <svg viewBox="0 0 52 52">
-            <circle cx="26" cy="26" r="25" />
-            <path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-          </svg>
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none"/><path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
         </div>
         <div id="icon-error" class="error-icon" style="display: none;">
-          <svg viewBox="0 0 52 52">
-            <circle cx="26" cy="26" r="25" />
-            <path fill="none" d="M16 16 36 36 M36 16 16 36" />
-          </svg>
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none"/><path fill="none" d="M16 16 36 36 M36 16 16 36"/></svg>
         </div>
         <h2 id="modal-titulo">Título</h2>
         <p id="modal-mensagem">Mensagem aqui...</p>

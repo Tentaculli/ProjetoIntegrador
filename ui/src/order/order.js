@@ -101,9 +101,11 @@ function init() {
   document.addEventListener("mousemove", aoMoverMouse);
   document.addEventListener("mouseup", aoSoltarMouse);
 
+  // Exportar globais
   window.limparPino = limparPino;
   window.finalizarCompra = finalizarCompra;
   window.fecharModal = fecharModal;
+  window.fazerLogout = fazerLogout;
 }
 
 // ============================================================================
@@ -111,40 +113,24 @@ function init() {
 // ============================================================================
 function criarPino(x, z, id) {
   const grupo = new THREE.Group();
+  const materialPino = new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.6, roughness: 0.2 });
+  const materialBorda = new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.5, transparent: true });
 
-  const materialPino = new THREE.MeshStandardMaterial({
-    color: 0xC0C0C0, // Prata
-  });
-
-  const materialBorda = new THREE.LineBasicMaterial({
-    color: 0x000000,
-    opacity: 0.5,
-    transparent: true
-  });
-
-  // Base
   const geoBase = new THREE.CylinderGeometry(4.0, 4.0, 1.2, 64);
   const base = new THREE.Mesh(geoBase, materialPino);
   base.position.y = 0.4;
-  
-  const bordaBase = new THREE.LineSegments(new THREE.EdgesGeometry(geoBase, 30), materialBorda);
-  base.add(bordaBase);
+  base.add(new THREE.LineSegments(new THREE.EdgesGeometry(geoBase, 30), materialBorda));
   grupo.add(base);
 
-  // Haste
   const geoHaste = new THREE.CylinderGeometry(RAIO_PINO, RAIO_PINO, ALTURA_PINO, 64);
   const haste = new THREE.Mesh(geoHaste, materialPino);
   haste.position.y = ALTURA_PINO / 2 + 0.4;
-
-  const bordaHaste = new THREE.LineSegments(new THREE.EdgesGeometry(geoHaste, 30), materialBorda);
-  haste.add(bordaHaste);
+  haste.add(new THREE.LineSegments(new THREE.EdgesGeometry(geoHaste, 30), materialBorda));
   grupo.add(haste);
 
-  // Anel de Junção (Contorno onde a haste encontra a base)
   const geoJuncao = new THREE.CircleGeometry(RAIO_PINO, 64);
   const anelJuncao = new THREE.LineSegments(new THREE.EdgesGeometry(geoJuncao), materialBorda);
-  anelJuncao.rotation.x = -Math.PI / 2;
-  anelJuncao.position.y = 1.01;
+  anelJuncao.rotation.x = -Math.PI / 2; anelJuncao.position.y = 1.01;
   grupo.add(anelJuncao);
 
   grupo.position.set(x, 0, z);
@@ -183,9 +169,7 @@ function criarMalhaPeca(tipo, tamanho, hexCor) {
   });
 
   const malha = new THREE.Mesh(geometria, material);
-  const linhas = new THREE.LineSegments(new THREE.EdgesGeometry(geometria, 1), new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.35, transparent: true }));
-  malha.add(linhas);
-
+  malha.add(new THREE.LineSegments(new THREE.EdgesGeometry(geometria, 1), new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.35, transparent: true })));
   return malha;
 }
 
@@ -271,21 +255,20 @@ function aoSoltarMouse() {
   pecaSelecionada = null;
 }
 
-// ---- VALIDAÇÃO DE PEÇA REPETIDA AO ADICIONAR ----
+// ----------------------------------------------------------------------------
+// VALIDAÇÃO 1: IMPEDIR PEÇAS REPETIDAS AO SOLTAR
+// ----------------------------------------------------------------------------
 function adicionarAoPino(grupo, pino) {
-  // Regra 1: Máximo de 3 peças por pino
   if (pino.itens.length >= 3) return false;
 
-  // Regra 2: Verificar duplicidade
   const tipoDaPecaNova = grupo.userData.idTipo;
   const jaExisteNoPino = pino.itens.some(item => item.userData.idTipo === tipoDaPecaNova);
 
   if (jaExisteNoPino) {
     mostrarModal("Peça repetida! Você só pode colocar uma peça de cada tipo por pino.", "erro");
-    return false; // Retorna false para a peça ser deletada
+    return false;
   }
 
-  // Se passou pelas regras, adiciona a peça
   const alturaUnitaria = ESPESSURA_PECA + TAMANHO_CHANFRO * 2;
   grupo.position.set(pino.posicao.x, 1.2 + pino.itens.length * alturaUnitaria + alturaUnitaria / 2, pino.posicao.z);
   grupo.userData.pinoAtual = pino.id;
@@ -322,47 +305,99 @@ function limparPino(id) {
   if (pino) { [...pino.itens].forEach((obj) => deletarObjeto(obj)); pino.itens = []; }
 }
 
-<<<<<<< HEAD
 // ============================================================================
-// 6. FINALIZAÇÃO E MODAL (COM VALIDAÇÃO DE PINO INCOMPLETO)
+// 6. FINALIZAÇÃO E MODAL (Com validação de regras)
 // ============================================================================
 
-function finalizarCompra() {
+async function finalizarCompra() {
   const qtdPino1 = listaPinos[0].itens.length;
   const qtdPino2 = listaPinos[1].itens.length;
 
-  // 1. Verificar se tudo está vazio
+  // Validação: Pelo menos um pino deve ter peças
   if (qtdPino1 === 0 && qtdPino2 === 0) {
     mostrarModal("Nenhuma peça selecionada! Monte pelo menos um pino completo.", "erro");
-    return null;
+    return;
   }
 
-  // 2. Verificar se o Pino 1 está incompleto (Tem peças, mas não são 3)
-  if (qtdPino1 > 0 && qtdPino1 < 3) {
+  // Validação: Pino não pode estar incompleto (1 ou 2 peças)
+  if ((qtdPino1 > 0 && qtdPino1 < 3)) {
     mostrarModal("O pino da esquerda está incompleto! Ele precisa ter 3 peças ou ficar vazio.", "erro");
-    return null;
+    return;
   }
-
-  // 3. Verificar se o Pino 2 está incompleto (Tem peças, mas não são 3)
-  if (qtdPino2 > 0 && qtdPino2 < 3) {
+  
+  if ((qtdPino2 > 0 && qtdPino2 < 3)) {
     mostrarModal("O pino da direita está incompleto! Ele precisa ter 3 peças ou ficar vazio.", "erro");
-    return null;
+    return;
   }
 
-  // 4. Se passou das validações, processa a compra
-  let vetorResultado = [0, 0, 0, 0, 0, 0];
-  listaPinos[0].itens.forEach((item, i) => { if (i < 3) vetorResultado[i] = item.userData.idTipo; });
-  listaPinos[1].itens.forEach((item, i) => { if (i < 3) vetorResultado[i + 3] = item.userData.idTipo; });
+  // Preparar os dados (Vetor de 6 posições)
+  let vetorNumerico = [0, 0, 0, 0, 0, 0];
+  listaPinos[0].itens.forEach((item, i) => { if (i < 3) vetorNumerico[i] = item.userData.idTipo; });
+  listaPinos[1].itens.forEach((item, i) => { if (i < 3) vetorNumerico[i + 3] = item.userData.idTipo; });
+
+  // Verificar autenticação
+  const clientData = localStorage.getItem('currentClient');
+  if (!clientData) {
+    mostrarModal('Você precisa estar logado para fazer um pedido.<br><br><a href="../login/login.html" style="color:#a970ff; font-weight:bold;">Ir para Login</a>', 'erro');
+    return;
+  }
   
-  console.log("Vetor Final:", vetorResultado);
-  
-  // Modal de sucesso
-  mostrarModal("Sua configuração foi salva e enviada para o carrinho.", "sucesso");
-  return vetorResultado;
+  let client;
+  try {
+      client = JSON.parse(clientData);
+  } catch (e) {
+      mostrarModal('Erro nos dados do usuário. Faça login novamente.', 'erro');
+      return;
+  }
+
+  // Objeto do pedido para a API
+  // AQUI É ONDE O JSON É MONTADO
+  const orderData = {
+    // Atenção: Use camelCase se o backend aceitar, mas alguns backends C# preferem PascalCase se não configurado
+    pin1Pos1: vetorNumerico[0], 
+    pin1Pos2: vetorNumerico[1], 
+    pin1Pos3: vetorNumerico[2],
+    pin2Pos1: vetorNumerico[3], 
+    pin2Pos2: vetorNumerico[4], 
+    pin2Pos3: vetorNumerico[5],
+    clientId: client.id, 
+    status: 1 // 1 = Waiting
+  };
+
+  console.log("Enviando Payload:", orderData);
+
+  try {
+    mostrarModal('⏳ Processando pedido...', 'sucesso');
+    
+    // Chama a API
+    const response = await api.createOrder(orderData);
+    
+    // Sucesso: Limpa os pinos
+    limparPino(0);
+    limparPino(1);
+    
+    // Verifica se response tem ID, senão usa texto genérico
+    const pedidoId = (response && response.id) ? response.id : "Novo";
+    mostrarModal(`✅ Pedido #${pedidoId} criado com sucesso!`, 'sucesso');
+    
+  } catch (error) {
+    console.error("ERRO API:", error);
+    
+    // Tratamento de erro detalhado para ajudar no debug
+    let msgErro = "Erro desconhecido";
+    
+    if (error.message) {
+        if (error.message.includes("Microsoft") || error.message.includes("Unknown column")) {
+            msgErro = "Erro interno no servidor (Banco de Dados desatualizado).<br>O Backend precisa rodar 'dotnet ef database update'.";
+        } else {
+            msgErro = error.message;
+        }
+    }
+    
+    mostrarModal(`❌ Falha ao criar pedido:<br>${msgErro}`, 'erro');
+  }
 }
 
-=======
->>>>>>> 156cc8271291f8f62aef9431c895ca3b7e166ef1
 function mostrarModal(mensagem, tipo = "sucesso") {
   const modal = document.getElementById("modal-container");
   const tituloEl = document.getElementById("modal-titulo");
@@ -372,12 +407,14 @@ function mostrarModal(mensagem, tipo = "sucesso") {
   const iconSuccess = document.getElementById("icon-success");
   const iconError = document.getElementById("icon-error");
 
-  if (!modal) return;
+  if (!modal) {
+      alert(mensagem.replace(/<br>/g, "\n"));
+      return;
+  }
 
-  msgEl.textContent = mensagem;
+  msgEl.innerHTML = mensagem;
 
   if (tipo === "erro") {
-    // Configura ERRO
     tituloEl.textContent = "Atenção";
     tituloEl.style.color = "#dc3545";
     iconSuccess.style.display = "none";
@@ -385,7 +422,6 @@ function mostrarModal(mensagem, tipo = "sucesso") {
     btnEl.classList.add("btn-erro");
     btnEl.textContent = "Corrigir";
   } else {
-    // Configura SUCESSO
     tituloEl.textContent = "Sucesso!";
     tituloEl.style.color = "#333";
     iconSuccess.style.display = "block";
@@ -402,6 +438,11 @@ function fecharModal() {
   if (modal) modal.classList.add("fechado");
 }
 
+function fazerLogout() {
+    localStorage.removeItem('currentClient');
+    window.location.href = '../login/login.html';
+}
+
 function aoRedimensionar() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -411,96 +452,4 @@ function aoRedimensionar() {
 function animar() {
   requestAnimationFrame(animar);
   renderizador.render(cena, camera);
-}
-
-// Logout Global
-window.fazerLogout = function() {
-    localStorage.removeItem('currentClient');
-    window.location.href = '../login/login.html';
-};
-
-// ============================================================================
-// 11. LÓGICA DE FINALIZAR COMPRA (CONECTADA À API)
-// ============================================================================
-
-function getLoggedClient() {
-  const saved = localStorage.getItem("loggedClient");
-  if (!saved) return null;
-
-  try {
-    return JSON.parse(saved);
-  } catch {
-    return null;
-  }
-}
-
-async function finalizarCompra() {
-  let vetorResultado = [0, 0, 0, 0, 0, 0];
-
-  // Pino 1 (índices 0-2)
-  listaPinos[0].itens.forEach((item, i) => {
-    if (i < 3) vetorResultado[i] = item.userData.idTipo;
-  });
-
-  // Pino 2 (índices 3-5)
-  listaPinos[1].itens.forEach((item, i) => {
-    if (i < 3) vetorResultado[i + 3] = item.userData.idTipo;
-  });
-
-  // Validação: Pino 1 deve estar completo
-  if (vetorResultado[0] === 0 || vetorResultado[1] === 0 || vetorResultado[2] === 0) {
-    mostrarModal('❌ Erro!<br><br>O primeiro pino deve estar completamente preenchido com 3 peças.');
-    return;
-  }
-
-  // Pegar o cliente logado
-  const clientData = localStorage.getItem('currentClient');
-  if (!clientData) {
-    mostrarModal('❌ Erro!<br><br>Você precisa estar logado para fazer um pedido.<br><br><a href="../login/login.html" style="color: #a970ff;">Clique aqui para fazer login</a>');
-    return;
-  }
-
-  const client = JSON.parse(clientData);
-
-  // Preparar dados do pedido conforme o modelo Order
-  const orderData = {
-    pin1Pos1: vetorResultado[0],
-    pin1Pos2: vetorResultado[1],
-    pin1Pos3: vetorResultado[2],
-    pin2Pos1: vetorResultado[3],
-    pin2Pos2: vetorResultado[4],
-    pin2Pos3: vetorResultado[5],
-    clientId: client.id,
-    status: 1 // 1 = Waiting (StatusType.Waiting)
-  };
-
-  console.log("Enviando pedido:", orderData);
-
-  try {
-    // Mostrar mensagem de carregamento
-    mostrarModal('⏳ Processando seu pedido...');
-    
-    // Chamar a API
-    const response = await api.createOrder(orderData);
-    
-    console.log("Pedido criado com sucesso:", response);
-    
-    // Limpar os pinos após sucesso
-    limparPino(0);
-    limparPino(1);
-    
-    // Mostrar mensagem de sucesso
-    mostrarModal(`
-      ✅ Pedido realizado com sucesso!<br><br>
-      <strong>Número do Pedido:</strong> #${response.id}<br>
-      <strong>Status:</strong> Aguardando produção<br><br>
-      Você pode acompanhar seu pedido na área de encomendas.
-    `);
-    
-  } catch (error) {
-    console.error("Erro ao criar pedido:", error);
-    mostrarModal(`❌ Erro ao criar pedido!<br><br>${error.message}`);
-  }
-
-  return vetorResultado;
 }

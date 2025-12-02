@@ -74,7 +74,7 @@
         </div>
     </section>
     
-    <!-- TELA DE DASHBOARD -->
+    <!-- TELA DE DASHBOARD (Que aparece após o login) -->
     <div id="dashboard-screen" class="main-app-screen">
         <header class="dashboard-header">
             <img src="../../imagens/TENTACULLI.png" alt="Logo Tentaculli" class="header-logo">
@@ -82,19 +82,23 @@
         <div class="dashboard-content">
             <h2 class="welcome-message">Bem-vindo, <span id="user-email-display">usuário</span>!</h2>
             <p class="dashboard-subtitle">O que você gostaria de fazer?</p>
+            
             <div class="dashboard-actions">
-                <!-- Botão Encomendas -->
-                <button class="btn btn-primary btn-action" onclick="window.location.href='../encomendas/encomendas.html'">
-                    Encomendas
+                <!-- 
+                   AQUI ESTÁ A CORREÇÃO:
+                   O caminho agora aponta para ../orders-history/orders-history.html
+                -->
+                <button class="btn btn-primary btn-action" onclick="window.location.href='../orders-history/orders-history.html'">
+                    Histórico de Encomendas
                 </button>
                 
-                <!-- Botão Fazer Encomenda -->
                 <button
                     class="btn btn-secondary btn-action"
                     onclick="window.location.href='../order/order.html'">
-                    Fazer Encomenda
+                    Fazer Novo Pedido
                 </button>
             </div>
+            
             <a href="#" id="logout-btn" class="logout-link">Sair</a>
         </div>
     </div>

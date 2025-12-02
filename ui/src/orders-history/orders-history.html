@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Encomendas</title>
+    <!-- Link para o CSS -->
     <link rel="stylesheet" href="orders-history.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Fonte Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    
+    <!-- Fundo -->
     <div class="background-decor"></div>
+
     <div class="container">
+        <!-- Cabeçalho -->
         <header class="page-header">
             <div class="header-text">
-                <h1>Histórico de Encomendas</h1>
+                <!-- Span usado para o efeito de cor no texto -->
+                <h1>Histórico <span>de Encomendas</span></h1>
                 <p>Acompanhe o status de produção e entrega dos seus pedidos.</p>
             </div>
             
@@ -22,10 +31,13 @@
             </div>
         </header>
 
+        <!-- Lista -->
         <main id="lista-pedidos" class="orders-grid">
             <div class="loading">Carregando seus pedidos...</div>
         </main>
     </div>
+
+    <!-- Script -->
     <script type="module" src="orders-history.js"></script>
 </body>
 </html>
