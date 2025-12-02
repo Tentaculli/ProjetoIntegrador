@@ -1,0 +1,444 @@
+###########################################
+# .NET / C# (Backend API)
+###########################################
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.userprefs
+
+# Build Results
+_ReSharper*/
+*.DotSettings.user
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Entity Framework
+*.mdf
+*.ldf
+*.ndf
+
+# NuGet Packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual Studio Trace Files
+*.e2e
+
+# TeamCity
+_TeamCity*
+
+# DotCover
+*.dotCover
+
+# AxoCover
+.axoCover/*
+!.axoCover/settings.json
+
+# Coverlet
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# Visual Studio code coverage
+*.coverage
+*.coveragexml
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Web workbench (sass)
+.sass-cache/
+
+# Installshield output
+[Ee]xpress/
+
+# DocProject
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once directory
+publish/
+
+# Publish Web Output
+*.[Pp]ublish.xml
+*.azurePubxml
+*.pubxml
+*.publishproj
+
+# Microsoft Azure Web App publish settings
+PublishScripts/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Microsoft Azure Build Output
+csx/
+*.build.csdef
+
+# Microsoft Azure Emulator
+ecf/
+rcf/
+
+# Windows Store app package
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
+
+###########################################
+# Node.js / JavaScript (Frontend UI)
+###########################################
+
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Optional npm cache
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache
+.temp
+
+# Docusaurus cache
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+###########################################
+# IDEs e Editores
+###########################################
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.swp
+*.swo
+*.iml
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*~
+\#*\#
+.\#*
+
+# Emacs
+.emacs.desktop
+.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Eclipse
+.project
+.metadata
+.classpath
+.settings/
+
+###########################################
+# Sistema Operacional
+###########################################
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+###########################################
+# Banco de Dados
+###########################################
+
+# MySQL Workbench
+*.mwb.bak
+*.mwb.beforefix
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# SQL Server
+*.mdf
+*.ldf
+*.ndf
+
+###########################################
+# Arquivos de Configuração Local
+###########################################
+
+# appsettings personalizados (NÃO commitar senhas!)
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# Connection strings com credenciais
+**/appsettings.Production.json
+**/appsettings.Staging.json
+**/appsettings.Local.json
+
+###########################################
+# Logs e Temporários
+###########################################
+
+# Logs gerais
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+###########################################
+# Build e Deploy
+###########################################
+
+# Webpack
+dist/
+build/
+
+# Parcel
+.cache/
+
+###########################################
+# Testes
+###########################################
+
+# Coverage
+coverage/
+*.lcov
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+###########################################
+# Específico do Projeto
+###########################################
+
+# Three.js cache (se houver)
+.three-cache/
+
+# Arquivos de backup
+*.bak
+*.backup
+*.old
+
+# Arquivos grandes
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Certificados e chaves
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+
+# Secrets
+secrets.json
+.secrets/
+
+###########################################
+# Git
+###########################################
+
+# Git attributes
+.gitattributes
