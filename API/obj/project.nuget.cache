@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dwSiM4Czvp8=",
+  "dgSpecHash": "/T5+Kr072Tw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\01122025\\ProjetoIntegrador\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\chmat\\OneDrive\\Desktop\\Github\\funcional\\ProjetoIntegrador\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\chmat\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\chmat\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
