@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação Tentaculli Team</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+
+    <!-- Botão de Voltar -->
+    <button class="back-to-login-btn" onclick="window.location.href='../login/login.html'" title="Voltar para Login">
+        <i class="fas fa-arrow-left"></i>
+        <span>Voltar</span>
+    </button>
+
+    <div class="background-shapes">
+        <div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div>
+        <div class="shape s4"></div><div class="shape s5"></div><div class="shape s6"></div>
+    </div>
+
+    <main class="main-container">
+        
+        <header class="hero-section glass-panel">
+            <h1 id="typing-title"></h1>
+            <p class="subtitle">Automação Inteligente e Integração Total</p>
+        </header>
+
+        <section class="team-section">
+            <h2 class="section-title">Squad Tentaculli</h2>
+            <div id="team-grid" class="team-grid">
+            </div>
+        </section>
+
+        <section class="tech-section glass-panel">
+            <h2 class="section-title-small"><i class="fas fa-toolbox"></i> Arsenal Tecnológico</h2>
+            <div class="tech-grid">
+                <div class="tech-card" data-tech="mysql">
+                    <i class="fas fa-database tech-icon"></i>
+                    <span>MySQL</span>
+                </div>
+                <div class="tech-card" data-tech="vscode">
+                    <i class="fas fa-code tech-icon"></i>
+                    <span>VS Code</span>
+                </div>
+                <div class="tech-card" data-tech="nodered">
+                    <i class="fab fa-node-js tech-icon"></i>
+                    <span>Node-RED</span>
+                </div>
+                <div class="tech-card" data-tech="csharp">
+                    <i class="fab fa-microsoft tech-icon"></i>
+                    <span>C# / .NET</span>
+                </div>
+                <div class="tech-card" data-tech="omron">
+                    <i class="fas fa-industry tech-icon"></i>
+                    <span>Omron Auto.</span>
+                </div>
+                <div class="tech-card" data-tech="tia">
+                    <i class="fas fa-microchip tech-icon"></i>
+                    <span>TIA Portal</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="project-details glass-panel">
+            <h2 class="section-title-small">Sobre o Ecossistema</h2>
+            <div class="text-content-highlight">
+                <p>
+                    O Projeto Tentaculli é uma solução <strong>Full Stack & IoT</strong> projetada para preencher a lacuna entre o chão de fábrica e a gestão administrativa. 
+                    Nossa arquitetura permite que pedidos realizados via web sejam traduzidos instantaneamente em comandos físicos para maquinário industrial.
+                </p>
+                <p style="margin-top: 1rem;">
+                    Utilizando protocolos de comunicação robustos, garantimos integridade de dados, monitoramento em tempo real e eficiência na linha de produção automatizada.
+                </p>
+            </div>
+        </section>
+
+        <section class="flow-section glass-panel">
+            <h2 class="section-title-small">Arquitetura do Sistema</h2>
+            
+            <div class="system-flow-container">
+                <div class="flow-node start">
+                    <i class="fas fa-globe"></i>
+                    <span>Site</span>
+                </div>
+
+                <div class="flow-arrow"><i class="fas fa-chevron-right"></i></div>
+
+                <div class="flow-node">
+                    <i class="fas fa-cloud"></i>
+                    <span>API</span>
+                </div>
+
+                <div class="flow-arrow"><i class="fas fa-chevron-right"></i></div>
+
+                <div class="flow-group-vertical">
+                    <div class="flow-node sub-node">
+                        <i class="fas fa-database"></i> MySQL
+                    </div>
+                    <div class="flow-connector-vertical"></div>
+                    <div class="flow-node sub-node">
+                        <i class="fab fa-node-js"></i> Node-RED
+                    </div>
+                </div>
+
+                <div class="flow-arrow"><i class="fas fa-chevron-right"></i></div>
+
+                <div class="flow-node">
+                    <i class="fas fa-server"></i>
+                    <span>CLP</span>
+                </div>
+
+                <div class="flow-arrow"><i class="fas fa-chevron-right"></i></div>
+
+                <div class="flow-group-vertical">
+                    <div class="flow-node sub-node action">
+                        <i class="fas fa-robot"></i> Braço Robótico
+                    </div>
+                    <div class="flow-connector-vertical"></div>
+                    <div class="flow-node sub-node action">
+                        <i class="fas fa-cogs"></i> Motor
+                    </div>
+                </div>
+
+                <div class="flow-arrow result-arrow"><i class="fas fa-equals"></i></div>
+
+                <div class="flow-node result">
+                    <i class="fas fa-box-open"></i>
+                    <span>Pedido Pronto</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery-section glass-panel">
+            <h2 class="section-title-small" style="text-align: center; border: none; margin-bottom: 2rem;">
+                <i class="fas fa-camera"></i> Bastidores em Ação
+            </h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" data-img="../../assets/images/tentaculli-foto-front.jpg">
+                    <img src="../../assets/images/tentaculli-foto-front.jpg" alt="Front-end">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item" data-img="../../assets/images/imagem.jpg">
+                    <img src="../../assets/images/imagem.jpg" alt="Back-end">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item" data-img="../../assets/images/tentaculli-robo.jpg">
+                    <img src="../../assets/images/tentaculli-robo.jpg" alt="Robô">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item" data-img="../../assets/images/imagem.jpg">
+                    <img src="../../assets/images/imagem.jpg" alt="CLP">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item" data-img="../../assets/images/tentaculli-esteira.jpg">
+                    <img src="../../assets/images/tentaculli-esteira.jpg" alt="Esteira">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item" data-img="../../assets/images/imagem.jpg">
+                    <img src="../../assets/images/imagem.jpg" alt="Apresentação">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal para Zoom de Imagem da Galeria -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content-img" id="modalImage" alt="Imagem ampliada">
+    </div>
+
+    <!-- Modal para Detalhes da Ferramenta -->
+    <div id="techModal" class="tech-modal">
+        <div class="tech-modal-content">
+            <span class="tech-modal-close">&times;</span>
+            <div class="tech-modal-header">
+                <h2 id="techModalTitle">Ferramenta</h2>
+            </div>
+            <div class="tech-modal-body">
+                <div class="tech-modal-image-wrapper">
+                    <img id="techModalImage" src="" alt="Ferramenta">
+                </div>
+                <p id="techModalDescription">Descrição da ferramenta</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Membro da Equipe -->
+    <div id="memberModal" class="member-modal">
+        <div class="member-modal-content">
+            <span class="member-modal-close">&times;</span>
+            <img id="memberModalPic" class="member-modal-pic" src="" alt="Foto do membro">
+            <h2 id="memberModalName" class="member-modal-name"></h2>
+            <p id="memberModalRole" class="member-modal-role"></p>
+            <p id="memberModalBio" class="member-modal-bio"></p>
+            <div id="memberModalSocial" class="member-modal-social">
+                <a id="memberGithub" href="#" target="_blank"><i class="fab fa-github"></i></a>
+                <a id="memberLinkedin" href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="glass-panel footer">
+        <p>Tentaculli System &copy; 2025 - Desenvolvido com 💜</p>
+    </footer>
+
+    <script src="presentation.js"></script>
+</body>
+</html>

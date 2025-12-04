@@ -1,4 +1,4 @@
-import { api } from '../services/api.js';
+import { api } from '../../services/api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toggleScreen = (screenId, show) => {
         const screen = document.getElementById(screenId);
-        if (screen) screen.classList.toggle('visible', show);
+        if (screen) {
+            screen.classList.toggle('visible', show);
+        }
     };
 
     const switchScreens = (hideId, showId) => {
@@ -58,8 +60,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const validatePassword = (password) => password.length >= 6;
     const validateName = (name) => name.trim().length >= 3;
 
-    mainLoginBtn.addEventListener('click', () => toggleScreen('login-screen', true));
-    mainSignupBtn.addEventListener('click', () => toggleScreen('signup-screen', true));
+    // CORREÇÃO: Adicionar event listeners corretos
+    if (mainLoginBtn) {
+        mainLoginBtn.addEventListener('click', () => {
+            console.log('Botão Login clicado'); // Debug
+            toggleScreen('login-screen', true);
+        });
+    }
+
+    if (mainSignupBtn) {
+        mainSignupBtn.addEventListener('click', () => {
+            console.log('Botão Cadastro clicado'); // Debug
+            toggleScreen('signup-screen', true);
+        });
+    }
 
     document.body.addEventListener('click', (event) => {
         const trigger = event.target.closest('[data-action]');
@@ -185,9 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    logoutBtn.addEventListener('click', (event) => {
-        event.preventDefault();
-        localStorage.removeItem('currentClient');
-        toggleScreen('dashboard-screen', false);
-    });
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            localStorage.removeItem('currentClient');
+            toggleScreen('dashboard-screen', false);
+        });
+    }
 });

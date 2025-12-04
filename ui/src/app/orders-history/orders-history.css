@@ -1,0 +1,596 @@
+/* ============================================================================
+   TENTACULLI - HISTÓRICO DE ENCOMENDAS
+   Design System aprimorado com gradientes e animações modernas
+   ============================================================================ */
+
+:root {
+    /* Paleta de Cores */
+    --bg-color: #0a0014;
+    --card-bg: #1a1028;
+    --card-bg-hover: #241634;
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8c8;
+    
+    --gradient-primary: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
+    --gradient-secondary: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    --gradient-dark: linear-gradient(135deg, #050014 0%, #0d012c 50%, #1a0b2e 100%);
+    
+    /* Cores das Peças */
+    --shape-square: #5a2a81;
+    --shape-circle: #b547d6;
+    --shape-hex: #0044cc;
+
+    /* Cores de Status */
+    --status-waiting: #f59e0b;
+    --status-progress: #3b82f6;
+    --status-finished: #10b981;
+    --status-canceled: #ef4444;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 40px rgba(111, 66, 193, 0.4);
+    
+    /* Outros */
+    --border-radius: 20px;
+    --border-radius-sm: 12px;
+    --transition-speed: 0.4s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: var(--gradient-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Efeito de partículas animadas no fundo */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(111, 66, 193, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(154, 46, 195, 0.1) 0%, transparent 50%);
+    animation: pulseBackground 10s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes pulseBackground {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 50px;
+    padding: 30px;
+    background: rgba(26, 16, 40, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInDown 0.8s ease-out 0.2s backwards;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Efeito de luz animado no header */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(111, 66, 193, 0.1) 50%, 
+        transparent 70%);
+    animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.header-text {
+    position: relative;
+    z-index: 1;
+}
+
+.header-text h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.header-text h1 span {
+    background: var(--gradient-secondary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(30deg); }
+}
+
+.header-text p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* Botões do Header */
+.btn-sair,
+.btn-voltar {
+    padding: 12px 28px;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+}
+
+.btn-sair::before,
+.btn-voltar::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: width 0.6s, height 0.6s;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+.btn-sair:hover::before,
+.btn-voltar:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-sair {
+    background: transparent;
+    border-color: var(--status-canceled);
+    color: var(--status-canceled);
+}
+
+.btn-sair:hover {
+    background: var(--status-canceled);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+}
+
+.btn-voltar {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+}
+
+.btn-voltar:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(111, 66, 193, 0.6);
+}
+
+/* ============================================================================
+   LISTA DE PEDIDOS
+   ============================================================================ */
+.orders-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.loading {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-top: 60px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ============================================================================
+   CARD DO PEDIDO
+   ============================================================================ */
+.order-card {
+    background: rgba(26, 16, 40, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    padding: 30px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.6s ease-out backwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Efeito de borda animada no hover */
+.order-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius);
+    padding: 2px;
+    background: var(--gradient-primary);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.order-card:hover::before {
+    opacity: 1;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    background: rgba(36, 22, 52, 0.9);
+}
+
+.order-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Linha do ID e Data */
+.order-header-line {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.order-header-line h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.date-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.order-card:hover .date-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================================
+   CONFIGURAÇÃO VISUAL DAS PEÇAS
+   ============================================================================ */
+.visual-config {
+    display: flex;
+    align-items: center;
+    background: rgba(8, 6, 15, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 12px 18px;
+    border-radius: 12px;
+    width: fit-content;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.pino-divisor {
+    width: 2px;
+    height: 28px;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    margin: 0 8px;
+}
+
+/* Formas Geométricas */
+.mini-peca {
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover .mini-peca {
+    transform: scale(1.1);
+}
+
+.mini-peca.vazio {
+    opacity: 0.15;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+/* Quadrado */
+.mini-peca.tipo-2 {
+    background: var(--shape-square);
+    border-radius: 4px;
+    box-shadow: 
+        0 0 10px rgba(90, 42, 129, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Círculo */
+.mini-peca.tipo-1 {
+    background: var(--shape-circle);
+    border-radius: 50%;
+    box-shadow: 
+        0 0 10px rgba(181, 71, 214, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Hexágono */
+.mini-peca.tipo-3 {
+    background: var(--shape-hex);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    box-shadow: 
+        0 0 10px rgba(0, 68, 204, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================================================
+   STATUS BADGE
+   ============================================================================ */
+.status-badge {
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Bolinha indicadora animada */
+.status-badge::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 12px currentColor;
+    animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+/* Cores Específicas dos Status */
+
+/* Aguardando */
+.status-badge.produzindo {
+    color: var(--status-waiting);
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.order-card:hover .status-badge.produzindo {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: rgba(245, 158, 11, 0.15);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+}
+
+/* Em Trânsito */
+.status-badge.entregando {
+    color: var(--status-progress);
+    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.order-card:hover .status-badge.entregando {
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.15);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* Entregue */
+.status-badge.entregue {
+    color: var(--status-finished);
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.order-card:hover .status-badge.entregue {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.15);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Cancelado */
+.status-badge.cancelado {
+    color: var(--status-canceled);
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.order-card:hover .status-badge.cancelado {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.15);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* ============================================================================
+   ESTADOS VAZIOS
+   ============================================================================ */
+.orders-grid > div[style*="text-align:center"] {
+    background: rgba(26, 16, 40, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    padding: 60px 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ============================================================================
+   RESPONSIVIDADE
+   ============================================================================ */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 25px;
+        padding: 25px;
+    }
+
+    .header-text h1 {
+        font-size: 2rem;
+    }
+
+    .header-text p {
+        font-size: 1rem;
+    }
+
+    .btn-sair,
+    .btn-voltar {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .orders-grid {
+        gap: 20px;
+    }
+
+    .order-card {
+        padding: 25px 30px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .status-badge {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

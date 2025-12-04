@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { api } from "../services/api.js";
+import { api } from "../../services/api.js";
 
 // ============================================================================
 // 1. VARIÁVEIS GLOBAIS
@@ -106,6 +106,28 @@ function init() {
   window.finalizarCompra = finalizarCompra;
   window.fecharModal = fecharModal;
   window.fazerLogout = fazerLogout;
+
+  // CONTROLE DO TOOLTIP
+  const helpTrigger = document.getElementById('help-trigger');
+  const helpTooltip = document.getElementById('help-tooltip');
+  const helpClose = document.getElementById('help-close');
+
+  if (helpTrigger && helpTooltip && helpClose) {
+    helpTrigger.addEventListener('click', () => {
+      helpTooltip.classList.toggle('active');
+    });
+
+    helpClose.addEventListener('click', () => {
+      helpTooltip.classList.remove('active');
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', (e) => {
+      if (!helpTooltip.contains(e.target) && !helpTrigger.contains(e.target)) {
+        helpTooltip.classList.remove('active');
+      }
+    });
+  }
 }
 
 // ============================================================================
@@ -367,7 +389,7 @@ async function finalizarCompra() {
   console.log("Enviando Payload:", orderData);
 
   try {
-    mostrarModal('⏳ Processando pedido...', 'sucesso');
+    mostrarModal('⏳ Processando pedido...', 'loading');
     
     // Chama a API
     const response = await api.createOrder(orderData);
@@ -400,36 +422,118 @@ async function finalizarCompra() {
 
 function mostrarModal(mensagem, tipo = "sucesso") {
   const modal = document.getElementById("modal-container");
-  const tituloEl = document.getElementById("modal-titulo");
-  const msgEl = document.getElementById("modal-mensagem");
-  const btnEl = document.getElementById("modal-btn");
   
-  const iconSuccess = document.getElementById("icon-success");
-  const iconError = document.getElementById("icon-error");
-
   if (!modal) {
       alert(mensagem.replace(/<br>/g, "\n"));
       return;
   }
 
-  msgEl.innerHTML = mensagem;
+  // Limpar conteúdo anterior
+  modal.innerHTML = '';
+
+  // Criar estrutura do modal
+  const modalBox = document.createElement('div');
+  modalBox.className = 'modal-box';
+
+  // Header com ícone
+  const modalHeader = document.createElement('div');
+  modalHeader.className = 'modal-header';
+
+  const iconWrapper = document.createElement('div');
+  iconWrapper.className = 'modal-icon-wrapper';
+
+  const iconBg = document.createElement('div');
+  iconBg.className = 'modal-icon-bg';
+
+  let iconSVG = '';
+  let titulo = '';
+  let btnClass = '';
+  let btnText = 'Continuar';
 
   if (tipo === "erro") {
-    tituloEl.textContent = "Atenção";
-    tituloEl.style.color = "#dc3545";
-    iconSuccess.style.display = "none";
-    iconError.style.display = "block";
-    btnEl.classList.add("btn-erro");
-    btnEl.textContent = "Corrigir";
+    iconBg.classList.add('error');
+    iconSVG = `
+      <svg viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="25"/>
+        <path d="M16 16 L36 36 M36 16 L16 36"/>
+      </svg>
+    `;
+    titulo = 'Ops! Algo deu errado';
+    btnClass = 'btn-erro';
+    btnText = 'Entendi';
+  } else if (tipo === "loading") {
+    iconBg.classList.add('loading');
+    iconSVG = `
+      <svg viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="20" stroke-dasharray="31.4 31.4"/>
+      </svg>
+    `;
+    titulo = 'Processando...';
+    btnClass = '';
+    btnText = 'Aguarde';
+  } else if (tipo === "warning") {
+    iconBg.classList.add('warning');
+    iconSVG = `
+      <svg viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="25"/>
+        <path d="M26 14 L26 28 M26 34 L26 35"/>
+      </svg>
+    `;
+    titulo = 'Atenção!';
+    btnClass = '';
+    btnText = 'OK';
   } else {
-    tituloEl.textContent = "Sucesso!";
-    tituloEl.style.color = "#333";
-    iconSuccess.style.display = "block";
-    iconError.style.display = "none";
-    btnEl.classList.remove("btn-erro");
-    btnEl.textContent = "Continuar";
+    iconBg.classList.add('success');
+    iconSVG = `
+      <svg viewBox="0 0 52 52">
+        <circle cx="26" cy="26" r="25"/>
+        <path d="M14 27 L22 35 L38 17"/>
+      </svg>
+    `;
+    titulo = 'Tudo certo!';
+    btnClass = 'btn-success';
+    btnText = 'Continuar';
   }
 
+  iconBg.innerHTML = iconSVG;
+  iconWrapper.appendChild(iconBg);
+  modalHeader.appendChild(iconWrapper);
+
+  // Body com título e mensagem
+  const modalBody = document.createElement('div');
+  modalBody.className = 'modal-body';
+
+  const h2 = document.createElement('h2');
+  h2.textContent = titulo;
+  if (tipo === "erro") h2.classList.add('error-title');
+  else if (tipo === "sucesso") h2.classList.add('success-title');
+  else if (tipo === "warning") h2.classList.add('warning-title');
+
+  const p = document.createElement('p');
+  p.innerHTML = mensagem;
+
+  const btn = document.createElement('button');
+  btn.textContent = btnText;
+  btn.className = btnClass;
+  btn.onclick = fecharModal;
+  
+  // Se for loading, desabilita o botão
+  if (tipo === "loading") {
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'not-allowed';
+  }
+
+  modalBody.appendChild(h2);
+  modalBody.appendChild(p);
+  modalBody.appendChild(btn);
+
+  // Montar modal
+  modalBox.appendChild(modalHeader);
+  modalBox.appendChild(modalBody);
+  modal.appendChild(modalBox);
+
+  // Mostrar modal
   modal.classList.remove("fechado");
 }
 

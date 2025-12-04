@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configurador 3D</title>
+    <link rel="stylesheet" href="order.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- LOGO FLUTUANTE -->
+    <div class="floating-logo">
+      <img src="../../assets/images/logo.png" alt="Tentaculli Logo">
+    </div>
+
+    <!-- BOTÃO DE AJUDA - CANTO INFERIOR ESQUERDO (SEM LABEL) -->
+    <div class="help-control">
+      <button class="control-btn btn-help btn-icon-only" id="help-trigger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- BOTÕES PRINCIPAIS - CANTO SUPERIOR DIREITO -->
+    <div class="main-controls">
+      <button class="control-btn btn-checkout" onclick="finalizarCompra()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span class="btn-label">Finalizar</span>
+      </button>
+
+      <button class="control-btn btn-history" onclick="window.location.href='../orders-history/orders-history.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+          <path d="M12 7v5l4 2"/>
+        </svg>
+        <span class="btn-label">Histórico</span>
+      </button>
+
+      <button class="control-btn btn-logout btn-icon-only" onclick="fazerLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- TOOLTIP DE INSTRUÇÕES -->
+    <div id="help-tooltip" class="help-tooltip">
+      <div class="tooltip-header">
+        <h3>Como usar</h3>
+        <button class="tooltip-close" id="help-close">×</button>
+      </div>
+      <div class="tooltip-content">
+        <div class="instruction-step">
+          <div class="step-icon">1</div>
+          <p>Arraste as peças da vitrine para os pinos</p>
+        </div>
+        <div class="instruction-step">
+          <div class="step-icon">2</div>
+          <p>Cada pino precisa de 3 peças diferentes</p>
+        </div>
+        <div class="instruction-step">
+          <div class="step-icon">3</div>
+          <p>Finalize o pedido quando estiver pronto</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- MODAL -->
+    <div id="modal-container" class="modal-container fechado">
+      <div class="modal-box">
+        <div id="icon-success" class="success-icon" style="display: none;">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none"/><path fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+        </div>
+        <div id="icon-error" class="error-icon" style="display: none;">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="25" fill="none"/><path fill="none" d="M16 16 36 36 M36 16 16 36"/></svg>
+        </div>
+        <h2 id="modal-titulo">Título</h2>
+        <p id="modal-mensagem">Mensagem aqui...</p>
+        <button id="modal-btn" onclick="fecharModal()">Continuar</button>
+      </div>
+    </div>
+
+    <script type="module" src="order.js"></script>
+  </body>
+</html>
