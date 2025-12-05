@@ -213,16 +213,16 @@ window.mostrarConfirmacaoCancelamento = function(orderId) {
 
     const btnContainer = document.createElement('div');
     btnContainer.className = 'modal-buttons-row';
-
-    const btnNao = document.createElement('button');
-    btnNao.textContent = 'Não, Manter';
-    btnNao.className = 'btn-secondary-modal';
-    btnNao.onclick = fecharModalDark;
-
+    
     const btnSim = document.createElement('button');
-    btnSim.textContent = 'Sim, Cancelar';
+    btnSim.textContent = 'Cancelar';
     btnSim.className = 'btn-danger-modal';
     btnSim.onclick = () => confirmarCancelamentoPedido(orderId);
+    
+    const btnNao = document.createElement('button');
+    btnNao.textContent = 'Manter';
+    btnNao.className = 'btn-secondary-modal';
+    btnNao.onclick = fecharModalDark;
 
     btnContainer.appendChild(btnNao);
     btnContainer.appendChild(btnSim);
@@ -241,7 +241,7 @@ window.mostrarConfirmacaoCancelamento = function(orderId) {
 async function confirmarCancelamentoPedido(orderId) {
     try {
         // Mostrar loading
-        mostrarModalDark('⏳ Cancelando pedido...', 'loading');
+        mostrarModalDark('Cancelando pedido...', 'loading');
 
         // Buscar o pedido atualizado
         const response = await fetch(`http://localhost:5150/api/Order/${orderId}`);

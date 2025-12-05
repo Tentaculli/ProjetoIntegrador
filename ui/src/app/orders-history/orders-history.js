@@ -400,10 +400,96 @@ async function confirmarCancelamentoPedido(orderId) {
 // ============================================================================
 window.cancelarPedido = async function(orderId) {
     try {
-        // 1. Mostrar modal de loading
+        // 1. Mostrar modal de confirmação PRIMEIRO
+        mostrarModalConfirmacao(orderId);
+    } catch (error) {
+        console.error('Erro ao preparar cancelamento:', error);
+        mostrarModalDark(
+            `❌ Erro inesperado:<br>${error.message}`,
+            'erro'
+        );
+    }
+};
+
+// Nova função para modal de confirmação
+function mostrarModalConfirmacao(orderId) {
+    const modal = document.getElementById("modal-container-dark");
+    
+    if (!modal) {
+        console.error("Modal não encontrado!");
+        return;
+    }
+
+    modal.innerHTML = '';
+
+    const modalBox = document.createElement('div');
+    modalBox.className = 'modal-box-dark';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header-dark';
+
+    const iconWrapper = document.createElement('div');
+    iconWrapper.className = 'modal-icon-wrapper-dark';
+
+    const iconBg = document.createElement('div');
+    iconBg.className = 'modal-icon-bg-dark warning';
+    iconBg.innerHTML = `
+        <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25"/>
+            <path d="M26 14 L26 28 M26 34 L26 35"/>
+        </svg>
+    `;
+
+    iconWrapper.appendChild(iconBg);
+    modalHeader.appendChild(iconWrapper);
+
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body-dark';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = 'Confirmar Cancelamento';
+    h2.classList.add('warning-title');
+
+    const p = document.createElement('p');
+    p.innerHTML = `Tem certeza que deseja cancelar o pedido <strong>#${orderId}</strong>?<br><br>Esta ação não pode ser desfeita.`;
+
+    // Container de botões
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display: flex; gap: 15px; justify-content: center; margin-top: 1.5rem;';
+
+    // Botão MANTER (primário/destaque)
+    const btnManter = document.createElement('button');
+    btnManter.textContent = 'Manter Pedido';
+    btnManter.className = 'btn-primary-emphasis';
+    btnManter.onclick = fecharModalDark;
+
+    // Botão CANCELAR (secundário/discreto)
+    const btnCancelar = document.createElement('button');
+    btnCancelar.textContent = 'Cancelar Pedido';
+    btnCancelar.className = 'btn-secondary-subtle';
+    btnCancelar.onclick = () => confirmarCancelamento(orderId);
+
+    btnContainer.appendChild(btnManter);
+    btnContainer.appendChild(btnCancelar);
+
+    modalBody.appendChild(h2);
+    modalBody.appendChild(p);
+    modalBody.appendChild(btnContainer);
+
+    modalBox.appendChild(modalHeader);
+    modalBox.appendChild(modalBody);
+    modal.appendChild(modalBox);
+
+    modal.classList.remove("fechado");
+}
+
+// Função que realmente executa o cancelamento após confirmação
+async function confirmarCancelamento(orderId) {
+    try {
+        // 2. Mostrar modal de loading
         mostrarModalDark('⏳ Verificando status do pedido...', 'loading');
 
-        // 2. Buscar o pedido atualizado antes de cancelar
+        // 3. Buscar o pedido atualizado antes de cancelar
         const response = await fetch(`http://localhost:5150/api/Order/${orderId}`);
         
         if (!response.ok) {
@@ -412,7 +498,7 @@ window.cancelarPedido = async function(orderId) {
 
         const pedidoAtual = await response.json();
 
-        // 3. Verificar se ainda está em "Waiting"
+        // 4. Verificar se ainda está em "Waiting"
         if (pedidoAtual.status !== 1 && pedidoAtual.status !== "Waiting") {
             mostrarModalDark(
                 '⚠️ Este pedido não pode mais ser cancelado.<br>O status foi alterado para: <strong>' + 
@@ -422,7 +508,7 @@ window.cancelarPedido = async function(orderId) {
             return;
         }
 
-        // 4. Se ainda está Waiting, pode cancelar
+        // 5. Se ainda está Waiting, pode cancelar
         mostrarModalDark('⏳ Cancelando pedido...', 'loading');
 
         const cancelResponse = await fetch(`http://localhost:5150/api/Order/${orderId}/status`, {
@@ -438,7 +524,7 @@ window.cancelarPedido = async function(orderId) {
             throw new Error(errorData.Message || errorData.message || 'Falha ao cancelar o pedido.');
         }
 
-        // 5. Sucesso - atualizar a página
+        // 6. Sucesso - atualizar a página
         mostrarModalDark(`✅ Pedido #${orderId} cancelado com sucesso!`, 'sucesso');
         
         // Recarregar a lista após 2 segundos
@@ -454,7 +540,7 @@ window.cancelarPedido = async function(orderId) {
             'erro'
         );
     }
-};
+}
 
 // Função auxiliar para mapear status para texto legível
 function mapearStatusParaTexto(status) {
