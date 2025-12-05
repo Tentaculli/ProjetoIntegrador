@@ -400,7 +400,7 @@ async function finalizarCompra() {
     
     // Verifica se response tem ID, senão usa texto genérico
     const pedidoId = (response && response.id) ? response.id : "Novo";
-    mostrarModal(`✅ Pedido #${pedidoId} criado com sucesso!`, 'sucesso');
+    mostrarModal(`Pedido #${pedidoId} criado com sucesso!`, 'sucesso');
     
   } catch (error) {
     console.error("ERRO API:", error);

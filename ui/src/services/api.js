@@ -97,5 +97,32 @@ export const api = {
         const orders = await response.json();
         
         return orders.filter(order => order.clientId === clientId);
+    },
+
+    async getOrderById(orderId) {
+        const response = await fetch(`${API_BASE_URL}/Order/${orderId}`);
+        
+        if (!response.ok) {
+            throw new Error('Pedido não encontrado');
+        }
+        
+        return response.json();
+    },
+
+    async updateOrderStatus(orderId, newStatus) {
+        const response = await fetch(`${API_BASE_URL}/Order/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newStatus)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.Message || error.message || 'Falha ao atualizar status do pedido');
+        }
+
+        return response.json();
     }
 };

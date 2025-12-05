@@ -42,8 +42,49 @@ async function carregarPedidos() {
             return;
         }
 
-        // Ordenar: mais recentes primeiro
-        pedidos.sort((a, b) => new Date(b.created) - new Date(a.created));
+        // ORDENAÇÃO CUSTOMIZADA COM PRIORIDADES
+        pedidos.sort((a, b) => {
+            // Função para normalizar o status
+            const normalizarStatus = (status) => {
+                if (status === 2 || status === "InProgress" || status === "inprogress") return 2; // Em Produção
+                if (status === 1 || status === "Waiting" || status === "waiting") return 1; // Aguardando
+                if (status === 3 || status === "Finished" || status === "finished") return 3; // Entregue
+                if (status === 4 || status === "Canceled" || status === "canceled") return 4; // Cancelado
+                return 5; // Desconhecido
+            };
+
+            const statusA = normalizarStatus(a.status);
+            const statusB = normalizarStatus(b.status);
+
+            // Prioridade de exibição
+            const prioridades = {
+                2: 1, // Em Produção = prioridade 1 (primeiro)
+                1: 2, // Aguardando = prioridade 2 (segundo)
+                3: 3, // Entregue = prioridade 3 (terceiro)
+                4: 4, // Cancelado = prioridade 4 (último)
+                5: 5  // Desconhecido = prioridade 5
+            };
+
+            const prioridadeA = prioridades[statusA];
+            const prioridadeB = prioridades[statusB];
+
+            // Se as prioridades forem diferentes, ordena por prioridade
+            if (prioridadeA !== prioridadeB) {
+                return prioridadeA - prioridadeB;
+            }
+
+            // Se ambos tiverem a mesma prioridade, ordena por data
+            const dataA = new Date(a.created);
+            const dataB = new Date(b.created);
+
+            // Para "Aguardando", do mais ANTIGO para o mais RECENTE
+            if (statusA === 1 && statusB === 1) {
+                return dataA - dataB; // Crescente (mais antigo primeiro)
+            }
+
+            // Para os outros status, do mais RECENTE para o mais ANTIGO
+            return dataB - dataA; // Decrescente (mais recente primeiro)
+        });
 
         pedidos.forEach(pedido => {
             const cardHTML = criarCardHTML(pedido);
@@ -109,7 +150,13 @@ function criarCardHTML(pedido) {
     const dataObj = new Date(pedido.created);
     const dataFormatada = dataObj.toLocaleDateString('pt-BR');
 
-    // 4. Retornar HTML Estruturado
+    // 4. Verificar se pode cancelar (apenas status Waiting)
+    const podeCancel = (status === 1 || status === "Waiting" || status === "waiting");
+    const btnCancel = podeCancel 
+        ? `<button class="btn-cancel-order" onclick="cancelarPedido(${pedido.id})">Cancelar Pedido</button>` 
+        : '';
+
+    // 5. Retornar HTML Estruturado
     return `
         <div class="order-card">
             <div class="order-left">
@@ -117,12 +164,14 @@ function criarCardHTML(pedido) {
                     <h3>Pedido #${pedido.id}</h3>
                     <span class="date-badge">${dataFormatada}</span>
                 </div>
-                
+
                 <div class="visual-config">
                     ${htmlPino1}
                     <div class="pino-divisor"></div>
                     ${htmlPino2}
                 </div>
+
+                ${btnCancel}
             </div>
 
             <div class="status-badge ${statusClass}">
@@ -131,3 +180,191 @@ function criarCardHTML(pedido) {
         </div>
     `;
 }
+
+// ============================================================================
+// FUNÇÃO DE CANCELAMENTO COM VALIDAÇÃO
+// ============================================================================
+window.cancelarPedido = async function(orderId) {
+    try {
+        // 1. Mostrar modal de loading
+        mostrarModalDark('⏳ Verificando status do pedido...', 'loading');
+
+        // 2. Buscar o pedido atualizado antes de cancelar
+        const response = await fetch(`http://localhost:5150/api/Order/${orderId}`);
+        
+        if (!response.ok) {
+            throw new Error('Não foi possível verificar o status do pedido.');
+        }
+
+        const pedidoAtual = await response.json();
+
+        // 3. Verificar se ainda está em "Waiting"
+        if (pedidoAtual.status !== 1 && pedidoAtual.status !== "Waiting") {
+            mostrarModalDark(
+                '⚠️ Este pedido não pode mais ser cancelado.<br>O status foi alterado para: <strong>' + 
+                mapearStatusParaTexto(pedidoAtual.status) + '</strong>',
+                'warning'
+            );
+            return;
+        }
+
+        // 4. Se ainda está Waiting, pode cancelar
+        mostrarModalDark('⏳ Cancelando pedido...', 'loading');
+
+        const cancelResponse = await fetch(`http://localhost:5150/api/Order/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(4) // 4 = Canceled
+        });
+
+        if (!cancelResponse.ok) {
+            const errorData = await cancelResponse.json();
+            throw new Error(errorData.Message || errorData.message || 'Falha ao cancelar o pedido.');
+        }
+
+        // 5. Sucesso - atualizar a página
+        mostrarModalDark(`✅ Pedido #${orderId} cancelado com sucesso!`, 'sucesso');
+        
+        // Recarregar a lista após 2 segundos
+        setTimeout(() => {
+            fecharModalDark();
+            carregarPedidos();
+        }, 2000);
+
+    } catch (error) {
+        console.error('Erro ao cancelar pedido:', error);
+        mostrarModalDark(
+            `❌ Erro ao cancelar pedido:<br>${error.message}`,
+            'erro'
+        );
+    }
+};
+
+// Função auxiliar para mapear status para texto legível
+function mapearStatusParaTexto(status) {
+    if (status === 1 || status === "Waiting") return "Aguardando";
+    if (status === 2 || status === "InProgress") return "Em Produção";
+    if (status === 3 || status === "Finished") return "Entregue";
+    if (status === 4 || status === "Canceled") return "Cancelado";
+    return "Desconhecido";
+}   
+
+// ============================================================================
+// SISTEMA DE MODAL DARK
+// ============================================================================
+function mostrarModalDark(mensagem, tipo = "sucesso") {
+    const modal = document.getElementById("modal-container-dark");
+    
+    if (!modal) {
+        console.error("Modal não encontrado!");
+        return;
+    }
+
+    modal.innerHTML = '';
+
+    const modalBox = document.createElement('div');
+    modalBox.className = 'modal-box-dark';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header-dark';
+
+    const iconWrapper = document.createElement('div');
+    iconWrapper.className = 'modal-icon-wrapper-dark';
+
+    const iconBg = document.createElement('div');
+    iconBg.className = 'modal-icon-bg-dark';
+
+    let iconSVG = '';
+    let titulo = '';
+    let btnClass = '';
+    let btnText = 'Continuar';
+    let mostrarBotao = true;
+
+    if (tipo === "erro") {
+        iconBg.classList.add('error');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M16 16 L36 36 M36 16 L16 36"/>
+            </svg>
+        `;
+        titulo = 'Ops! Algo deu errado';
+        btnClass = 'btn-erro';
+        btnText = 'Entendi';
+    } else if (tipo === "loading") {
+        iconBg.classList.add('loading');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="20"/>
+            </svg>
+        `;
+        titulo = 'Processando...';
+        mostrarBotao = false; // NÃO MOSTRAR BOTÃO NO LOADING
+    } else if (tipo === "warning") {
+        iconBg.classList.add('warning');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M26 14 L26 28 M26 34 L26 35"/>
+            </svg>
+        `;
+        titulo = 'Atenção!';
+        btnClass = '';
+        btnText = 'OK';
+    } else {
+        iconBg.classList.add('success');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M14 27 L22 35 L38 17"/>
+            </svg>
+        `;
+        titulo = 'Tudo certo!';
+        btnClass = 'btn-success';
+        btnText = 'Continuar';
+    }
+
+    iconBg.innerHTML = iconSVG;
+    iconWrapper.appendChild(iconBg);
+    modalHeader.appendChild(iconWrapper);
+
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body-dark';
+
+    const h2 = document.createElement('h2');
+    h2.textContent = titulo;
+    if (tipo === "erro") h2.classList.add('error-title');
+    else if (tipo === "sucesso") h2.classList.add('success-title');
+    else if (tipo === "warning") h2.classList.add('warning-title');
+    else if (tipo === "loading") h2.classList.add('loading-title');
+
+    const p = document.createElement('p');
+    p.innerHTML = mensagem;
+
+    modalBody.appendChild(h2);
+    modalBody.appendChild(p);
+
+    // Só adicionar botão se não for loading
+    if (mostrarBotao) {
+        const btn = document.createElement('button');
+        btn.textContent = btnText;
+        btn.className = btnClass;
+        btn.onclick = fecharModalDark;
+        modalBody.appendChild(btn);
+    }
+
+    modalBox.appendChild(modalHeader);
+    modalBox.appendChild(modalBody);
+    modal.appendChild(modalBox);
+
+    modal.classList.remove("fechado");
+}
+
+function fecharModalDark() {
+    const modal = document.getElementById("modal-container-dark");
+    if (modal) modal.classList.add("fechado");
+}
+
+window.fecharModalDark = fecharModalDark;

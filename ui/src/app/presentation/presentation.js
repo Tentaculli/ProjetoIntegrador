@@ -6,17 +6,17 @@
 const teamData = [
     {
         name: "Angelina Chaves",
-        role: "Back-end & Full Stack",
+        role: "Back-end & Full-Stack",
         img: "../../assets/images/team/angelina-chaves.jpg",
-        bio: "Orquestrando o código e garantindo que tudo funcione perfeitamente.",
+        bio: "Orquestra o código e garante que tudo funcione perfeitamente.",
         github: "https://www.github.com/angelinahc/",
         linkedin: "https://www.linkedin.com/in/angelina-chaves/"
     },
     {
         name: "Carlos Matozo",
-        role: "Frontend",
+        role: "Brand design & Front-End",
         img: "../../assets/images/team/carlos-matozo.jpg",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Alinha o design, preserva a imagem da marca e integra tudo ao front-end.",
         github: "https://www.github.com/cebolits/",
         linkedin: "https://www.linkedin.com/in/carlos-henrique-matozo-aa0276259/"
     },
@@ -47,7 +47,7 @@ const teamData = [
     {
         name: "Maria Lemes",
         role: "Automação do robô",
-        img: "../../assets/images/team/carlos-matozo.jpg",
+        img: "../../assets/images/team/maria-lemes.png",
         bio: "Transformando café em interfaces incríveis com React e CSS.",
         github: "https://www.github.com/cebolits/",
         linkedin: "https://www.linkedin.com/in/maria-lemes/"
