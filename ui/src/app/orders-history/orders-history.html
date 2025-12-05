@@ -20,7 +20,6 @@
         <!-- Cabeçalho -->
         <header class="page-header">
             <div class="header-text">
-                <!-- Span usado para o efeito de cor no texto -->
                 <h1>Histórico <span>de Encomendas</span></h1>
                 <p>Acompanhe o status de produção e entrega dos seus pedidos.</p>
             </div>
@@ -30,6 +29,27 @@
                 <button class="btn-voltar" onclick="window.location.href='../order/order.html'">Voltar para Loja</button>
             </div>
         </header>
+
+        <!-- NOVO: Controles Simplificados -->
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label for="filter-status">Filtrar por Status:</label>
+                <select id="filter-status" class="filter-select" onchange="aplicarFiltros()">
+                    <option value="todos">Todos os Status</option>
+                    <option value="1">Aguardando</option>
+                    <option value="2">Em Produção</option>
+                    <option value="3">Entregue</option>
+                    <option value="4">Cancelado</option>
+                </select>
+            </div>
+
+            <button class="btn-sort-toggle" onclick="toggleOrdenacao()" id="btn-sort" title="Ordenar por data">
+                <span class="sort-label">Data</span>
+                <svg class="sort-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M19 12l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
 
         <!-- Lista -->
         <main id="lista-pedidos" class="orders-grid">

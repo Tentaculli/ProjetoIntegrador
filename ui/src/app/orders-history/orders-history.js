@@ -10,6 +10,10 @@ window.fazerLogout = function() {
     window.location.href = '../login/login.html';
 };
 
+// Variável global para armazenar todos os pedidos e estado de ordenação
+let todosOsPedidos = [];
+let ordenacaoDescendente = true; // true = mais novo primeiro, false = mais antigo primeiro
+
 async function carregarPedidos() {
     const container = document.getElementById("lista-pedidos");
     
@@ -42,54 +46,11 @@ async function carregarPedidos() {
             return;
         }
 
-        // ORDENAÇÃO CUSTOMIZADA COM PRIORIDADES
-        pedidos.sort((a, b) => {
-            // Função para normalizar o status
-            const normalizarStatus = (status) => {
-                if (status === 2 || status === "InProgress" || status === "inprogress") return 2; // Em Produção
-                if (status === 1 || status === "Waiting" || status === "waiting") return 1; // Aguardando
-                if (status === 3 || status === "Finished" || status === "finished") return 3; // Entregue
-                if (status === 4 || status === "Canceled" || status === "canceled") return 4; // Cancelado
-                return 5; // Desconhecido
-            };
+        // Armazenar globalmente
+        todosOsPedidos = pedidos;
 
-            const statusA = normalizarStatus(a.status);
-            const statusB = normalizarStatus(b.status);
-
-            // Prioridade de exibição
-            const prioridades = {
-                2: 1, // Em Produção = prioridade 1 (primeiro)
-                1: 2, // Aguardando = prioridade 2 (segundo)
-                3: 3, // Entregue = prioridade 3 (terceiro)
-                4: 4, // Cancelado = prioridade 4 (último)
-                5: 5  // Desconhecido = prioridade 5
-            };
-
-            const prioridadeA = prioridades[statusA];
-            const prioridadeB = prioridades[statusB];
-
-            // Se as prioridades forem diferentes, ordena por prioridade
-            if (prioridadeA !== prioridadeB) {
-                return prioridadeA - prioridadeB;
-            }
-
-            // Se ambos tiverem a mesma prioridade, ordena por data
-            const dataA = new Date(a.created);
-            const dataB = new Date(b.created);
-
-            // Para "Aguardando", do mais ANTIGO para o mais RECENTE
-            if (statusA === 1 && statusB === 1) {
-                return dataA - dataB; // Crescente (mais antigo primeiro)
-            }
-
-            // Para os outros status, do mais RECENTE para o mais ANTIGO
-            return dataB - dataA; // Decrescente (mais recente primeiro)
-        });
-
-        pedidos.forEach(pedido => {
-            const cardHTML = criarCardHTML(pedido);
-            container.innerHTML += cardHTML;
-        });
+        // Exibir com ordenação padrão
+        exibirPedidos(todosOsPedidos);
         
     } catch (error) {
         console.error("Erro ao carregar pedidos:", error);
@@ -100,6 +61,93 @@ async function carregarPedidos() {
         `;
     }
 }
+
+// Função para exibir pedidos
+function exibirPedidos(pedidos) {
+    const container = document.getElementById("lista-pedidos");
+    container.innerHTML = "";
+
+    if (!pedidos || pedidos.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding: 40px; color: #777;">
+                Nenhum pedido encontrado com os filtros aplicados.
+            </div>
+        `;
+        return;
+    }
+
+    // Aplicar ordenação por data
+    const pedidosOrdenados = ordenarPorData(pedidos);
+
+    pedidosOrdenados.forEach(pedido => {
+        const cardHTML = criarCardHTML(pedido);
+        container.innerHTML += cardHTML;
+    });
+}
+
+// Função de ordenação por data
+function ordenarPorData(pedidos) {
+    const pedidosCopia = [...pedidos];
+    
+    return pedidosCopia.sort((a, b) => {
+        const dataA = new Date(a.created);
+        const dataB = new Date(b.created);
+        
+        // Se descendente (padrão): mais novo primeiro
+        // Se ascendente: mais antigo primeiro
+        return ordenacaoDescendente 
+            ? dataB - dataA  // Mais recente primeiro
+            : dataA - dataB; // Mais antigo primeiro
+    });
+}
+
+// Função para alternar ordenação (toggle)
+window.toggleOrdenacao = function() {
+    ordenacaoDescendente = !ordenacaoDescendente;
+    
+    const btn = document.getElementById('btn-sort');
+    if (ordenacaoDescendente) {
+        btn.classList.add('desc');
+        btn.title = 'Ordenar por data (Mais Recente)';
+    } else {
+        btn.classList.remove('desc');
+        btn.title = 'Ordenar por data (Mais Antigo)';
+    }
+    
+    aplicarFiltros();
+};
+
+// Função para aplicar filtros
+window.aplicarFiltros = function() {
+    const statusFiltro = document.getElementById('filter-status').value;
+
+    let pedidosFiltrados = [...todosOsPedidos];
+
+    // Aplicar filtro de status
+    if (statusFiltro !== 'todos') {
+        const statusNumerico = parseInt(statusFiltro);
+        pedidosFiltrados = pedidosFiltrados.filter(pedido => {
+            const normalizarStatus = (status) => {
+                if (status === 2 || status === "InProgress" || status === "inprogress") return 2;
+                if (status === 1 || status === "Waiting" || status === "waiting") return 1;
+                if (status === 3 || status === "Finished" || status === "finished") return 3;
+                if (status === 4 || status === "Canceled" || status === "canceled") return 4;
+                return 5;
+            };
+            return normalizarStatus(pedido.status) === statusNumerico;
+        });
+    }
+
+    // Exibir resultados (já aplica a ordenação atual)
+    exibirPedidos(pedidosFiltrados);
+};
+
+// Função para resetar filtros
+window.resetarFiltros = function() {
+    document.getElementById('filter-status').value = 'todos';
+    document.getElementById('sort-order').value = 'prioridade';
+    exibirPedidos(todosOsPedidos);
+};
 
 function criarCardHTML(pedido) {
     let statusLabel, statusClass;

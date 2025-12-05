@@ -1055,3 +1055,134 @@ body::before {
         justify-content: space-between;
     }
 }
+
+/* ============================================================================
+   CONTROLES DE FILTRO SIMPLIFICADOS
+   ============================================================================ */
+.filter-controls {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 25px;
+    background: rgba(26, 16, 40, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease-out 0.3s backwards;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-select {
+    padding: 12px 16px;
+    background: rgba(13, 5, 32, 0.8);
+    border: 2px solid rgba(111, 66, 193, 0.3);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a855f7' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+.filter-select:hover {
+    border-color: rgba(111, 66, 193, 0.6);
+    background-color: rgba(13, 5, 32, 0.95);
+}
+
+.filter-select:focus {
+    border-color: var(--gradient-primary);
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.2);
+}
+
+.filter-select option {
+    background: #0d0520;
+    color: white;
+    padding: 10px;
+}
+
+/* Botão de Toggle de Ordenação */
+.btn-sort-toggle {
+    padding: 12px 20px;
+    background: rgba(13, 5, 32, 0.8);
+    border: 2px solid rgba(111, 66, 193, 0.3);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-sort-toggle:hover {
+    border-color: rgba(111, 66, 193, 0.6);
+    background: rgba(13, 5, 32, 0.95);
+    transform: translateY(-2px);
+}
+
+.btn-sort-toggle:active {
+    transform: translateY(0);
+}
+
+.sort-label {
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.sort-arrow {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Quando ordenação está invertida (mais novo primeiro) */
+.btn-sort-toggle.desc .sort-arrow {
+    transform: rotate(180deg);
+}
+
+.btn-sort-toggle.desc {
+    background: rgba(111, 66, 193, 0.15);
+    border-color: rgba(111, 66, 193, 0.5);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .btn-sort-toggle {
+        width: 100%;
+    }
+}
