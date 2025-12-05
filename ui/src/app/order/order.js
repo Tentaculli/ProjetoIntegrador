@@ -416,7 +416,7 @@ async function finalizarCompra() {
         }
     }
     
-    mostrarModal(`❌ Falha ao criar pedido:<br>${msgErro}`, 'erro');
+    mostrarModal(`Falha ao criar pedido:<br>${msgErro}`, 'erro');
   }
 }
 

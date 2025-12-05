@@ -99,6 +99,16 @@ export const api = {
         return orders.filter(order => order.clientId === clientId);
     },
 
+    async getAllOrders() {
+        const response = await fetch(`${API_BASE_URL}/Order`);
+        
+        if (!response.ok) {
+            throw new Error('Erro ao buscar pedidos');
+        }
+        
+        return response.json();
+    },
+
     async getOrderById(orderId) {
         const response = await fetch(`${API_BASE_URL}/Order/${orderId}`);
         
