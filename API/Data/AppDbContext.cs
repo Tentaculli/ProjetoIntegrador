@@ -2,7 +2,6 @@ using API.Models.Enums;
 using API.Models.Order;
 using API.Models.Client;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -65,57 +64,6 @@ namespace API.Data
                 .WithMany()
                 .HasForeignKey(o => o.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
-
-    public partial class ForceRecreateClientForeignKey : Migration
-    {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            // Remove a FK antiga se existir
-            migrationBuilder.Sql(@"
-                SET @fk_name = (
-                    SELECT CONSTRAINT_NAME 
-                    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                    WHERE TABLE_SCHEMA = 'Tentaculli' 
-                    AND TABLE_NAME = 'Orders' 
-                    AND COLUMN_NAME = 'ClientId'
-                    AND REFERENCED_TABLE_NAME IS NOT NULL
-                    LIMIT 1
-                );
-                
-                SET @sql = IF(@fk_name IS NOT NULL, 
-                    CONCAT('ALTER TABLE Orders DROP FOREIGN KEY ', @fk_name), 
-                    'SELECT ''No FK to drop''');
-                
-                PREPARE stmt FROM @sql;
-                EXECUTE stmt;
-                DEALLOCATE PREPARE stmt;
-            ");
-
-            // Recria com CASCADE
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Clients_ClientId",
-                table: "Orders",
-                column: "ClientId",
-                principalTable: "Clients",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Orders_Clients_ClientId",
-                table: "Orders");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Orders_Clients_ClientId",
-                table: "Orders",
-                column: "ClientId",
-                principalTable: "Clients",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
     }
 }
