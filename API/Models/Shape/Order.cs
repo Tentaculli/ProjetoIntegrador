@@ -35,5 +35,7 @@ namespace API.Models.Order
         [ForeignKey("ClientId")]
         public virtual ClientModel? Client { get; set; }    
         public StatusType Status { get; set; }
+
+        public int StatusByPosition { get; set; }
     }
 }

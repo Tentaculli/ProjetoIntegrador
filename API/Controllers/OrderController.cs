@@ -38,6 +38,9 @@ namespace API.Controllers
                 return BadRequest($"Client with ID {order.ClientId} does not exist.");
             }
 
+            // Initialize StatusByPosition
+            order.StatusByPosition = 0;
+
             _appDbContext.Orders.Add(order);
             await _appDbContext.SaveChangesAsync();
 
@@ -195,6 +198,8 @@ namespace API.Controllers
             }
 
             order.Status = StatusType.InProgress;
+            order.StatusByPosition = 0; // Reset position when starting
+
             await _appDbContext.SaveChangesAsync();
 
             return Ok(new
@@ -240,6 +245,52 @@ namespace API.Controllers
             }
 
             return null;
+        }
+
+        private string? ValidatePositionStatusTransition(int currentPosition, int newPosition)
+        {
+            // Position must increase by 1
+            if (newPosition != currentPosition + 1)
+            {
+                return $"Position status must be incremented by 1. Current: {currentPosition}, Expected: {currentPosition + 1}, Received: {newPosition}";
+            }
+
+            // Position must be between 0 and 6 (assuming 7 positions total)
+            if (newPosition < 0 || newPosition > 6)
+            {
+                return "Position status must be between 0 and 6.";
+            }
+
+            return null;
+        }
+
+
+        [HttpPut("{id}/positionStatus")]
+        public async Task<IActionResult> UpdatePositionStatus(int id, [FromBody] int newPositionStatus)
+        {
+            var order = await _appDbContext.Orders.FindAsync(id);
+
+            if (order == null)
+            {
+                return NotFound("Order wasn't found.");
+            }
+
+            // Only orders in InProgress can have their position updated
+            if (order.Status != StatusType.InProgress)
+            {
+                return BadRequest("Only orders with 'InProgress' status can have their position updated.");
+            }
+
+            var validationError = ValidatePositionStatusTransition(order.StatusByPosition, newPositionStatus);
+            if (validationError != null)
+            {
+                return BadRequest(validationError);
+            }
+
+            order.StatusByPosition = newPositionStatus;
+            await _appDbContext.SaveChangesAsync();
+
+            return Ok(new { Message = "Position status updated successfully!", Order = order });
         }
     }
 }
