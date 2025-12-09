@@ -6,8 +6,8 @@ namespace API.Models.Enums
     public enum ShapeType
     {
         None = 0,
-        Hexagon = 1,
+        Circle = 1,
         Square = 2,
-        Circle = 3
+        Hexagon = 3
     }
 }

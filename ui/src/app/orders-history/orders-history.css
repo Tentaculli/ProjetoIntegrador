@@ -486,33 +486,46 @@ body::before {
 
 /* Cores Específicas dos Status */
 
-/* Aguardando */
-.status-badge.produzindo {
+/* Aguardando - Amarelo/Laranja */
+.status-badge.aguardando {
     color: var(--status-waiting);
     border-color: rgba(245, 158, 11, 0.3);
     background: rgba(245, 158, 11, 0.1);
 }
 
-.order-card:hover .status-badge.produzindo {
+.order-card:hover .status-badge.aguardando {
     border-color: rgba(245, 158, 11, 0.5);
     background: rgba(245, 158, 11, 0.15);
     box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
 }
 
-/* Em Trânsito */
-.status-badge.entregando {
+/* Em Produção - Azul */
+.status-badge.produzindo {
     color: var(--status-progress);
     border-color: rgba(59, 130, 246, 0.3);
     background: rgba(59, 130, 246, 0.1);
 }
 
-.order-card:hover .status-badge.entregando {
+.order-card:hover .status-badge.produzindo {
     border-color: rgba(59, 130, 246, 0.5);
     background: rgba(59, 130, 246, 0.15);
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
 
-/* Entregue */
+/* Em Trânsito - Roxo */
+.status-badge.entregando {
+    color: #a855f7;
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.1);
+}
+
+.order-card:hover .status-badge.entregando {
+    border-color: rgba(168, 85, 247, 0.5);
+    background: rgba(168, 85, 247, 0.15);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+}
+
+/* Entregue - Verde */
 .status-badge.entregue {
     color: var(--status-finished);
     border-color: rgba(16, 185, 129, 0.3);
@@ -525,7 +538,7 @@ body::before {
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
 }
 
-/* Cancelado */
+/* Cancelado - Vermelho */
 .status-badge.cancelado {
     color: var(--status-canceled);
     border-color: rgba(239, 68, 68, 0.3);
