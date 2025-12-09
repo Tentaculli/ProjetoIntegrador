@@ -1479,3 +1479,49 @@ body::before {
     background: rgba(245, 158, 11, 0.15);
     border-color: rgba(245, 158, 11, 0.35);
 }
+
+/* Função de ordenação por status E data */
+function ordenarPorData(pedidos) {
+    const pedidosCopia = [...pedidos];
+    
+    return pedidosCopia.sort((a, b) => {
+        // 1. Normalizar status para números
+        const normalizarStatus = (status) => {
+            if (status === 2 || status === "InProgress" || status === "inprogress") return 2; // Em Produção
+            if (status === 1 || status === "Waiting" || status === "waiting") return 1; // Aguardando
+            if (status === 3 || status === "Finished" || status === "finished") return 3; // Entregue
+            if (status === 4 || status === "Canceled" || status === "canceled") return 4; // Cancelado
+            return 5; // Outros
+        };
+
+        const statusA = normalizarStatus(a.status);
+        const statusB = normalizarStatus(b.status);
+
+        // 2. Definir prioridade dos status (menor = mais importante)
+        const prioridadeStatus = {
+            2: 1, // Em Produção (MAIOR PRIORIDADE)
+            1: 2, // Aguardando (SEGUNDA PRIORIDADE)
+            4: 3, // Cancelado (TERCEIRA PRIORIDADE)
+            3: 4, // Entregue (MENOR PRIORIDADE)
+            5: 5  // Outros
+        };
+
+        const prioridadeA = prioridadeStatus[statusA] || 5;
+        const prioridadeB = prioridadeStatus[statusB] || 5;
+
+        // 3. Primeiro compara por prioridade de status
+        if (prioridadeA !== prioridadeB) {
+            return prioridadeA - prioridadeB;
+        }
+
+        // 4. Se status for igual, ordena por data
+        const dataA = new Date(a.created);
+        const dataB = new Date(b.created);
+
+        // Se descendente: mais novo primeiro
+        // Se ascendente: mais antigo primeiro
+        return ordenacaoDescendente 
+            ? dataB - dataA  // Mais recente primeiro
+            : dataA - dataB; // Mais antigo primeiro
+    });
+}

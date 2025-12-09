@@ -111,7 +111,7 @@ function exibirPedidos(pedidos) {
     });
 }
 
-// Função de ordenação por data E status
+// Função de ordenação por status E data
 function ordenarPorData(pedidos) {
     const pedidosCopia = [...pedidos];
     
@@ -130,10 +130,10 @@ function ordenarPorData(pedidos) {
 
         // 2. Definir prioridade dos status (menor = mais importante)
         const prioridadeStatus = {
-            2: 1, // Em Produção (maior prioridade)
-            1: 2, // Aguardando
-            3: 3, // Entregue
-            4: 4, // Cancelado
+            2: 1, // Em Produção (MAIOR PRIORIDADE)
+            1: 2, // Aguardando (SEGUNDA PRIORIDADE)
+            4: 3, // Cancelado (TERCEIRA PRIORIDADE)
+            3: 4, // Entregue (MENOR PRIORIDADE)
             5: 5  // Outros
         };
 
