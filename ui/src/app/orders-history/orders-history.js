@@ -213,10 +213,10 @@ function criarCardHTML(pedido) {
     
     if (status === 1 || status === "Waiting" || status === "waiting") {
         statusLabel = "Aguardando"; 
-        statusClass = "aguardando"; // ✅ Mudança aqui
+        statusClass = "aguardando";
     } else if (status === 2 || status === "InProgress" || status === "inprogress") {
         statusLabel = "Em Produção"; 
-        statusClass = "produzindo"; // ✅ Mantém azul
+        statusClass = "produzindo";
     } else if (status === 3 || status === "Finished" || status === "finished") {
         statusLabel = "Entregue"; 
         statusClass = "entregue";
@@ -279,7 +279,35 @@ function criarCardHTML(pedido) {
         ` 
         : '';
 
-    // 7. Retornar HTML Estruturado
+    // 7. NOVO: Criar barra de progresso de produção
+    const statusByPosition = pedido.statusByPosition || 0;
+    const totalPecas = 6;
+    const percentualProgresso = Math.round((statusByPosition / totalPecas) * 100);
+    const estaCompleto = statusByPosition === totalPecas;
+    
+    // Mostrar barra de progresso apenas se estiver "Em Produção"
+    const estaEmProducao = status === 2 || status === "InProgress" || status === "inprogress";
+    
+    const progressHTML = estaEmProducao ? `
+        <div class="production-progress">
+            <div class="progress-header">
+                <span class="progress-label">Montagem</span>
+                <span class="progress-counter ${estaCompleto ? 'complete' : ''}">${statusByPosition}/${totalPecas}</span>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill ${estaCompleto ? 'complete' : ''}" style="width: ${percentualProgresso}%"></div>
+            </div>
+            
+            <div class="progress-pieces">
+                ${Array.from({ length: totalPecas }, (_, i) => `
+                    <div class="progress-piece ${i < statusByPosition ? 'placed' : ''} ${estaCompleto ? 'complete' : ''}"></div>
+                `).join('')}
+            </div>
+        </div>
+    ` : '';
+
+    // 8. Retornar HTML Estruturado
     return `
         <div class="order-card-wrapper">
             <div class="order-card ${podeCancel ? 'cancelavel' : ''}">
@@ -295,6 +323,8 @@ function criarCardHTML(pedido) {
                         <div class="pino-divisor"></div>
                         ${htmlPino2}
                     </div>
+
+                    ${progressHTML}
                 </div>
 
                 <div class="status-badge ${statusClass}">
