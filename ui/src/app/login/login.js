@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainLogo = document.getElementById('main-logo');
     const dashboardLogo = document.getElementById('dashboard-logo');
 
+    // DEFINIR A FUNÇÃO toggleScreen ANTES DE USAR
     const toggleScreen = (screenId, show) => {
         const screen = document.getElementById(screenId);
         if (screen) {
@@ -30,6 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleScreen(showId, true);
         }
     };
+
+    // AGORA SIM verificar se há usuário logado
+    const currentClient = localStorage.getItem('currentClient');
+    if (currentClient) {
+        const client = JSON.parse(currentClient);
+        if (userEmailDisplay) {
+            userEmailDisplay.textContent = client.name;
+        }
+        toggleScreen('dashboard-screen', true);
+    }
 
     const clearFormErrors = (form) => {
         form.querySelectorAll('.input-error, .form-error-message').forEach(el => el.remove());
@@ -48,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearFormErrors(form);
         const errorDiv = document.createElement('div');
         errorDiv.className = 'form-error-message';
-        errorDiv.textContent = message;
+        errorDiv.innerHTML = `<p>${message}</p>`;
         form.insertBefore(errorDiv, form.firstChild);
     };
 
@@ -76,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (trigger?.closest('.form-overlay')) {
             event.preventDefault();
             const { action, targetId, hideId, showId } = trigger.dataset;
+
             if (action === 'hide') {
                 toggleScreen(targetId, false);
             } else if (action === 'switch') {
@@ -120,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('currentClient', JSON.stringify(client));
 
                 if (userEmailDisplay) {
-                    userEmailDisplay.textContent = client.email;
+                    userEmailDisplay.textContent = client.name;
                 }
 
                 toggleScreen('login-screen', false);
@@ -202,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ========================================================================
-    // THEME TOGGLE FUNCTIONALITY COM TROCA DE LOGO - CORRIGIDO
+    // THEME TOGGLE FUNCTIONALITY COM TROCA DE LOGO
     // ========================================================================
 
     const themeToggle = document.getElementById('theme-toggle');
@@ -210,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para atualizar logos baseado no tema
     function updateLogos(isLightMode) {
         const logoSrc = isLightMode 
-            ? '../../assets/images/logo-light.jpg' 
+            ? '../../assets/images/logo-light.png' 
             : '../../assets/images/logo-dark.png';
         
         if (mainLogo) {
@@ -241,13 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLogos(false);
     }
 
-    // Toggle theme ao clicar no botão - CORRIGIDO
+    // Toggle theme ao clicar no botão
     if (themeToggle) {
         themeToggle.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             
-            console.log('Theme toggle clicado!'); // Debug
+            console.log('Theme toggle clicado!');
             
             // Adicionar classe de transição suave
             document.body.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -274,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createRippleEffect();
         });
     } else {
-        console.error('Botão theme-toggle não encontrado!'); // Debug
+        console.error('Botão theme-toggle não encontrado!');
     }
 
     // Criar efeito de ondulação ao trocar tema
