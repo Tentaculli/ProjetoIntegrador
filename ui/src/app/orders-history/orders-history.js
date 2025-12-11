@@ -2,6 +2,7 @@ import { api } from '../../services/api.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarPedidos();
+    initThemeToggle();
 });
 
 // Logout global
@@ -476,3 +477,78 @@ window.cancelarPedido = async function(orderId) {
         );
     }
 };
+
+// ============================================================================
+// THEME TOGGLE FUNCTIONALITY
+// ============================================================================
+function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    // Verificar preferência salva
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+    }
+    
+    // Toggle ao clicar
+    if (themeToggle) {
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Transição suave
+            document.body.style.transition = 'all 1s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            document.body.classList.toggle('light-mode');
+            
+            // Salvar preferência
+            const currentTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', currentTheme);
+            
+            // Animação do botão
+            themeToggle.style.transform = 'scale(0.8) rotate(360deg)';
+            themeToggle.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+                themeToggle.style.opacity = '';
+            }, 400);
+            
+            // Efeito de ondulação
+            createRippleEffect();
+        });
+    }
+}
+
+function createRippleEffect() {
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: ${document.body.classList.contains('light-mode') 
+            ? 'radial-gradient(circle, rgba(111, 66, 193, 0.3) 0%, transparent 70%)' 
+            : 'radial-gradient(circle, rgba(91, 33, 182, 0.3) 0%, transparent 70%)'
+        };
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9998;
+        transition: width 1s ease-out, height 1s ease-out, opacity 0.8s ease-out;
+        opacity: 0.8;
+    `;
+    
+    document.body.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.style.width = '3000px';
+        ripple.style.height = '3000px';
+        ripple.style.opacity = '0';
+    }, 10);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 1000);
+}
