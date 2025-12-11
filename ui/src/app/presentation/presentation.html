@@ -14,7 +14,6 @@
 </head>
 <body>
 
-    <!-- Botão de Voltar -->
     <button class="back-to-login-btn" onclick="window.location.href='../login/login.html'" title="Voltar para Login">
         <i class="fas fa-arrow-left"></i>
         <span>Voltar</span>
@@ -27,18 +26,49 @@
 
     <main class="main-container">
         
-        <header class="hero-section glass-panel">
+        <header class="hero-section glass-panel scroll-reveal">
             <h1 id="typing-title"></h1>
             <p class="subtitle">Automação Inteligente e Integração Total</p>
         </header>
 
-        <section class="team-section">
+        <section class="course-section glass-panel scroll-reveal">
+            <h2 class="section-title">Eng. de Cibersistemas</h2>
+            <div class="course-container">
+                <div class="course-info">
+                    <p class="course-description">
+                        O curso de <strong>Cibersistemas para Automação</strong> é a vanguarda da Indústria 4.0. 
+                        Focamos na convergência entre a Tecnologia da Informação (TI) e a Tecnologia de Automação (TA). 
+                        Nossa formação abrange desde o chão de fábrica, com sensores e atuadores, até a nuvem, 
+                        integrando sistemas ciberfísicos, robótica avançada e desenvolvimento full-stack para criar 
+                        soluções inteligentes e conectadas.
+                    </p>
+                    <p class="course-description">
+                        Preparamos profissionais completos, capazes de projetar, implementar e gerenciar sistemas 
+                        complexos que conectam o mundo físico ao digital. Do controle de processos industriais à 
+                        arquitetura de software escalável, nossos estudantes dominam todas as camadas da automação moderna.
+                    </p>
+                    <div class="course-badges">
+                        <span class="badge"><i class="fas fa-network-wired"></i> IoT Industrial</span>
+                        <span class="badge"><i class="fas fa-code-branch"></i> Integração de Sistemas</span>
+                        <span class="badge"><i class="fas fa-shield-alt"></i> Cibersegurança</span>
+                        <span class="badge"><i class="fas fa-microchip"></i> Sistemas Embarcados</span>
+                    </div>
+                </div>
+                <div class="course-visual">
+                    <div class="course-image-wrapper">
+                        <img src="../../assets/images/ciber-logo.jpg" alt="Logo Cibersistemas">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section scroll-reveal">
             <h2 class="section-title">Squad Tentaculli</h2>
             <div id="team-grid" class="team-grid">
             </div>
         </section>
 
-        <section class="tech-section glass-panel">
+        <section class="tech-section glass-panel scroll-reveal">
             <h2 class="section-title-small"><i class="fas fa-toolbox"></i> Arsenal Tecnológico</h2>
             <div class="tech-grid">
                 <div class="tech-card" data-tech="mysql">
@@ -68,7 +98,15 @@
             </div>
         </section>
 
-        <section class="project-details glass-panel">
+        <section class="ucs-section glass-panel scroll-reveal">
+            <h2 class="section-title-small"><i class="fas fa-graduation-cap"></i> UCs Aplicadas</h2>
+            <p class="subtitle" style="margin-bottom: 2rem; text-align: left;">Conhecimentos acadêmicos fundamentais para o sucesso do projeto:</p>
+            
+            <div id="uc-grid" class="uc-grid">
+            </div>
+        </section>
+
+        <section class="project-details glass-panel scroll-reveal">
             <h2 class="section-title-small">Sobre o Ecossistema</h2>
             <div class="text-content-highlight">
                 <p>
@@ -81,7 +119,7 @@
             </div>
         </section>
 
-        <section class="flow-section glass-panel">
+        <section class="flow-section glass-panel scroll-reveal">
             <h2 class="section-title-small">Arquitetura do Sistema</h2>
             
             <div class="system-flow-container">
@@ -137,7 +175,7 @@
             </div>
         </section>
 
-        <section class="gallery-section glass-panel">
+        <section class="gallery-section glass-panel scroll-reveal">
             <h2 class="section-title-small" style="text-align: center; border: none; margin-bottom: 2rem;">
                 <i class="fas fa-camera"></i> Bastidores em Ação
             </h2>
@@ -171,13 +209,11 @@
 
     </main>
 
-    <!-- Modal para Zoom de Imagem da Galeria -->
     <div id="imageModal" class="image-modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content-img" id="modalImage" alt="Imagem ampliada">
     </div>
 
-    <!-- Modal para Detalhes da Ferramenta -->
     <div id="techModal" class="tech-modal">
         <div class="tech-modal-content">
             <span class="tech-modal-close">&times;</span>
@@ -193,7 +229,6 @@
         </div>
     </div>
 
-    <!-- Modal para Membro da Equipe -->
     <div id="memberModal" class="member-modal">
         <div class="member-modal-content">
             <span class="member-modal-close">&times;</span>
@@ -208,7 +243,7 @@
         </div>
     </div>
 
-    <footer class="glass-panel footer">
+    <footer class="glass-panel footer scroll-reveal">
         <p>Tentaculli System &copy; 2025 - Desenvolvido com 💜</p>
     </footer>
 

@@ -96,6 +96,40 @@ const techData = {
     }
 };
 
+// DADOS DAS UCs (UNIDADES CURRICULARES)
+const ucData = [
+    {
+        title: "Banco de Dados",
+        icon: "fa-database",
+        desc: "Modelagem relacional e SQL para persistência segura dos pedidos e histórico."
+    },
+    {
+        title: "Programação de CLPs",
+        icon: "fa-microchip",
+        desc: "Lógica Ladder e estruturada para controle de processos industriais em tempo real."
+    },
+    {
+        title: "Desenvolvimento Web",
+        icon: "fa-laptop-code",
+        desc: "Criação de interfaces responsivas e APIs RESTful para interação com o usuário."
+    },
+    {
+        title: "Robótica Industrial",
+        icon: "fa-robot",
+        desc: "Cinemática e programação de manipuladores robóticos para automação física."
+    },
+    {
+        title: "Redes Industriais",
+        icon: "fa-wifi",
+        desc: "Protocolos de comunicação (OPC UA, Modbus) unindo o chão de fábrica à TI."
+    },
+    {
+        title: "Gestão de Projetos",
+        icon: "fa-tasks",
+        desc: "Metodologias ágeis (Scrum/Kanban) para organização e entrega do MVP."
+    }
+];
+
 // 2. FUNÇÃO EFEITO DIGITAÇÃO (Typewriter)
 function typeWriter(text, elementId, speed = 80) {
     const element = document.getElementById(elementId);
@@ -150,6 +184,27 @@ function renderTeam() {
     }, 100);
 }
 
+// 4. RENDERIZAR UCs
+function renderUCs() {
+    const grid = document.getElementById('uc-grid');
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    ucData.forEach((uc, index) => {
+        const ucHTML = `
+            <div class="uc-card" style="animation: fadeInUp 0.5s ease forwards; animation-delay: ${index * 100}ms;">
+                <div class="uc-header">
+                    <div class="uc-icon"><i class="fas ${uc.icon}"></i></div>
+                    <div class="uc-title">${uc.title}</div>
+                </div>
+                <div class="uc-desc">${uc.desc}</div>
+            </div>
+        `;
+        grid.innerHTML += ucHTML;
+    });
+}
+
 // FUNÇÃO PARA ABRIR MODAL DO MEMBRO
 function openMemberModal(member) {
     const modal = document.getElementById('memberModal');
@@ -185,7 +240,7 @@ function closeMemberModal() {
     }, 300);
 }
 
-// 4. FUNCIONALIDADE DE ZOOM NAS IMAGENS (COM ANIMAÇÕES)
+// 5. FUNCIONALIDADE DE ZOOM NAS IMAGENS (COM ANIMAÇÕES)
 function setupImageZoom() {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
@@ -239,7 +294,7 @@ function setupImageZoom() {
     }
 }
 
-// 5. MODAL DE FERRAMENTAS
+// 6. MODAL DE FERRAMENTAS
 function setupTechModal() {
     const techModal = document.getElementById('techModal');
     const techModalClose = document.querySelector('.tech-modal-close');
@@ -370,15 +425,6 @@ function setupTechModal() {
     }
 }
 
-// 6. INICIALIZAÇÃO
-document.addEventListener('DOMContentLoaded', () => {
-    typeWriter("Bem-vindo ao Projeto Tentaculli", "typing-title");
-    renderTeam();
-    setupImageZoom();
-    setupTechModal();
-    setupMemberModal();
-});
-
 // SETUP DO MODAL DE MEMBRO
 function setupMemberModal() {
     const modal = document.getElementById('memberModal');
@@ -396,5 +442,49 @@ function setupMemberModal() {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
             closeMemberModal();
         }
+    });
+}
+
+// 7. INICIALIZAÇÃO
+document.addEventListener('DOMContentLoaded', () => {
+    typeWriter("Bem-vindo ao Projeto Tentaculli", "typing-title");
+    renderTeam();
+    renderUCs();
+    setupImageZoom();
+    setupTechModal();
+    setupMemberModal();
+    setupScrollReveal(); // <--- NOVA CHAMADA
+});
+
+// 8. SCROLL REVEAL - Animações ao rolar a página
+function setupScrollReveal() {
+    const reveals = document.querySelectorAll('.scroll-reveal');
+    
+    const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        const revealPoint = 100;
+        
+        reveals.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            
+            if (elementTop < windowHeight - revealPoint) {
+                element.classList.add('active');
+            }
+        });
+    };
+    
+    // Revelar elementos já visíveis no carregamento
+    revealOnScroll();
+    
+    // Adicionar listener de scroll com throttle para performance
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) {
+            window.cancelAnimationFrame(scrollTimeout);
+        }
+        
+        scrollTimeout = window.requestAnimationFrame(() => {
+            revealOnScroll();
+        });
     });
 }
