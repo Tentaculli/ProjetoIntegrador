@@ -1,15 +1,13 @@
 /* ==========================================================================
-   TENTACULLI STYLESHEET - VERSÃO APRIMORADA
-   --------------------------------------------------------------------------
-   Design System atualizado com gradientes, animações e efeitos modernos
+   TENTACULLI STYLESHEET - DARK/LIGHT MODE
    ========================================================================== */
 
 /* ==========================================================================
-   1. CONFIG & GLOBALS
+   1. CONFIG & GLOBALS - DARK MODE (Padrão Original)
    ========================================================================== */
 
 :root {
-    /* Colors - Paleta expandida e mais escura */
+    /* Dark Mode Colors - ORIGINAL */
     --color-bg: #0a0014;
     --color-primary: #6f42c1;
     --color-secondary: #9a2ec3;
@@ -20,7 +18,13 @@
     --color-success: #10b981;
     --color-purple-glow: rgba(111, 66, 193, 0.4);
     
-    /* Gradientes mais escuros e vibrantes */
+    --color-text: #ffffff;
+    --color-text-secondary: #b8b8c8;
+    --color-surface: rgba(255, 255, 255, 0.05);
+    --color-surface-elevated: rgba(255, 255, 255, 0.1);
+    --color-border: rgba(255, 255, 255, 0.1);
+    
+    /* Gradientes Dark - ORIGINAL */
     --gradient-primary: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
     --gradient-secondary: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
     --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
@@ -34,10 +38,10 @@
     --border-radius-sm: 12px;
     --transition-speed: 0.4s;
 
-    /* Shadows - Aprimoradas */
-    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.3);
+    /* Shadows Dark - ORIGINAL */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 40px var(--color-purple-glow);
     --shadow-glow-intense: 0 0 60px rgba(111, 66, 193, 0.6);
 
@@ -46,7 +50,111 @@
     --z-index-content: 10;
     --z-index-overlay: 1000;
     --z-index-dashboard: 2000;
+    --z-index-theme-toggle: 9999;
 }
+
+/* ==========================================================================
+   LIGHT MODE VARIABLES - MAIS ESCURO E ELEGANTE
+   ========================================================================== */
+
+body.light-mode {
+    /* Light Mode Colors - Tom Mais Escuro */
+    --color-bg: #e8ebf0;
+    --color-primary: #6f42c1;
+    --color-secondary: #8b5cf6;
+    --color-accent: #5b21b6;
+    --color-dark-void: #f5f7fa;
+    --color-light: #475569;
+    --color-white: #0f172a;
+    --color-purple-glow: rgba(111, 66, 193, 0.2);
+    
+    --color-text: #0f172a;
+    --color-text-secondary: #475569;
+    --color-surface: rgba(255, 255, 255, 0.7);
+    --color-surface-elevated: rgba(255, 255, 255, 0.85);
+    --color-border: rgba(111, 66, 193, 0.2);
+    
+    /* Gradientes Light - Mais Profundos */
+    --gradient-primary: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+    --gradient-secondary: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
+    --gradient-accent: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    --gradient-dark: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+
+    /* Shadows Light - Mais Pronunciadas */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(111, 66, 193, 0.25);
+    --shadow-glow-intense: 0 0 60px rgba(111, 66, 193, 0.35);
+}
+
+/* ==========================================================================
+   THEME TOGGLE BUTTON
+   ========================================================================== */
+
+.theme-toggle {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: var(--z-index-theme-toggle);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--color-surface-elevated);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-speed) ease;
+    overflow: hidden;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle svg {
+    width: 28px;
+    height: 28px;
+    position: absolute;
+    transition: all var(--transition-speed) ease;
+    color: var(--color-primary);
+}
+
+/* Dark Mode: Mostrar Lua, Esconder Sol */
+.theme-toggle .sun-icon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
+}
+
+.theme-toggle .moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* Light Mode: Mostrar Sol, Esconder Lua */
+body.light-mode .theme-toggle .sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+body.light-mode .theme-toggle .moon-icon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0);
+}
+
+/* ==========================================================================
+   GLOBAL STYLES WITH THEME SUPPORT
+   ========================================================================== */
 
 * {
     margin: 0;
@@ -56,6 +164,7 @@
 
 body {
     background: var(--gradient-dark);
+    color: var(--color-text);
     font-family: var(--font-family);
     display: grid;
     place-items: center;
@@ -63,6 +172,8 @@ body {
     padding: 1.5rem;
     overflow-x: hidden;
     position: relative;
+    transition: background 1s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.6s ease;
 }
 
 /* Efeito de partículas animadas no fundo */
@@ -74,10 +185,16 @@ body::before {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 20% 50%, rgba(111, 66, 193, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(154, 46, 195, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 50%, var(--color-purple-glow) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, var(--color-purple-glow) 0%, transparent 50%);
     animation: pulseBackground 10s ease-in-out infinite;
     z-index: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+body.light-mode::before {
+    opacity: 0.6;
 }
 
 @keyframes pulseBackground {
@@ -110,6 +227,8 @@ body::before {
 
 /* Logo Section - Aprimorada */
 .logo-section {
+    text-align: center;
+    flex: 1;
     display: block;
     position: relative;
 }
@@ -121,7 +240,7 @@ body::before {
     max-width: 400px;
     border-radius: 30px;
     box-shadow: var(--shadow-lg), var(--shadow-glow);
-    transition: all var(--transition-speed) ease;
+    transition: all 0.5s ease, opacity 0.5s ease; /* Adicionada transição de opacity */
     animation: floatAnimation 6s ease-in-out infinite;
     position: relative;
 }
@@ -411,7 +530,6 @@ body::before {
 .back-button:hover {
     color: var(--color-primary);
     background: rgba(111, 66, 193, 0.1);
-    transform: scale(1.1) translateX(-3px);
 }
 
 /* Form Elements - Aprimorados */
@@ -640,7 +758,7 @@ body::before {
     width: 200px;
     height: auto;
     filter: drop-shadow(0 5px 15px rgba(111, 66, 193, 0.5));
-    transition: all 0.3s ease;
+    transition: all 0.5s ease, opacity 0.5s ease; /* Adicionada transição de opacity */
 }
 
 .header-logo:hover {
@@ -735,7 +853,7 @@ body::before {
 }
 
 /* =========================================================================
-   5. BACKGROUND SHAPES (Desktop)
+   5. BACKGROUND SHAPES (Desktop) - ORIGINAL COM ANIMAÇÃO SEMPRE ATIVA
    ========================================================================== */
 
 .background-shapes {
@@ -751,15 +869,22 @@ body::before {
         top: 0;
         left: 0;
         z-index: var(--z-index-background);
-        opacity: 0.6;
+        opacity: 0.85;
+        transition: opacity 1s ease;
+    }
+
+    body.light-mode .background-shapes {
+        opacity: 0.9;
     }
 
     .shape {
         position: absolute;
         border-radius: 20px;
-        animation: fadeIn 1.5s ease-out forwards, float 8s ease-in-out infinite;
-        backdrop-filter: blur(2px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 1.5s ease-out forwards, float 8s ease-in-out infinite, shimmerShape 4s ease-in-out infinite;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     @keyframes float {
@@ -767,8 +892,21 @@ body::before {
         50% { transform: translateY(-20px) rotate(5deg); }
     }
 
+    /* ANIMAÇÃO DE PISCAR/BRILHAR - SEMPRE ATIVA */
+    @keyframes shimmerShape {
+        0%, 100% { 
+            opacity: 0.85;
+            filter: brightness(1);
+        }
+        50% { 
+            opacity: 1;
+            filter: brightness(1.3);
+        }
+    }
+
+    /* DARK MODE - Cores vibrantes ORIGINAIS */
     .s1 {
-        background: linear-gradient(135deg, #9a2ec3, #764ba2);
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
         width: 10vw;
         height: 10vw;
         top: 8%;
@@ -777,7 +915,7 @@ body::before {
     }
 
     .s2 {
-        background: linear-gradient(135deg, #4f32b8, #667eea);
+        background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
         width: 10vw;
         height: 10vw;
         top: 8%;
@@ -786,7 +924,7 @@ body::before {
     }
 
     .s3 {
-        background: linear-gradient(135deg, #edf2f4, #c5cfd6);
+        background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
         width: 10vw;
         height: 10vw;
         top: 8%;
@@ -795,7 +933,7 @@ body::before {
     }
 
     .s4 {
-        background: linear-gradient(135deg, #0d012c, #1a1a3e);
+        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
         width: 22vw;
         height: 18vw;
         top: 8%;
@@ -804,7 +942,7 @@ body::before {
     }
 
     .s5 {
-        background: linear-gradient(135deg, #9a2ec3, #f093fb);
+        background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
         width: 10vw;
         height: 10vw;
         top: 8%;
@@ -813,7 +951,7 @@ body::before {
     }
 
     .s6 {
-        background: linear-gradient(135deg, #edf2f4, #a8b8d8);
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
         width: 6vw;
         height: 6vw;
         top: 20%;
@@ -822,7 +960,7 @@ body::before {
     }
 
     .s7 {
-        background: linear-gradient(135deg, #4f32b8, #667eea);
+        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
         width: 25vw;
         height: 25vw;
         top: 25%;
@@ -831,52 +969,61 @@ body::before {
     }
 
     .s8 {
-        background: linear-gradient(135deg, #9a2ec3, #764ba2);
+        background: linear-gradient(135deg, #c026d3 0%, #e879f9 100%);
         width: 12vw;
         height: 12vw;
-        top: 38%;
-        left: 45%;
+        top: 35%;
+        right: 5%;
         animation-delay: 1.4s;
     }
 
     .s9 {
-        background: linear-gradient(135deg, #edf2f4, #c5cfd6);
-        width: 8vw;
-        height: 8vw;
-        top: 45%;
-        right: 18%;
+        background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+        width: 12vw;
+        height: 12vw;
+        top: 38%;
+        left: 45%;
         animation-delay: 1.6s;
     }
 
     .s10 {
-        background: linear-gradient(135deg, #edf2f4, #a8b8d8);
-        width: 12vw;
-        height: 12vw;
-        bottom: 10%;
-        left: 8%;
+        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        width: 8vw;
+        height: 8vw;
+        top: 45%;
+        right: 18%;
         animation-delay: 1.8s;
     }
 
     .s11 {
-        background: linear-gradient(135deg, #9a2ec3, #f093fb);
-        width: 14vw;
-        height: 14vw;
-        bottom: 8%;
-        left: 25%;
+        background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+        width: 12vw;
+        height: 12vw;
+        bottom: 10%;
+        left: 8%;
         animation-delay: 2s;
     }
 
     .s12 {
-        background: linear-gradient(135deg, #4f32b8, #667eea);
-        width: 8vw;
-        height: 8vw;
+        background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+        width: 14vw;
+        height: 14vw;
         bottom: 8%;
-        left: 42%;
+        left: 25%;
         animation-delay: 2.2s;
     }
 
     .s13 {
-        background: linear-gradient(135deg, #9a2ec3, #764ba2);
+        background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+        width: 8vw;
+        height: 8vw;
+        bottom: 8%;
+        left: 42%;
+        animation-delay: 2.4s;
+    }
+
+    .s14 {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
         width: 8vw;
         height: 8vw;
         bottom: 8%;
@@ -884,13 +1031,85 @@ body::before {
         display: grid;
         place-items: end;
         padding: 0.5rem;
-        animation-delay: 2.4s;
+        animation-delay: 2.6s;
+    }
+
+    /* LIGHT MODE - Cores mais saturadas e profundas */
+    body.light-mode .s1 { 
+        background: linear-gradient(135deg, #a78bfa 0%, #c7d2fe 100%);
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
+    }
+    
+    body.light-mode .s2 { 
+        background: linear-gradient(135deg, #c084fc 0%, #ddd6fe 100%);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.35);
+    }
+    
+    body.light-mode .s3 { 
+        background: linear-gradient(135deg, #f472b6 0%, #fbcfe8 100%);
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.35);
+    }
+    
+    body.light-mode .s4 { 
+        background: linear-gradient(135deg, #c7d2fe 0%, #e9d5ff 100%);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+    }
+    
+    body.light-mode .s5 { 
+        background: linear-gradient(135deg, #d8b4fe 0%, #f5d0fe 100%);
+        box-shadow: 0 8px 25px rgba(168, 85, 247, 0.35);
+    }
+    
+    body.light-mode .s6 { 
+        background: linear-gradient(135deg, #93c5fd 0%, #bfdbfe 100%);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+    }
+    
+    body.light-mode .s7 { 
+        background: linear-gradient(135deg, #c7d2fe 0%, #ddd6fe 100%);
+        box-shadow: 0 8px 25px rgba(91, 33, 182, 0.3);
+    }
+    
+    body.light-mode .s8 { 
+        background: linear-gradient(135deg, #e879f9 0%, #fae8ff 100%);
+        box-shadow: 0 8px 25px rgba(192, 38, 211, 0.35);
+    }
+    
+    body.light-mode .s9 { 
+        background: linear-gradient(135deg, #a5b4fc 0%, #c7d2fe 100%);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+    }
+    
+    body.light-mode .s10 { 
+        background: linear-gradient(135deg, #c084fc 0%, #e9d5ff 100%);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
+    }
+    
+    body.light-mode .s11 { 
+        background: linear-gradient(135deg, #d8b4fe 0%, #f5d0fe 100%);
+        box-shadow: 0 8px 25px rgba(168, 85, 247, 0.35);
+    }
+    
+    body.light-mode .s12 { 
+        background: linear-gradient(135deg, #f472b6 0%, #fbcfe8 100%);
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.35);
+    }
+    
+    body.light-mode .s13 { 
+        background: linear-gradient(135deg, #c084fc 0%, #ddd6fe 100%);
+        box-shadow: 0 8px 25px rgba(111, 66, 193, 0.35);
+    }
+    
+    body.light-mode .s14 { 
+        background: linear-gradient(135deg, #93c5fd 0%, #bfdbfe 100%);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
     }
 
     .star {
         color: var(--color-light);
         font-size: 1.5vw;
         animation: twinkle 2s ease-in-out infinite;
+        transition: color 1s ease;
     }
 
     @keyframes twinkle {
@@ -900,48 +1119,90 @@ body::before {
 }
 
 /* ==========================================================================
-   6. KEYFRAMES & ANIMATIONS
+   LIGHT MODE - LOGIN BOX
    ========================================================================== */
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+body.light-mode .login-box {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(111, 66, 193, 0.25);
+    box-shadow: var(--shadow-lg), 0 0 50px rgba(111, 66, 193, 0.15);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes stroke {
-    100% {
-        stroke-dashoffset: 0;
-    }
+body.light-mode .login-box p {
+    color: #334155;
 }
 
 /* ==========================================================================
-   7. RESPONSIVE ADJUSTMENTS
+   LIGHT MODE - FORMS
+   ========================================================================== */
+
+body.light-mode .form-overlay {
+    background: rgba(203, 213, 225, 0.85);
+    backdrop-filter: blur(20px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-mode .form-container,
+body.light-mode .notification-box {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(111, 66, 193, 0.25);
+    box-shadow: var(--shadow-lg), 0 0 50px rgba(111, 66, 193, 0.15);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-mode .input-group input {
+    background: rgba(241, 245, 249, 0.9);
+    border: 2px solid rgba(111, 66, 193, 0.2);
+    color: var(--color-text);
+    transition: all 0.3s ease;
+}
+
+body.light-mode .input-group input:focus {
+    background: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.15);
+}
+
+body.light-mode .input-group label {
+    color: #334155;
+}
+
+body.light-mode .back-button {
+    color: #475569;
+    background: rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+body.light-mode .back-button:hover {
+    background: rgba(111, 66, 193, 0.15);
+    color: var(--color-primary);
+}
+
+body.light-mode .form-switcher {
+    color: #475569;
+}
+
+body.light-mode .form-switcher a {
+    color: var(--color-primary);
+}
+
+/* ==========================================================================
+   LIGHT MODE - DASHBOARD
+   ========================================================================== */
+
+body.light-mode .main-app-screen {
+    background: var(--gradient-dark);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-mode .dashboard-subtitle,
+body.light-mode .logout-link {
+    color: var(--color-text-secondary);
+}
+
+/* =========================================================================
+   LIGHT MODE - RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 
 @media (max-width: 767px) {
@@ -972,5 +1233,23 @@ body::before {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================================
+   RESPONSIVE - THEME TOGGLE
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    .theme-toggle {
+        top: 1rem;
+        right: 1rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .theme-toggle svg {
+        width: 24px;
+        height: 24px;
     }
 }
