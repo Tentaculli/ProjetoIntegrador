@@ -243,6 +243,8 @@ function criarCardHTML(pedido) {
         mapearShape(pedido.pin2Pos1), mapearShape(pedido.pin2Pos2), mapearShape(pedido.pin2Pos3)
     ];
 
+    const totalPecasReais = config.filter(tipo => tipo !== 0).length;
+
     const htmlPino1 = config.slice(0, 3).map(tipo => 
         tipo === 0 ? `<div class="mini-peca vazio"></div>` : `<div class="mini-peca tipo-${tipo}"></div>`
     ).join('');
@@ -279,11 +281,10 @@ function criarCardHTML(pedido) {
         ` 
         : '';
 
-    // 7. NOVO: Criar barra de progresso de produção
+    // 7. AJUSTADO: Criar barra de progresso baseada no total real de peças
     const statusByPosition = pedido.statusByPosition || 0;
-    const totalPecas = 6;
-    const percentualProgresso = Math.round((statusByPosition / totalPecas) * 100);
-    const estaCompleto = statusByPosition === totalPecas;
+    const percentualProgresso = Math.round((statusByPosition / totalPecasReais) * 100);
+    const estaCompleto = statusByPosition === totalPecasReais;
     
     // Mostrar barra de progresso apenas se estiver "Em Produção"
     const estaEmProducao = status === 2 || status === "InProgress" || status === "inprogress";
@@ -292,7 +293,7 @@ function criarCardHTML(pedido) {
         <div class="production-progress">
             <div class="progress-header">
                 <span class="progress-label">Montagem</span>
-                <span class="progress-counter ${estaCompleto ? 'complete' : ''}">${statusByPosition}/${totalPecas}</span>
+                <span class="progress-counter ${estaCompleto ? 'complete' : ''}">${statusByPosition}/${totalPecasReais}</span>
             </div>
             
             <div class="progress-bar-container">
@@ -300,7 +301,7 @@ function criarCardHTML(pedido) {
             </div>
             
             <div class="progress-pieces">
-                ${Array.from({ length: totalPecas }, (_, i) => `
+                ${Array.from({ length: totalPecasReais }, (_, i) => `
                     <div class="progress-piece ${i < statusByPosition ? 'placed' : ''} ${estaCompleto ? 'complete' : ''}"></div>
                 `).join('')}
             </div>

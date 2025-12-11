@@ -1529,7 +1529,7 @@ body::before {
 
 .progress-label {
     font-size: 0.75rem;
-    color: rgba(184, 184, 200, 0.6);
+    color: rgba(184, 184, 200, 0.75); /* Aumentado de 0.6 para 0.75 */
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -1537,18 +1537,18 @@ body::before {
 
 .progress-counter {
     font-size: 0.75rem;
-    color: rgba(184, 184, 200, 0.8);
+    color: rgba(184, 184, 200, 0.95); /* Aumentado de 0.8 para 0.95 */
     font-weight: 600;
     padding: 2px 8px;
-    background: rgba(59, 130, 246, 0.08);
+    background: rgba(59, 130, 246, 0.12); /* Aumentado de 0.08 para 0.12 */
     border-radius: 6px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.25); /* Aumentado de 0.15 para 0.25 */
 }
 
 .progress-bar-container {
     width: 100%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.06); /* Aumentado de 0.03 para 0.06 */
     border-radius: 4px;
     overflow: hidden;
     position: relative;
@@ -1557,11 +1557,11 @@ body::before {
 
 .progress-bar-fill {
     height: 100%;
-    background: rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.5); /* Aumentado de 0.4 para 0.5 */
     border-radius: 4px;
     transition: width 1s ease-out;
     position: relative;
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); /* Aumentado de 8px para 10px e 0.3 para 0.4 */
 }
 
 /* Animação de brilho sutil */
@@ -1589,66 +1589,65 @@ body::before {
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
-    gap: 3px;
+    gap: 1px;
 }
 
 .progress-piece {
-    width: calc(100% / 6 - 3px);
-    height: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 2px;
+    flex: 1;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.06); /* Aumentado de 0.04 para 0.06 */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Aumentado de 0.06 para 0.1 */
+    border-radius: 3px;
     transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
 }
 
 .progress-piece.placed {
-    background: rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.4);
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+    background: rgba(59, 130, 246, 0.35); /* Aumentado de 0.3 para 0.35 */
+    border-color: rgba(59, 130, 246, 0.5); /* Aumentado de 0.4 para 0.5 */
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); /* Aumentado de 6px para 8px e 0.4 para 0.5 */
 }
 
 /* Peça aguardando (vazia) */
 .progress-piece:not(.placed) {
-    opacity: 0.5;
+    opacity: 0.6; /* Aumentado de 0.5 para 0.6 */
 }
 
 /* Status completo - Verde sutil */
 .progress-bar-fill.complete {
-    background: rgba(16, 185, 129, 0.4);
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.5); /* Aumentado de 0.4 para 0.5 */
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); /* Aumentado de 8px para 10px e 0.3 para 0.4 */
 }
 
 .progress-counter.complete {
-    background: rgba(16, 185, 129, 0.08);
-    border-color: rgba(16, 185, 129, 0.15);
-    color: rgba(16, 185, 129, 0.9);
+    background: rgba(16, 185, 129, 0.12); /* Aumentado de 0.08 para 0.12 */
+    border-color: rgba(16, 185, 129, 0.25); /* Aumentado de 0.15 para 0.25 */
+    color: rgba(16, 185, 129, 1); /* Aumentado de 0.9 para 1 */
 }
 
 .progress-piece.placed.complete {
-    background: rgba(16, 185, 129, 0.3);
-    border-color: rgba(16, 185, 129, 0.4);
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.35); /* Aumentado de 0.3 para 0.35 */
+    border-color: rgba(16, 185, 129, 0.5); /* Aumentado de 0.4 para 0.5 */
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); /* Aumentado de 6px para 8px e 0.4 para 0.5 */
 }
 
 /* Hover discreto no card */
 .order-card:hover .progress-bar-fill {
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5); /* Aumentado de 10px para 12px e 0.4 para 0.5 */
 }
 
 .order-card:hover .progress-piece.placed {
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.6); /* Aumentado de 8px para 10px e 0.5 para 0.6 */
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
     .progress-pieces {
-        gap: 2px;
+        gap: 0.5px; /* Ainda menor no mobile */
     }
     
     .progress-piece {
-        width: calc(100% / 6 - 2px);
-        height: 5px;
+        height: 5px; /* Altura reduzida no mobile */
     }
 }
