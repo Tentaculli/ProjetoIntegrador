@@ -9,24 +9,23 @@ O Tentaculli é uma solução full-stack que permite aos clientes configurarem p
 ## Screenshots
 
 ### Tela de Login
-![Tela de Login](path/to/login-screenshot.png)
+![Tela de Login](./ui/src/assets/images/readme/login.jpg)
 *Interface de autenticação com suporte a dark/light mode*
 
 ### Configurador 3D
-![Configurador 3D](path/to/order-screenshot.png)
+![Tela de pedidos](./ui/src/assets/images/readme/order.jpg)
 *Ambiente 3D interativo para montagem de pedidos com drag-and-drop*
 
 ### Histórico de Pedidos
-![Histórico](path/to/history-screenshot.png)
+![Histórico (Modo escuro)](./ui/src/assets/images/readme/orders-history-dark.jpg)
+*Acompanhamento em tempo real do status de produção*
+
+![Histórico (Modo claro)](./ui/src/assets/images/readme/orders-history-light.jpg)
 *Acompanhamento em tempo real do status de produção*
 
 ### Página de Apresentação
-![Apresentação](path/to/presentation-screenshot.png)
+![Apresentação](./ui/src/assets/images/readme/presentation.jpg)
 *Página institucional com informações sobre o projeto e equipe*
-
-### Sistema em Funcionamento
-![Sistema Funcionando](path/to/system-working.png)
-*Integração completa: Web → API → CLP → Robô*
 
 ## Arquitetura
 
