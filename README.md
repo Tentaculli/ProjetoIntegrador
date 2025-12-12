@@ -6,6 +6,28 @@ Sistema de automação industrial integrado que conecta pedidos web a processos 
 
 O Tentaculli é uma solução full-stack que permite aos clientes configurarem pedidos personalizados via interface web 3D. Esses pedidos são processados por uma API REST, armazenados em banco de dados MySQL e automaticamente traduzidos em comandos para CLPs industriais que controlam braços robóticos e sistemas de montagem.
 
+## Screenshots
+
+### Tela de Login
+![Tela de Login](path/to/login-screenshot.png)
+*Interface de autenticação com suporte a dark/light mode*
+
+### Configurador 3D
+![Configurador 3D](path/to/order-screenshot.png)
+*Ambiente 3D interativo para montagem de pedidos com drag-and-drop*
+
+### Histórico de Pedidos
+![Histórico](path/to/history-screenshot.png)
+*Acompanhamento em tempo real do status de produção*
+
+### Página de Apresentação
+![Apresentação](path/to/presentation-screenshot.png)
+*Página institucional com informações sobre o projeto e equipe*
+
+### Sistema em Funcionamento
+![Sistema Funcionando](path/to/system-working.png)
+*Integração completa: Web → API → CLP → Robô*
+
 ## Arquitetura
 
 ```
@@ -62,6 +84,7 @@ Tentaculli/
         ├── services/
         │   └── api.js            # Cliente HTTP para API
         └── assets/               # Imagens e recursos estáticos
+            └── screenshots/      # Screenshots do sistema
 ```
 
 ## Funcionalidades
