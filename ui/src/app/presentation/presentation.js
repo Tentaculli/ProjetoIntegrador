@@ -67,22 +67,22 @@ const techData = {
     mysql: {
         name: "MySQL",
         description: "Utilizamos o MySQL como banco de dados relacional para armazenar todos os pedidos dos clientes, histórico de encomendas e configurações das peças. A estrutura foi otimizada para consultas rápidas e integridade dos dados.",
-        img: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/mySql.png"
     },
     vscode: {
         name: "VS Code",
         description: "Nossa IDE principal para desenvolvimento. Utilizamos extensões como Prettier, ESLint e Live Server para manter o código limpo e produtivo. Toda a interface web e lógica foram desenvolvidas aqui.",
-        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/vsCode.png"
     },
     nodered: {
         name: "Node-RED",
         description: "Implementamos o Node-RED como middleware entre a API e o CLP. Ele recebe os pedidos via HTTP, processa os dados e envia comandos OPC UA para o controlador industrial.",
-        img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/node-red.jpg"
     },
     csharp: {
         name: "C# / .NET",
         description: "A API REST foi construída em C# com ASP.NET Core. Implementamos autenticação JWT, validação de dados e endpoints seguros para gerenciar pedidos e usuários.",
-        img: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/cs-dotnet.png"
     },
     omron: {
         name: "Omron Automation",
@@ -453,7 +453,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupImageZoom();
     setupTechModal();
     setupMemberModal();
-    setupScrollReveal(); // <--- NOVA CHAMADA
+    setupScrollReveal();
+    setupSpecialNote();
 });
 
 // 8. SCROLL REVEAL - Animações ao rolar a página
@@ -487,4 +488,68 @@ function setupScrollReveal() {
             revealOnScroll();
         });
     });
+}
+
+// 9. EASTER EGG: NOTA ESPECIAL
+function setupSpecialNote() {
+    const secretTrigger = document.getElementById('secretTrigger');
+    const specialModal = document.getElementById('specialNoteModal');
+    const closeBtn = document.querySelector('.special-note-close');
+    const confettiContainer = document.getElementById('confettiContainer');
+
+    // Abrir modal ao clicar no trigger
+    secretTrigger.addEventListener('click', () => {
+        specialModal.classList.add('active');
+        createConfetti();
+    });
+
+    // Fechar modal
+    closeBtn.addEventListener('click', closeSpecialModal);
+
+    specialModal.addEventListener('click', (e) => {
+        if (e.target === specialModal) {
+            closeSpecialModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && specialModal.classList.contains('active')) {
+            closeSpecialModal();
+        }
+    });
+
+    function closeSpecialModal() {
+        const content = document.querySelector('.special-note-content');
+        content.style.opacity = '0';
+        content.style.transform = 'scale(0.5) rotateY(90deg)';
+        
+        setTimeout(() => {
+            specialModal.classList.remove('active');
+            confettiContainer.innerHTML = '';
+            content.style.opacity = '';
+            content.style.transform = '';
+        }, 400);
+    }
+
+    function createConfetti() {
+        const colors = ['#6f42c1', '#a855f7', '#ec4899', '#00d4ff', '#ffd700'];
+        const confettiCount = 50;
+
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                
+                confettiContainer.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }, i * 50);
+        }
+    }
 }
