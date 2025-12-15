@@ -24,7 +24,7 @@ const teamData = [
         name: "Luan Ziscycki",
         role: "Comunicação Web-CLP",
         img: "../../assets/images/team/luan-ziscycki.jpg",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Conecta sistemas industriais à web, transformando dados do CLP em informação acessível e funcional.",
         github: "https://github.com/LuanZiscycki",
         linkedin: "https://www.linkedin.com/in/luanziscycki/"
     },
@@ -32,7 +32,7 @@ const teamData = [
         name: "Lucas Moreira",
         role: "Frontend",
         img: "../../assets/images/team/lucas-igor.jpg",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Dá vida às interfaces, unindo performance, usabilidade e código bem estruturado no front-end.",
         github: "https://github.com/Lucaxcm/",
         linkedin: "https://www.linkedin.com/in/lucas-moreira-381aa5254/"
     },
@@ -40,7 +40,7 @@ const teamData = [
         name: "Maria Bianchini",
         role: "CLP",
         img: "../../assets/images/team/maria-bianchini.jpg",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Atua na lógica e no controle do sistema, garantindo confiabilidade e precisão nos processos automatizados.",
         github: "#",
         linkedin: "https://www.linkedin.com/in/maria-eduarda-bianchini-a95b35383/"
     },
@@ -48,7 +48,7 @@ const teamData = [
         name: "Maria Lemes",
         role: "Automação do robô",
         img: "../../assets/images/team/maria-lemes.png",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Responsável pela automação e comportamento do robô, traduzindo lógica em movimentos inteligentes.",
         github: "https://www.github.com/cebolits/",
         linkedin: "https://www.linkedin.com/in/maria-lemes/"
     },
@@ -56,7 +56,7 @@ const teamData = [
         name: "Victor Fidelis",
         role: "Comunicação robô-CLP",
         img: "../../assets/images/team/victor-fidelis.jpg",
-        bio: "Transformando café em interfaces incríveis com React e CSS.",
+        bio: "Integra robô e CLP, assegurando comunicação estável e sincronizada entre hardware e controle.",
         github: "#",
         linkedin: "https://www.linkedin.com/in/victor-fidelis-117683350/"
     },

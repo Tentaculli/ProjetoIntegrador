@@ -341,6 +341,69 @@ function criarCardHTML(pedido) {
 // ============================================================================
 // MODAL DE CONFIRMAÇÃO DE CANCELAMENTO
 // ============================================================================
+
+// Função para confirmar e cancelar o pedido
+async function confirmarCancelamentoPedido(orderId) {
+    try {
+        mostrarModalDark('⏳ Verificando status do pedido...', 'loading');
+
+        const response = await fetch(`http://localhost:5150/api/Order/${orderId}`);
+        
+        if (!response.ok) {
+            throw new Error('Não foi possível verificar o status do pedido.');
+        }
+
+        const pedidoAtual = await response.json();
+
+        if (pedidoAtual.status !== 1 && pedidoAtual.status !== "Waiting") {
+            mostrarModalDark(
+                'Este pedido não pode mais ser cancelado.<br>O status foi alterado para: <strong>' + 
+                mapearStatusParaTexto(pedidoAtual.status) + '</strong>',
+                'warning'
+            );
+            return;
+        }
+
+        mostrarModalDark('Cancelando pedido...', 'loading');
+        
+        const cancelResponse = await fetch(`http://localhost:5150/api/Order/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(4)
+        });
+
+        if (!cancelResponse.ok) {
+            const errorData = await cancelResponse.json();
+            throw new Error(errorData.Message || errorData.message || 'Falha ao cancelar o pedido.');
+        }
+
+        mostrarModalDark(`Pedido #${orderId} cancelado com sucesso!`, 'sucesso');
+        
+        setTimeout(() => {
+            fecharModalDark();
+            carregarPedidos();
+        }, 2000);
+
+    } catch (error) {
+        console.error('Erro ao cancelar pedido:', error);
+        mostrarModalDark(
+            `Erro ao cancelar pedido:<br>${error.message}`,
+            'erro'
+        );
+    }
+}
+
+// Função auxiliar para mapear status
+function mapearStatusParaTexto(status) {
+    if (status === 1 || status === "Waiting") return "Aguardando";
+    if (status === 2 || status === "InProgress") return "Em Produção";
+    if (status === 3 || status === "Finished") return "Entregue";
+    if (status === 4 || status === "Canceled") return "Cancelado";
+    return "Desconhecido";
+}
+
 window.mostrarConfirmacaoCancelamento = function(orderId) {
     const modal = document.getElementById("modal-container-dark");
     
@@ -410,73 +473,105 @@ window.mostrarConfirmacaoCancelamento = function(orderId) {
     modal.classList.remove("fechado");
 };
 
-async function confirmarCancelamentoPedido(orderId) {
-    try {
-        mostrarModalDark('⏳ Verificando status do pedido...', 'loading');
-
-        const response = await fetch(`http://localhost:5150/api/Order/${orderId}`);
-        
-        if (!response.ok) {
-            throw new Error('Não foi possível verificar o status do pedido.');
-        }
-
-        const pedidoAtual = await response.json();
-
-        if (pedidoAtual.status !== 1 && pedidoAtual.status !== "Waiting") {
-            mostrarModalDark(
-                '⚠️ Este pedido não pode mais ser cancelado.<br>O status foi alterado para: <strong>' + 
-                mapearStatusParaTexto(pedidoAtual.status) + '</strong>',
-                'warning'
-            );
-            return;
-        }
-
-        mostrarModalDark('⏳ Cancelando pedido...', 'loading');
-        
-        const cancelResponse = await fetch(`http://localhost:5150/api/Order/${orderId}/status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(4)
-        });
-
-        if (!cancelResponse.ok) {
-            const errorData = await cancelResponse.json();
-            throw new Error(errorData.Message || errorData.message || 'Falha ao cancelar o pedido.');
-        }
-
-        mostrarModalDark(`✅ Pedido #${orderId} cancelado com sucesso!`, 'sucesso');
-        
-        setTimeout(() => {
-            fecharModalDark();
-            carregarPedidos();
-        }, 2000);
-
-    } catch (error) {
-        console.error('Erro ao cancelar pedido:', error);
-        mostrarModalDark(
-            `❌ Erro ao cancelar pedido:<br>${error.message}`,
-            'erro'
-        );
-    }
-};
-
 // ============================================================================
-// FUNÇÃO DE CANCELAMENTO COM VALIDAÇÃO
+// FUNÇÕES DO MODAL DARK
 // ============================================================================
-window.cancelarPedido = async function(orderId) {
-    try {
-        // 1. Mostrar modal de confirmação PRIMEIRO
-        mostrarModalConfirmacao(orderId);
-    } catch (error) {
-        console.error('Erro ao preparar cancelamento:', error);
-        mostrarModalDark(
-            `❌ Erro inesperado:<br>${error.message}`,
-            'erro'
-        );
+
+// Função para fechar o modal dark
+function fecharModalDark() {
+    const modal = document.getElementById("modal-container-dark");
+    if (modal) {
+        modal.classList.add("fechado");
     }
-};
+}
+
+// Função para mostrar mensagens no modal dark
+function mostrarModalDark(mensagem, tipo = 'sucesso') {
+    const modal = document.getElementById("modal-container-dark");
+    
+    if (!modal) {
+        alert(mensagem.replace(/<br>/g, "\n").replace(/<\/?strong>/g, ""));
+        return;
+    }
+
+    modal.innerHTML = '';
+
+    const modalBox = document.createElement('div');
+    modalBox.className = 'modal-box-dark';
+
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header-dark';
+
+    const iconWrapper = document.createElement('div');
+    iconWrapper.className = 'modal-icon-wrapper-dark';
+
+    const iconBg = document.createElement('div');
+    iconBg.className = 'modal-icon-bg-dark';
+
+    let iconSVG = '';
+    
+    if (tipo === 'sucesso') {
+        iconBg.classList.add('success');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M14 27 L22 35 L38 17"/>
+            </svg>
+        `;
+    } else if (tipo === 'erro') {
+        iconBg.classList.add('error');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M16 16 L36 36 M36 16 L16 36"/>
+            </svg>
+        `;
+    } else if (tipo === 'warning') {
+        iconBg.classList.add('warning');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="25"/>
+                <path d="M26 14 L26 28 M26 34 L26 35"/>
+            </svg>
+        `;
+    } else if (tipo === 'loading') {
+        iconBg.classList.add('loading');
+        iconSVG = `
+            <svg viewBox="0 0 52 52">
+                <circle cx="26" cy="26" r="20" stroke-dasharray="31.4 31.4"/>
+            </svg>
+        `;
+    }
+
+    iconBg.innerHTML = iconSVG;
+    iconWrapper.appendChild(iconBg);
+    modalHeader.appendChild(iconWrapper);
+
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body-dark';
+
+    const p = document.createElement('p');
+    p.innerHTML = mensagem;
+    p.style.fontSize = '1.1rem';
+    p.style.margin = '0';
+
+    modalBody.appendChild(p);
+
+    // Se não for loading, adicionar botão OK
+    if (tipo !== 'loading') {
+        const btn = document.createElement('button');
+        btn.textContent = 'OK';
+        btn.onclick = fecharModalDark;
+        btn.style.marginTop = '1.5rem';
+        modalBody.appendChild(btn);
+    }
+
+    modalBox.appendChild(modalHeader);
+    modalBox.appendChild(modalBody);
+    modal.appendChild(modalBox);
+
+    modal.classList.remove("fechado");
+}
 
 // ============================================================================
 // THEME TOGGLE FUNCTIONALITY

@@ -389,7 +389,7 @@ async function finalizarCompra() {
   console.log("Enviando Payload:", orderData);
 
   try {
-    mostrarModal('⏳ Processando pedido...', 'loading');
+    mostrarModal('Processando pedido...', 'loading');
     
     // Chama a API
     const response = await api.createOrder(orderData);
