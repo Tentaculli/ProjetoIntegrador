@@ -480,43 +480,68 @@ function setupSpecialNote() {
     const closeBtn = document.querySelector('.special-note-close');
     const confettiContainer = document.getElementById('confettiContainer');
 
-    if (!trigger || !modal || !closeBtn) {
+    if (!trigger || !modal || !closeBtn || !confettiContainer) {
         console.error('Elementos do easter egg não encontrados');
         return;
     }
 
-    trigger.addEventListener('click', () => {
+    // Abrir modal
+    trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
         createConfetti();
     });
 
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('active');
-        confettiContainer.innerHTML = '';
+    // Função para fechar modal
+    function closeModal() {
+        const content = document.querySelector('.special-note-content');
+        content.style.opacity = '0';
+        content.style.transform = 'scale(0.5) rotateY(-90deg)';
+        
+        setTimeout(() => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            confettiContainer.innerHTML = '';
+            content.style.opacity = '';
+            content.style.transform = '';
+        }, 400);
+    }
+
+    // Botão fechar
+    closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeModal();
     });
 
+    // Clicar fora do modal
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            modal.classList.remove('active');
-            confettiContainer.innerHTML = '';
+            closeModal();
         }
     });
 
+    // Tecla ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
-            modal.classList.remove('active');
-            confettiContainer.innerHTML = '';
+            closeModal();
         }
     });
 
+    // Criar confetes
     function createConfetti() {
         const colors = ['#6f42c1', '#9a2ec3', '#00d4ff', '#ec4899', '#fbbf24'];
-        const confettiCount = 100;
+        const confettiCount = 150;
+
+        confettiContainer.innerHTML = '';
 
         for (let i = 0; i < confettiCount; i++) {
             const confetti = document.createElement('div');
             confetti.className = 'confetti';
             confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             confetti.style.animationDelay = Math.random() * 3 + 's';
             confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
@@ -525,7 +550,7 @@ function setupSpecialNote() {
 
         setTimeout(() => {
             confettiContainer.innerHTML = '';
-        }, 5000);
+        }, 6000);
     }
 }
 
