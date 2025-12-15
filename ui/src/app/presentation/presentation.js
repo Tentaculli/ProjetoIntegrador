@@ -2,7 +2,7 @@
    TENTACULLI LOGIC - PRESENTATION
    ========================================================================== */
 
-// 1. DADOS DA EQUIPE (6 Pessoas)
+// 1. DADOS DA EQUIPE
 const teamData = [
     {
         name: "Angelina Chaves",
@@ -59,10 +59,10 @@ const teamData = [
         bio: "Integra robô e CLP, assegurando comunicação estável e sincronizada entre hardware e controle.",
         github: "#",
         linkedin: "https://www.linkedin.com/in/victor-fidelis-117683350/"
-    },
+    }
 ];
 
-// DADOS DAS FERRAMENTAS
+// 2. DADOS DAS FERRAMENTAS
 const techData = {
     mysql: {
         name: "MySQL",
@@ -96,7 +96,7 @@ const techData = {
     }
 };
 
-// DADOS DAS UCs (UNIDADES CURRICULARES)
+// 3. DADOS DAS UCs (UNIDADES CURRICULARES)
 const ucData = [
     {
         title: "Banco de Dados",
@@ -130,7 +130,11 @@ const ucData = [
     }
 ];
 
-// 2. FUNÇÃO EFEITO DIGITAÇÃO (Typewriter)
+// ============================================================================
+// FUNÇÕES AUXILIARES
+// ============================================================================
+
+// Efeito de digitação (Typewriter)
 function typeWriter(text, elementId, speed = 80) {
     const element = document.getElementById(elementId);
     let i = 0;
@@ -146,7 +150,11 @@ function typeWriter(text, elementId, speed = 80) {
     type();
 }
 
-// 3. RENDERIZAR CARDS COM ANIMAÇÃO
+// ============================================================================
+// RENDERIZAÇÃO DE CONTEÚDO
+// ============================================================================
+
+// Renderizar cards da equipe
 function renderTeam() {
     const grid = document.getElementById('team-grid');
     grid.innerHTML = "";
@@ -175,7 +183,6 @@ function renderTeam() {
             card.style.opacity = "1";
             card.style.transform = "translateY(0)";
             
-            // Adicionar evento de clique para abrir modal
             card.addEventListener('click', function() {
                 const index = this.getAttribute('data-member-index');
                 openMemberModal(teamData[index]);
@@ -184,7 +191,7 @@ function renderTeam() {
     }, 100);
 }
 
-// 4. RENDERIZAR UCs
+// Renderizar UCs
 function renderUCs() {
     const grid = document.getElementById('uc-grid');
     if (!grid) return;
@@ -205,7 +212,11 @@ function renderUCs() {
     });
 }
 
-// FUNÇÃO PARA ABRIR MODAL DO MEMBRO
+// ============================================================================
+// MODAIS
+// ============================================================================
+
+// Modal de membros da equipe
 function openMemberModal(member) {
     const modal = document.getElementById('memberModal');
     const modalPic = document.getElementById('memberModalPic');
@@ -225,7 +236,6 @@ function openMemberModal(member) {
     modal.classList.add('active');
 }
 
-// FUNÇÃO PARA FECHAR MODAL DO MEMBRO
 function closeMemberModal() {
     const modal = document.getElementById('memberModal');
     const content = document.querySelector('.member-modal-content');
@@ -240,192 +250,6 @@ function closeMemberModal() {
     }, 300);
 }
 
-// 5. FUNCIONALIDADE DE ZOOM NAS IMAGENS (COM ANIMAÇÕES)
-function setupImageZoom() {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const closeBtn = document.querySelector('.close-modal');
-    const galleryItems = document.querySelectorAll('.gallery-item');
-
-    galleryItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const imgSrc = this.getAttribute('data-img');
-            modal.classList.add('active');
-            
-            // Pequeno delay para garantir que a classe 'active' seja aplicada antes da imagem
-            setTimeout(() => {
-                modalImg.src = imgSrc;
-            }, 50);
-        });
-    });
-
-    closeBtn.addEventListener('click', () => {
-        closeModal();
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
-
-    function closeModal() {
-        // Remove animações suavemente
-        modalImg.style.opacity = '0';
-        modalImg.style.transform = 'scale(0.7) translateY(30px)';
-        closeBtn.style.opacity = '0';
-        closeBtn.style.transform = 'rotate(-90deg) scale(0.5)';
-        
-        setTimeout(() => {
-            modal.classList.remove('active');
-            modalImg.src = ''; // Limpa a imagem
-            // Reset styles
-            modalImg.style.opacity = '';
-            modalImg.style.transform = '';
-            closeBtn.style.opacity = '';
-            closeBtn.style.transform = '';
-        }, 400);
-    }
-}
-
-// 6. MODAL DE FERRAMENTAS
-function setupTechModal() {
-    const techModal = document.getElementById('techModal');
-    const techModalClose = document.querySelector('.tech-modal-close');
-    const techCards = document.querySelectorAll('.tech-card[data-tech]');
-    const techModalTitle = document.getElementById('techModalTitle');
-    const techModalImage = document.getElementById('techModalImage');
-    const techModalDescription = document.getElementById('techModalDescription');
-    const imageModal = document.getElementById('imageModal');
-    const modalImage = document.getElementById('modalImage');
-    const imageModalClose = document.querySelector('.close-modal');
-
-    // Variável para controlar se veio do modal de tech
-    let voltarParaTechModal = false;
-
-    // Abrir modal ao clicar no card
-    techCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const techKey = this.getAttribute('data-tech');
-            const tech = techData[techKey];
-
-            if (tech) {
-                techModalTitle.textContent = tech.name;
-                techModalImage.src = tech.img;
-                techModalDescription.textContent = tech.description;
-                techModal.classList.add('active');
-                voltarParaTechModal = false; // Resetar flag
-            }
-        });
-    });
-
-    // Fechar modal de tech
-    techModalClose.addEventListener('click', () => {
-        closeTechModal();
-    });
-
-    techModal.addEventListener('click', (e) => {
-        if (e.target === techModal) {
-            closeTechModal();
-        }
-    });
-
-    // Zoom na imagem do modal de tech
-    const techImageWrapper = document.querySelector('.tech-modal-image-wrapper');
-    techImageWrapper.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const imgSrc = techModalImage.src;
-        
-        // Marcar que deve voltar para o modal de tech
-        voltarParaTechModal = true;
-        
-        // Fechar o modal de tech primeiro
-        const content = document.querySelector('.tech-modal-content');
-        content.style.opacity = '0';
-        content.style.transform = 'scale(0.7) translateY(30px)';
-        
-        setTimeout(() => {
-            techModal.classList.remove('active');
-            
-            // Abrir o modal de zoom
-            setTimeout(() => {
-                imageModal.classList.add('active');
-                setTimeout(() => {
-                    modalImage.src = imgSrc;
-                }, 50);
-            }, 100);
-        }, 300);
-    });
-
-    // Fechar modal de imagem (com lógica de retorno)
-    function closeImageModal() {
-        modalImage.style.opacity = '0';
-        modalImage.style.transform = 'scale(0.7) translateY(30px)';
-        imageModalClose.style.opacity = '0';
-        imageModalClose.style.transform = 'rotate(-90deg) scale(0.5)';
-        
-        setTimeout(() => {
-            imageModal.classList.remove('active');
-            modalImage.src = '';
-            modalImage.style.opacity = '';
-            modalImage.style.transform = '';
-            imageModalClose.style.opacity = '';
-            imageModalClose.style.transform = '';
-            
-            // Se veio do modal de tech, reabrir
-            if (voltarParaTechModal) {
-                setTimeout(() => {
-                    const content = document.querySelector('.tech-modal-content');
-                    content.style.opacity = '';
-                    content.style.transform = '';
-                    techModal.classList.add('active');
-                    voltarParaTechModal = false; // Resetar flag
-                }, 300);
-            }
-        }, 400);
-    }
-
-    // Eventos de fechar modal de imagem
-    imageModalClose.addEventListener('click', closeImageModal);
-    
-    imageModal.addEventListener('click', (e) => {
-        if (e.target === imageModal) {
-            closeImageModal();
-        }
-    });
-
-    // ESC para fechar modais
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (imageModal.classList.contains('active')) {
-                closeImageModal();
-            } else if (techModal.classList.contains('active')) {
-                closeTechModal();
-            }
-        }
-    });
-
-    function closeTechModal() {
-        const content = document.querySelector('.tech-modal-content');
-        content.style.opacity = '0';
-        content.style.transform = 'scale(0.7) translateY(30px)';
-        voltarParaTechModal = false; // Resetar flag ao fechar manualmente
-        
-        setTimeout(() => {
-            techModal.classList.remove('active');
-            content.style.opacity = '';
-            content.style.transform = '';
-        }, 300);
-    }
-}
-
-// SETUP DO MODAL DE MEMBRO
 function setupMemberModal() {
     const modal = document.getElementById('memberModal');
     const closeBtn = document.querySelector('.member-modal-close');
@@ -445,19 +269,177 @@ function setupMemberModal() {
     });
 }
 
-// 7. INICIALIZAÇÃO
-document.addEventListener('DOMContentLoaded', () => {
-    typeWriter("Bem-vindo ao Projeto Tentaculli", "typing-title");
-    renderTeam();
-    renderUCs();
-    setupImageZoom();
-    setupTechModal();
-    setupMemberModal();
-    setupScrollReveal();
-    setupSpecialNote();
-});
+// Modal de zoom de imagens
+function setupImageZoom() {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const closeBtn = document.querySelector('.close-modal');
+    const galleryItems = document.querySelectorAll('.gallery-item');
 
-// 8. SCROLL REVEAL - Animações ao rolar a página
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const imgSrc = this.getAttribute('data-img');
+            modal.classList.add('active');
+            
+            setTimeout(() => {
+                modalImg.src = imgSrc;
+            }, 50);
+        });
+    });
+
+    function closeModal() {
+        modalImg.style.opacity = '0';
+        modalImg.style.transform = 'scale(0.7) translateY(30px)';
+        closeBtn.style.opacity = '0';
+        closeBtn.style.transform = 'rotate(-90deg) scale(0.5)';
+        
+        setTimeout(() => {
+            modal.classList.remove('active');
+            modalImg.src = '';
+            modalImg.style.opacity = '';
+            modalImg.style.transform = '';
+            closeBtn.style.opacity = '';
+            closeBtn.style.transform = '';
+        }, 400);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}
+
+// Modal de tecnologias
+function setupTechModal() {
+    const techModal = document.getElementById('techModal');
+    const techModalClose = document.querySelector('.tech-modal-close');
+    const techCards = document.querySelectorAll('.tech-card[data-tech]');
+    const techModalTitle = document.getElementById('techModalTitle');
+    const techModalImage = document.getElementById('techModalImage');
+    const techModalDescription = document.getElementById('techModalDescription');
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const imageModalClose = document.querySelector('.close-modal');
+
+    let voltarParaTechModal = false;
+
+    techCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const techKey = this.getAttribute('data-tech');
+            const tech = techData[techKey];
+
+            if (tech) {
+                techModalTitle.textContent = tech.name;
+                techModalImage.src = tech.img;
+                techModalDescription.textContent = tech.description;
+                techModal.classList.add('active');
+                voltarParaTechModal = false;
+            }
+        });
+    });
+
+    function closeTechModal() {
+        const content = document.querySelector('.tech-modal-content');
+        content.style.opacity = '0';
+        content.style.transform = 'scale(0.7) translateY(30px)';
+        voltarParaTechModal = false;
+        
+        setTimeout(() => {
+            techModal.classList.remove('active');
+            content.style.opacity = '';
+            content.style.transform = '';
+        }, 300);
+    }
+
+    techModalClose.addEventListener('click', closeTechModal);
+
+    techModal.addEventListener('click', (e) => {
+        if (e.target === techModal) {
+            closeTechModal();
+        }
+    });
+
+    const techImageWrapper = document.querySelector('.tech-modal-image-wrapper');
+    techImageWrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const imgSrc = techModalImage.src;
+        
+        voltarParaTechModal = true;
+        
+        const content = document.querySelector('.tech-modal-content');
+        content.style.opacity = '0';
+        content.style.transform = 'scale(0.7) translateY(30px)';
+        
+        setTimeout(() => {
+            techModal.classList.remove('active');
+            
+            setTimeout(() => {
+                imageModal.classList.add('active');
+                setTimeout(() => {
+                    modalImage.src = imgSrc;
+                }, 50);
+            }, 100);
+        }, 300);
+    });
+
+    function closeImageModal() {
+        modalImage.style.opacity = '0';
+        modalImage.style.transform = 'scale(0.7) translateY(30px)';
+        imageModalClose.style.opacity = '0';
+        imageModalClose.style.transform = 'rotate(-90deg) scale(0.5)';
+        
+        setTimeout(() => {
+            imageModal.classList.remove('active');
+            modalImage.src = '';
+            modalImage.style.opacity = '';
+            modalImage.style.transform = '';
+            imageModalClose.style.opacity = '';
+            imageModalClose.style.transform = '';
+            
+            if (voltarParaTechModal) {
+                setTimeout(() => {
+                    const content = document.querySelector('.tech-modal-content');
+                    content.style.opacity = '';
+                    content.style.transform = '';
+                    techModal.classList.add('active');
+                    voltarParaTechModal = false;
+                }, 300);
+            }
+        }, 400);
+    }
+
+    imageModalClose.addEventListener('click', closeImageModal);
+    
+    imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) {
+            closeImageModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (imageModal.classList.contains('active')) {
+                closeImageModal();
+            } else if (techModal.classList.contains('active')) {
+                closeTechModal();
+            }
+        }
+    });
+}
+
+// ============================================================================
+// SCROLL REVEAL
+// ============================================================================
+
 function setupScrollReveal() {
     const reveals = document.querySelectorAll('.scroll-reveal');
     
@@ -474,10 +456,8 @@ function setupScrollReveal() {
         });
     };
     
-    // Revelar elementos já visíveis no carregamento
     revealOnScroll();
     
-    // Adicionar listener de scroll com throttle para performance
     let scrollTimeout;
     window.addEventListener('scroll', () => {
         if (scrollTimeout) {
@@ -490,66 +470,201 @@ function setupScrollReveal() {
     });
 }
 
-// 9. EASTER EGG: NOTA ESPECIAL
+// ============================================================================
+// EASTER EGG - NOTA ESPECIAL
+// ============================================================================
+
 function setupSpecialNote() {
-    const secretTrigger = document.getElementById('secretTrigger');
-    const specialModal = document.getElementById('specialNoteModal');
+    const trigger = document.getElementById('secretTrigger');
+    const modal = document.getElementById('specialNoteModal');
     const closeBtn = document.querySelector('.special-note-close');
     const confettiContainer = document.getElementById('confettiContainer');
 
-    // Abrir modal ao clicar no trigger
-    secretTrigger.addEventListener('click', () => {
-        specialModal.classList.add('active');
+    if (!trigger || !modal || !closeBtn) {
+        console.error('Elementos do easter egg não encontrados');
+        return;
+    }
+
+    trigger.addEventListener('click', () => {
+        modal.classList.add('active');
         createConfetti();
     });
 
-    // Fechar modal
-    closeBtn.addEventListener('click', closeSpecialModal);
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        confettiContainer.innerHTML = '';
+    });
 
-    specialModal.addEventListener('click', (e) => {
-        if (e.target === specialModal) {
-            closeSpecialModal();
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            confettiContainer.innerHTML = '';
         }
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && specialModal.classList.contains('active')) {
-            closeSpecialModal();
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+            confettiContainer.innerHTML = '';
         }
     });
 
-    function closeSpecialModal() {
-        const content = document.querySelector('.special-note-content');
-        content.style.opacity = '0';
-        content.style.transform = 'scale(0.5) rotateY(90deg)';
-        
-        setTimeout(() => {
-            specialModal.classList.remove('active');
-            confettiContainer.innerHTML = '';
-            content.style.opacity = '';
-            content.style.transform = '';
-        }, 400);
-    }
-
     function createConfetti() {
-        const colors = ['#6f42c1', '#a855f7', '#ec4899', '#00d4ff', '#ffd700'];
-        const confettiCount = 50;
+        const colors = ['#6f42c1', '#9a2ec3', '#00d4ff', '#ec4899', '#fbbf24'];
+        const confettiCount = 100;
 
         for (let i = 0; i < confettiCount; i++) {
-            setTimeout(() => {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                
-                confettiContainer.appendChild(confetti);
-
-                setTimeout(() => {
-                    confetti.remove();
-                }, 3000);
-            }, i * 50);
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            confettiContainer.appendChild(confetti);
         }
+
+        setTimeout(() => {
+            confettiContainer.innerHTML = '';
+        }, 5000);
     }
 }
+
+// ============================================================================
+// SLIDER DE FOTOS
+// ============================================================================
+
+function setupProjectSlider() {
+    const track = document.getElementById('sliderTrack');
+    const prevBtn = document.getElementById('sliderPrev');
+    const nextBtn = document.getElementById('sliderNext');
+    const indicators = document.querySelectorAll('.indicator');
+    const slides = document.querySelectorAll('.slider-item');
+    
+    if (!track || !prevBtn || !nextBtn || slides.length === 0) {
+        console.error('Elementos do slider não encontrados');
+        return;
+    }
+    
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+
+    function updateSlider() {
+        const translateValue = -(currentIndex * 100);
+        track.style.transform = `translateX(${translateValue}%)`;
+        
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === currentIndex);
+        });
+        
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateSlider();
+    }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        updateSlider();
+    }
+
+    prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        prevSlide();
+        clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(nextSlide, 5000);
+    });
+    
+    nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        nextSlide();
+        clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(nextSlide, 5000);
+    });
+    
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentIndex = index;
+            updateSlider();
+            clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(nextSlide, 5000);
+        });
+    });
+
+    let autoplayInterval = setInterval(nextSlide, 5000);
+    
+    const sliderContainer = document.querySelector('.slider-container');
+    if (sliderContainer) {
+        sliderContainer.addEventListener('mouseenter', () => {
+            clearInterval(autoplayInterval);
+        });
+        
+        sliderContainer.addEventListener('mouseleave', () => {
+            autoplayInterval = setInterval(nextSlide, 5000);
+        });
+    }
+
+    // Suporte para swipe em mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        
+        if (touchStartX - touchEndX > swipeThreshold) {
+            nextSlide();
+            clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+        
+        if (touchEndX - touchStartX > swipeThreshold) {
+            prevSlide();
+            clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+    }
+
+    // Suporte para navegação por teclado
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+            clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+        if (e.key === 'ArrowRight') {
+            nextSlide();
+            clearInterval(autoplayInterval);
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+    });
+
+    updateSlider();
+}
+
+// ============================================================================
+// INICIALIZAÇÃO
+// ============================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    typeWriter("Bem-vindo ao Projeto Tentaculli", "typing-title");
+    renderTeam();
+    renderUCs();
+    setupImageZoom();
+    setupTechModal();
+    setupMemberModal();
+    setupScrollReveal();
+    setupSpecialNote();
+    setupProjectSlider();
+});
