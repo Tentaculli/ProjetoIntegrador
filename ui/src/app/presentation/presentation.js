@@ -563,27 +563,47 @@ function setupProjectSlider() {
     const prevBtn = document.getElementById('sliderPrev');
     const nextBtn = document.getElementById('sliderNext');
     const indicators = document.querySelectorAll('.indicator');
-    const slides = document.querySelectorAll('.slider-item');
     
-    if (!track || !prevBtn || !nextBtn || slides.length === 0) {
+    if (!track || !prevBtn || !nextBtn) {
         console.error('Elementos do slider não encontrados');
         return;
     }
     
-    let currentIndex = 0;
+    // Contar apenas os slides reais (não duplicados)
+    const slides = Array.from(track.querySelectorAll('.slider-item'));
     const totalSlides = slides.length;
+    
+    console.log('Total de slides encontrados:', totalSlides);
+    
+    let currentIndex = 0;
+    let autoplayInterval;
 
     function updateSlider() {
+        // Garantir que o índice está dentro dos limites
+        currentIndex = ((currentIndex % totalSlides) + totalSlides) % totalSlides;
+        
         const translateValue = -(currentIndex * 100);
         track.style.transform = `translateX(${translateValue}%)`;
         
+        // Atualizar classes dos slides
         slides.forEach((slide, index) => {
-            slide.classList.toggle('active', index === currentIndex);
+            if (index === currentIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
         });
         
+        // Atualizar indicadores
         indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentIndex);
+            if (index === currentIndex) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
         });
+        
+        console.log('Slide atual:', currentIndex + 1, 'de', totalSlides);
     }
 
     function nextSlide() {
@@ -596,31 +616,34 @@ function setupProjectSlider() {
         updateSlider();
     }
 
+    function resetAutoplay() {
+        clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Event listeners para botões
     prevBtn.addEventListener('click', (e) => {
         e.preventDefault();
         prevSlide();
-        clearInterval(autoplayInterval);
-        autoplayInterval = setInterval(nextSlide, 5000);
+        resetAutoplay();
     });
     
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
         nextSlide();
-        clearInterval(autoplayInterval);
-        autoplayInterval = setInterval(nextSlide, 5000);
+        resetAutoplay();
     });
     
+    // Event listeners para indicadores
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => {
             currentIndex = index;
             updateSlider();
-            clearInterval(autoplayInterval);
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         });
     });
 
-    let autoplayInterval = setInterval(nextSlide, 5000);
-    
+    // Pausar autoplay ao passar mouse
     const sliderContainer = document.querySelector('.slider-container');
     if (sliderContainer) {
         sliderContainer.addEventListener('mouseenter', () => {
@@ -628,7 +651,7 @@ function setupProjectSlider() {
         });
         
         sliderContainer.addEventListener('mouseleave', () => {
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         });
     }
 
@@ -650,14 +673,12 @@ function setupProjectSlider() {
         
         if (touchStartX - touchEndX > swipeThreshold) {
             nextSlide();
-            clearInterval(autoplayInterval);
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         }
         
         if (touchEndX - touchStartX > swipeThreshold) {
             prevSlide();
-            clearInterval(autoplayInterval);
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         }
     }
 
@@ -665,23 +686,115 @@ function setupProjectSlider() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') {
             prevSlide();
-            clearInterval(autoplayInterval);
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         }
         if (e.key === 'ArrowRight') {
             nextSlide();
-            clearInterval(autoplayInterval);
-            autoplayInterval = setInterval(nextSlide, 5000);
+            resetAutoplay();
         }
     });
 
+    // Inicializar slider e autoplay
     updateSlider();
+    autoplayInterval = setInterval(nextSlide, 5000);
 }
 
 // ============================================================================
-// INICIALIZAÇÃO
+// CONTROLE DE VÍDEOS
 // ============================================================================
+function initVideoControls() {
+    const video1 = document.getElementById('video1');
+    const video2 = document.getElementById('video2');
+    const videosContainer = document.getElementById('videosContainer');
+    
+    const playAllBtn = document.getElementById('playAllBtn');
+    const pauseAllBtn = document.getElementById('pauseAllBtn');
+    const restartAllBtn = document.getElementById('restartAllBtn');
+    const muteAllBtn = document.getElementById('muteAllBtn');
+    
+    // Verificar se todos os elementos existem
+    if (!video1 || !video2 || !videosContainer) {
+        console.error('Elementos de vídeo não encontrados');
+        return;
+    }
+    
+    let isMuted = false;
+    
+    // Adicionar classes visuais para indicar sincronização
+    const wrapper1 = video1.closest('.video-wrapper');
+    const wrapper2 = video2.closest('.video-wrapper');
+    
+    // Função auxiliar para feedback visual
+    function showSyncFeedback() {
+        wrapper1.classList.add('synced');
+        wrapper2.classList.add('synced');
+        
+        setTimeout(() => {
+            wrapper1.classList.remove('synced');
+            wrapper2.classList.remove('synced');
+        }, 2000);
+    }
+    
+    // ========================================================================
+    // CONTROLES SINCRONIZADOS
+    // ========================================================================
+    
+    // Play de ambos os vídeos
+    if (playAllBtn) {
+        playAllBtn.addEventListener('click', () => {
+            video1.play().catch(e => console.log('Erro ao reproduzir video1:', e));
+            video2.play().catch(e => console.log('Erro ao reproduzir video2:', e));
+            showSyncFeedback();
+        });
+    }
+    
+    // Pause de ambos os vídeos
+    if (pauseAllBtn) {
+        pauseAllBtn.addEventListener('click', () => {
+            video1.pause();
+            video2.pause();
+            showSyncFeedback();
+        });
+    }
+    
+    // Reiniciar ambos os vídeos
+    if (restartAllBtn) {
+        restartAllBtn.addEventListener('click', () => {
+            video1.currentTime = 0;
+            video2.currentTime = 0;
+            video1.play().catch(e => console.log('Erro ao reproduzir video1:', e));
+            video2.play().catch(e => console.log('Erro ao reproduzir video2:', e));
+            showSyncFeedback();
+        });
+    }
+    
+    // Mutar/Desmutar ambos os vídeos
+    if (muteAllBtn) {
+        muteAllBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            video1.muted = isMuted;
+            video2.muted = isMuted;
+            
+            // Atualizar ícone
+            const icon = muteAllBtn.querySelector('i');
+            const text = muteAllBtn.querySelector('span');
+            
+            if (isMuted) {
+                icon.className = 'fas fa-volume-mute';
+                if (text) text.textContent = 'Desmutar';
+                muteAllBtn.classList.add('muted');
+            } else {
+                icon.className = 'fas fa-volume-up';
+                if (text) text.textContent = 'Mutar';
+                muteAllBtn.classList.remove('muted');
+            }
+            
+            showSyncFeedback();
+        });
+    }
+}
 
+// Inicializar quando o documento carregar
 document.addEventListener('DOMContentLoaded', () => {
     typeWriter("Bem-vindo ao Projeto Tentaculli", "typing-title");
     renderTeam();
@@ -692,4 +805,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollReveal();
     setupSpecialNote();
     setupProjectSlider();
+    
+    // Inicializar vídeos
+    setTimeout(() => {
+        initVideoControls();
+    }, 100);
 });
