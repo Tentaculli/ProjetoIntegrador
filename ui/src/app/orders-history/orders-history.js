@@ -3,6 +3,7 @@ import { api } from '../../services/api.js';
 document.addEventListener("DOMContentLoaded", () => {
     carregarPedidos();
     initThemeToggle();
+    iniciarAtualizacaoAutomatica(); // ← ADICIONAR APENAS ISSO
 });
 
 // Logout global
@@ -13,7 +14,17 @@ window.fazerLogout = function() {
 
 // Variável global para armazenar todos os pedidos e estado de ordenação
 let todosOsPedidos = [];
-let ordenacaoDescendente = true; // true = mais novo primeiro, false = mais antigo primeiro
+let ordenacaoDescendente = true;
+
+// ============================================================================
+// ATUALIZAÇÃO AUTOMÁTICA - SIMPLES
+// ============================================================================
+function iniciarAtualizacaoAutomatica() {
+    // Recarregar a página a cada 10 segundos
+    setInterval(() => {
+        location.reload();
+    }, 10000); // 10000ms = 10 segundos
+}
 
 async function carregarPedidos() {
     const container = document.getElementById("lista-pedidos");
@@ -141,20 +152,16 @@ function ordenarPorData(pedidos) {
         const prioridadeA = prioridadeStatus[statusA] || 5;
         const prioridadeB = prioridadeStatus[statusB] || 5;
 
-        // 3. Primeiro compara por prioridade de status
         if (prioridadeA !== prioridadeB) {
             return prioridadeA - prioridadeB;
         }
 
-        // 4. Se status for igual, ordena por data
         const dataA = new Date(a.created);
         const dataB = new Date(b.created);
 
-        // Se descendente: mais novo primeiro
-        // Se ascendente: mais antigo primeiro
         return ordenacaoDescendente 
-            ? dataB - dataA  // Mais recente primeiro
-            : dataA - dataB; // Mais antigo primeiro
+            ? dataB - dataA
+            : dataA - dataB;
     });
 }
 
