@@ -87,12 +87,12 @@ const techData = {
     omron: {
         name: "Omron Automation",
         description: "Utilizamos equipamentos Omron (braço robótico e sensores) integrados ao CLP para executar fisicamente os pedidos. A comunicação é feita via protocolos industriais padrão.",
-        img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/omron.jpg"
     },
     tia: {
         name: "TIA Portal",
         description: "Programamos o CLP Siemens S7-1200 usando TIA Portal. Criamos a lógica Ladder para controlar motores, válvulas e o braço robótico baseado nos comandos recebidos do Node-RED.",
-        img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        img: "../../assets/images/tech/clp.jpg"
     }
 };
 
