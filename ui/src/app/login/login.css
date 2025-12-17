@@ -698,8 +698,29 @@ body.light-mode::before {
     margin: 0;
 }
 
+.success-icon {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: successIconScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes successIconScale {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
 .success-icon svg {
     width: 100px;
+    height: 100px;
     display: block;
     filter: drop-shadow(0 5px 15px rgba(40, 167, 69, 0.3));
 }
@@ -708,17 +729,30 @@ body.light-mode::before {
     stroke: var(--color-success);
     stroke-width: 2;
     fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
-    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    animation: drawCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.2s forwards;
 }
 
 .success-icon path {
     stroke: var(--color-success);
     stroke-width: 3;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
-    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    animation: drawCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes drawCircle {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+    to { stroke-dashoffset: 0; }
 }
 
 /* ==========================================================================
@@ -1252,4 +1286,10 @@ body.light-mode .logout-link {
         width: 24px;
         height: 24px;
     }
+}
+
+/* LIGHT MODE - Success Icon */
+body.light-mode .success-icon circle,
+body.light-mode .success-icon path {
+    stroke: #28a745;
 }

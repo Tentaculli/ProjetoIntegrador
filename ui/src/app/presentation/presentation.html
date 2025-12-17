@@ -38,15 +38,13 @@
                     <p class="course-description">
                         O curso de <strong>Cibersistemas para Automação</strong> é uma área que integra automação, software,
                         redes e segurança da informação para conectar sistemas físicos e digitais. Seu foco está no desenvolvimento
-                        e na integração de soluções que permitem monitorar, controlar e otimizar processos reais por meio de tecnologia,
-                        garantindo eficiência, confiabilidade e proteção dos dados em ambientes automatizados e industriais.
+                        e na integração de soluções que permitem monitorar, controlar e otimizar processos reais por meio de tecnologia.
 
 
                     </p>
                     <p class="course-description">
                         A turma reúne diferentes conhecimentos técnicos e práticos, o que permite integrar habilidades variadas na construção de soluções
-                        completas. Essa combinação favorece a troca de experiências e a capacidade de transformar ideias em projetos consistentes,
-                        conectando teoria, tecnologia e aplicação real.
+                        completas.
 
 
                     </p>
@@ -135,12 +133,22 @@
             <h2 class="section-title-small">Sobre o Ecossistema</h2>
             <div class="text-content-highlight">
                 <p>
-                    O Projeto Tentaculli é uma solução <strong>Full Stack & IoT</strong> projetada para preencher a lacuna entre o chão de fábrica e a gestão administrativa. 
-                    Nossa arquitetura permite que pedidos realizados via web sejam traduzidos instantaneamente em comandos físicos para maquinário industrial.
+                    O <strong>Projeto Tentaculli</strong> conecta <strong>pedidos web</strong> diretamente ao <strong>chão de fábrica</strong>. 
+                    Via interface 3D, você monta configurações arrastando peças geométricas. Os dados são enviados 
+                    para uma <strong>API REST</strong> → <strong>Node-RED</strong> → <strong>CLP Siemens</strong> → <strong>Braço robótico Omron</strong>.
                 </p>
-                <p style="margin-top: 1rem;">
-                    Utilizando protocolos de comunicação robustos, garantimos integridade de dados, monitoramento em tempo real e eficiência na linha de produção automatizada.
-                </p>
+                
+                <h3 style="margin-top: 2rem; color: #a970ff; font-size: 1.3rem;">
+                    <i class="fas fa-shield-alt"></i> Validações Críticas
+                </h3>
+                
+                <ul style="margin-top: 1rem; padding-left: 2rem; line-height: 1.8;">
+                    <li><strong>Sem peças repetidas:</strong> Cada pino não aceita duplicatas (ex: dois círculos no mesmo pino).</li>
+                    
+                    <li><strong>Pinos completos ou vazios:</strong> Apenas 3 peças ou 0 peças. Configurações com 1-2 peças são rejeitadas.</li>
+                    
+                    <li><strong>Mínimo de um pino completo:</strong> Todo pedido precisa ter pelo menos um pino válido.</li>
+                </ul>
             </div>
         </section>
 
