@@ -13,7 +13,7 @@ builder.Services.AddControllers()
                 .Select(e => new
                 {
                     Field = e.Key,
-                    Errors = e.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                    Errors = e.Value!.Errors.Select(x => x.ErrorMessage).ToArray()
                 })
                 .ToList();
 
@@ -25,13 +25,14 @@ builder.Services.AddControllers()
         };
     });
 
+// ===== CORS =====
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.WithOrigins("http://127.0.0.1:5501")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -39,7 +40,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnectionString");
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
 
@@ -49,7 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// ❌ REMOVIDO
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
