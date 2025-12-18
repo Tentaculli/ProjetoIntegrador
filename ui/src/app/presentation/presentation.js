@@ -707,10 +707,10 @@ function initVideoControls() {
     const video2 = document.getElementById('video2');
     const videosContainer = document.getElementById('videosContainer');
     
-    const playAllBtn = document.getElementById('playAllBtn');
-    const pauseAllBtn = document.getElementById('pauseAllBtn');
+    const playPauseBtn = document.getElementById('playPauseBtn');
     const restartAllBtn = document.getElementById('restartAllBtn');
-    const muteAllBtn = document.getElementById('muteAllBtn');
+    const speedControl = document.getElementById('speedControl');
+    const speedValue = document.getElementById('speedValue');
     
     // Verificar se todos os elementos existem
     if (!video1 || !video2 || !videosContainer) {
@@ -718,7 +718,7 @@ function initVideoControls() {
         return;
     }
     
-    let isMuted = false;
+    let isPlaying = false;
     
     // Adicionar classes visuais para indicar sincronização
     const wrapper1 = video1.closest('.video-wrapper');
@@ -735,24 +735,43 @@ function initVideoControls() {
         }, 2000);
     }
     
+    // Função para atualizar ícone do botão play/pause
+    function updatePlayPauseButton() {
+        const icon = playPauseBtn.querySelector('i');
+        const text = playPauseBtn.querySelector('span');
+        
+        if (isPlaying) {
+            icon.className = 'fas fa-pause';
+            if (text) text.textContent = 'Pausar';
+            playPauseBtn.classList.remove('btn-play');
+            playPauseBtn.classList.add('btn-pause');
+            playPauseBtn.title = 'Pausar ambos';
+        } else {
+            icon.className = 'fas fa-play';
+            if (text) text.textContent = 'Play';
+            playPauseBtn.classList.remove('btn-pause');
+            playPauseBtn.classList.add('btn-play');
+            playPauseBtn.title = 'Reproduzir ambos';
+        }
+    }
+    
     // ========================================================================
     // CONTROLES SINCRONIZADOS
     // ========================================================================
     
-    // Play de ambos os vídeos
-    if (playAllBtn) {
-        playAllBtn.addEventListener('click', () => {
-            video1.play().catch(e => console.log('Erro ao reproduzir video1:', e));
-            video2.play().catch(e => console.log('Erro ao reproduzir video2:', e));
-            showSyncFeedback();
-        });
-    }
-    
-    // Pause de ambos os vídeos
-    if (pauseAllBtn) {
-        pauseAllBtn.addEventListener('click', () => {
-            video1.pause();
-            video2.pause();
+    // Toggle Play/Pause de ambos os vídeos
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                video1.pause();
+                video2.pause();
+                isPlaying = false;
+            } else {
+                video1.play().catch(e => console.log('Erro ao reproduzir video1:', e));
+                video2.play().catch(e => console.log('Erro ao reproduzir video2:', e));
+                isPlaying = true;
+            }
+            updatePlayPauseButton();
             showSyncFeedback();
         });
     }
@@ -764,34 +783,36 @@ function initVideoControls() {
             video2.currentTime = 0;
             video1.play().catch(e => console.log('Erro ao reproduzir video1:', e));
             video2.play().catch(e => console.log('Erro ao reproduzir video2:', e));
+            isPlaying = true;
+            updatePlayPauseButton();
             showSyncFeedback();
         });
     }
     
-    // Mutar/Desmutar ambos os vídeos
-    if (muteAllBtn) {
-        muteAllBtn.addEventListener('click', () => {
-            isMuted = !isMuted;
-            video1.muted = isMuted;
-            video2.muted = isMuted;
-            
-            // Atualizar ícone
-            const icon = muteAllBtn.querySelector('i');
-            const text = muteAllBtn.querySelector('span');
-            
-            if (isMuted) {
-                icon.className = 'fas fa-volume-mute';
-                if (text) text.textContent = 'Desmutar';
-                muteAllBtn.classList.add('muted');
-            } else {
-                icon.className = 'fas fa-volume-up';
-                if (text) text.textContent = 'Mutar';
-                muteAllBtn.classList.remove('muted');
-            }
-            
+    // Controle de velocidade para ambos os vídeos
+    if (speedControl && speedValue) {
+        speedControl.addEventListener('input', (e) => {
+            const speed = parseFloat(e.target.value);
+            video1.playbackRate = speed;
+            video2.playbackRate = speed;
+            speedValue.textContent = speed.toFixed(2) + 'x';
             showSyncFeedback();
         });
     }
+    
+    // Sincronizar estado quando os vídeos terminarem
+    video1.addEventListener('ended', () => {
+        isPlaying = false;
+        updatePlayPauseButton();
+    });
+    
+    video2.addEventListener('ended', () => {
+        isPlaying = false;
+        updatePlayPauseButton();
+    });
+    
+    // Inicializar estado do botão
+    updatePlayPauseButton();
 }
 
 // Inicializar quando o documento carregar

@@ -139,7 +139,7 @@
                 </p>
                 
                 <h3 style="margin-top: 2rem; color: #a970ff; font-size: 1.3rem;">
-                    <i class="fas fa-shield-alt"></i> Validações Críticas
+                    <i class="fas fa-shield-alt"></i> Requisitos
                 </h3>
                 
                 <ul style="margin-top: 1rem; padding-left: 2rem; line-height: 1.8;">
@@ -148,6 +148,8 @@
                     <li><strong>Pinos completos ou vazios:</strong> Apenas 3 peças ou 0 peças. Configurações com 1-2 peças são rejeitadas.</li>
                     
                     <li><strong>Mínimo de um pino completo:</strong> Todo pedido precisa ter pelo menos um pino válido.</li>
+
+                    <li><strong>Histórico de pedidos:</strong> O usuário deve poder acessar seus pedidos, assim como seus status.</li>
                 </ul>
             </div>
         </section>
@@ -307,7 +309,7 @@
             <div class="videos-container" id="videosContainer">
                 <div class="video-wrapper video-small">
                     <video id="video1" controls>
-                        <source src="../../assets/videos/aplicacao.mp4" type="video/mp4">
+                        <source src="../../assets/videos/gravacao-robo.mp4" type="video/mp4">
                         Seu navegador não suporta o elemento de vídeo.
                     </video>
                     <div class="video-caption">Robô</div>
@@ -324,14 +326,9 @@
             
             <!-- Controles sincronizados -->
             <div class="video-sync-controls">
-                <button id="playAllBtn" class="video-control-btn btn-play" title="Reproduzir ambos">
+                <button id="playPauseBtn" class="video-control-btn btn-play" title="Reproduzir ambos">
                     <i class="fas fa-play"></i>
                     <span>Play</span>
-                </button>
-                
-                <button id="pauseAllBtn" class="video-control-btn btn-pause" title="Pausar ambos">
-                    <i class="fas fa-pause"></i>
-                    <span>Pausar</span>
                 </button>
                 
                 <button id="restartAllBtn" class="video-control-btn btn-restart" title="Reiniciar ambos">
@@ -339,10 +336,15 @@
                     <span>Reiniciar</span>
                 </button>
                 
-                <button id="muteAllBtn" class="video-control-btn btn-mute" title="Mutar/Desmutar ambos">
-                    <i class="fas fa-volume-up"></i>
-                    <span>Mutar</span>
-                </button>
+                <div class="speed-control-wrapper">
+                    <label for="speedControl" class="speed-label">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Velocidade: <span id="speedValue">1.00x</span>
+                    </label>
+                    <input type="range" id="speedControl" class="speed-slider" 
+                           min="0.25" max="2.0" step="0.25" value="1.0" 
+                           title="Ajustar velocidade de reprodução">
+                </div>
             </div>
         </section>
 
